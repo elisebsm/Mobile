@@ -1,9 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activities.FoodServiceActivity">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/tvFoodServiceName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="50sp"
+        android:layout_marginTop="25dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="20dp"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:id="@+id/tvOpeningHours"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Opening hours:"
+        android:layout_margin="10dp"
+        android:textSize="20sp"/>
+
+    <fragment
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="10dp"
+        tools:context=".Activities.FoodServiceActivity" />
+
+
+
+    <TextView
+        android:id="@+id/tvWaitingTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/expected_queue_waiting_time"
+        android:layout_margin="10dp"
+        android:textSize="20sp"/>
+
+    <Button
+        android:id="@+id/buttonShowMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/show_menu_of_the_day"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:textSize="20sp"/>
+
+
+</LinearLayout>
