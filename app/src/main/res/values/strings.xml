@@ -1,5 +1,19 @@
 <resources>
     <string name="app_name">CafeteriaAppMUC</string>
+<<<<<<< HEAD
+    <string name="profile_setup">Profile setup</string>
+    <string name="userprofile_prompt">Select university user status</string>
+    <string-array name="userprofile_arrays">
+        <item>Student</item>
+        <item>Professor</item>
+        <item>Staff</item>
+        <item>Researcher</item>
+        <item>General Public</item>
+    </string-array>
+
+
+    </resources>
+=======
     <string name="title_activity_maps">Map</string>
 
     <!--    Permissions    -->
@@ -18,3 +32,4 @@
     <string name="change_campus">Change campus:</string>
 
 </resources>
+>>>>>>> 6a2c7b34913ba809c8ba482bfdf138c5f1834d8c
