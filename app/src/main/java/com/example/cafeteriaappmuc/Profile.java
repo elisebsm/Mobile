@@ -4,12 +4,12 @@ import android.app.Application;
 
 public class Profile extends Application {
 
-    private Object userProfile;
+    private String userProfile;
 
-    public Object getProfile(){
+    public String getProfile(){
         return userProfile;
     }
-    public void setProfile(Object userProfile){
+    public void setProfile(String userProfile){
         this.userProfile =userProfile;
     }
 
