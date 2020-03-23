@@ -1,5 +1,6 @@
 package com.example.cafeteriaappmuc.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,9 +14,7 @@ import com.example.cafeteriaappmuc.Profile;
 import com.example.cafeteriaappmuc.R;
 
 public class ProfileSetupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-    private Object user;
     private Spinner users_spinner;
-    private Object pos;
     final Button button = findViewById(R.id.save_button);
 
 
@@ -27,11 +26,12 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
         setContentView(R.layout.profile_setup);
         populateSpinner();
         button.setOnClickListener(new View.OnClickListener() {
+
             public void onClick(View v) {
-                // Code here executes on main thread after user presses button
-                // TODO: FINNE NOE HER
+                startActivity(new Intent(ProfileSetupActivity.this, MainActivity.class));
             }
         });
+
     }
 
 
@@ -46,16 +46,21 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
         // Apply the adapter to the spinner
         users_spinner.setAdapter(adapter);
 
+
     }
 
     //responding to user actions
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        // An item was selected. You can retrieve the selected item using:
-        pos = parent.getItemAtPosition(position);
-        users_spinner     = (Spinner) findViewById(R.id.users_spinner);
+        if(users_spinner.getItemAtPosition(position).equals("Select user group")){
+           // do nothing
+        }
+        else{
+            // An item was selected. Retrieve the selected item and pass it to global variable
+            users_spinner.setOnItemSelectedListener(this);
+            ((Profile) this.getApplication()).setProfile(users_spinner.getItemAtPosition(position).toString());
 
-        users_spinner.setOnItemSelectedListener(this);
+        }
 
     }
 
@@ -64,7 +69,7 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
         // Another interface callback
     }
     public void onButtonClicked(View view){
-        ((Profile) this.getApplication()).setProfile(pos);
+
     }
 
 
