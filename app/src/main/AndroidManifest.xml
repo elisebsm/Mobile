@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.cafeteriaappmuc">
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -11,19 +12,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-<<<<<<< HEAD
-        <activity android:name=".MenuOfTheDayActivity"></activity>
-        <activity android:name=".MainActivity">
-=======
-        <activity android:name=".activities.FoodServiceActivity"></activity>
-        <activity android:name=".activities.MainActivity">
->>>>>>> 0c352dbd7954c58193ed61e18b7dea0b4e0df532
+        <activity android:name=".activities.DishActivity"></activity>
+        <activity android:name=".activities.MenuOfTheDayActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activities.FoodServiceActivity" />
+        <activity android:name=".activities.MainActivity"></activity>
     </application>
 
 </manifest>
