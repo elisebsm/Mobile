@@ -4,9 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
+
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     //TODO: set current campus based on profile
     private String currentCampus = " ";
     private String status;
+    //final Button button = findViewById(R.id.profile_button);
 
 
     ListView listViewFoodServices;
@@ -77,7 +85,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         displayMainFoodServicesList();
+
     }
+    //load menu options from profilemenu.xml
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profilemenu, menu);
+        return true;
+    }
+
+    //handle events on click
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item1:
+                showProfileSetup();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
 
 
     private void updateSpinner(String chosenCampus){
@@ -186,5 +214,15 @@ public class MainActivity extends AppCompatActivity {
         intentFoodService.putExtra("foodService", foodService);
         startActivity(intentFoodService);
     }
+
+    //starter profile setup activity
+    private void showProfileSetup(){
+        Intent intentProfileSetup = new Intent(this, ProfileSetupActivity.class);
+
+        startActivity(intentProfileSetup);
+    }
+
+
+
 
 }
