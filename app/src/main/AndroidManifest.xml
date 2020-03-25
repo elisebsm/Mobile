@@ -30,10 +30,10 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
-        <activity android:name=".activities.FoodServiceActivity" />
-        <activity android:name=".activities.ProfileSetupActivity"
-            android:parentActivityName=".activities.MainActivity" />
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".Activities.FoodServiceActivity" />
+        <activity android:name=".Activities.ProfileSetupActivity"
+            android:parentActivityName=".Activities.MainActivity" />
+        <activity android:name=".Activities.MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
