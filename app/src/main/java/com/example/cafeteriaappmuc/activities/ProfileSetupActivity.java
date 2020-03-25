@@ -18,10 +18,7 @@ import com.example.cafeteriaappmuc.R;
 //bruke get i andre aktiviteter typ finne restaurant og åpningsider for den profilen som blir valgt
 public class ProfileSetupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private Spinner users_spinner;
-    private String selectedVal;
-    private boolean invalidValue=false;
-
-
+    private String selectedVal=null;
 
 
     @Override
@@ -35,9 +32,9 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
         button.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                if(invalidValue==true){
+                if(selectedVal==null){
                     Toast.makeText(getApplicationContext(), "Please select user value from bar" ,Toast.LENGTH_SHORT).show();
-                    invalidValue=false;
+
                 }
 
                 else {
@@ -65,8 +62,8 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
 
     @Override
     public void onItemSelected (AdapterView < ? > parent, View view,int position, long id){
-        if (parent.getItemAtPosition(position).equals("Select user group")) {
-            invalidValue=true;
+        if (users_spinner.getSelectedItem().toString().equals("Select user group")) {
+            selectedVal = null;
         } else {
             selectedVal =users_spinner.getSelectedItem().toString();
 
