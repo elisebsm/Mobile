@@ -13,4 +13,5 @@ public class Profile extends Application {
         this.userProfile =userProfile;
     }
 
+    //TODO: legge til åpningstider for hver gruppe/bruker. Finen metode å bruke dette
 }
