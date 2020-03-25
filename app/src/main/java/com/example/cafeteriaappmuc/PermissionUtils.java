@@ -27,7 +27,7 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.cafeteriaappmuc.Activities.FoodServiceActivity;
+import com.example.cafeteriaappmuc.activities.FoodServiceActivity;
 
 /**
  * Utility class for access to runtime permissions.

@@ -1,4 +1,4 @@
-package com.example.cafeteriaappmuc.Activities;
+package com.example.cafeteriaappmuc.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
