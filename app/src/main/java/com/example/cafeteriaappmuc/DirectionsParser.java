@@ -2,7 +2,6 @@ package com.example.cafeteriaappmuc;
 
 import android.util.Log;
 
-import com.example.cafeteriaappmuc.Activities.MainActivity;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
