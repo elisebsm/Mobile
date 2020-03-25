@@ -1,4 +1,4 @@
-package com.example.cafeteriaappmuc.activities;
+package com.example.cafeteriaappmuc.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;

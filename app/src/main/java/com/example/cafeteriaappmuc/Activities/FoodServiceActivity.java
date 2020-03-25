@@ -1,4 +1,4 @@
-package com.example.cafeteriaappmuc.activities;
+package com.example.cafeteriaappmuc.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -200,7 +200,7 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         //mode for finding direction
         String mode = "mode=walking";
         //Build the full param
-        String param = str_org + "&" + str_dest + "&" + sensor + "&" + mode + "&key=AIzaSyBaSw5RCtu8Fy4pYPuUvMk8eZVRBQ9eymo";
+        String param = str_org + "&" + str_dest + "&" + sensor + "&" + mode + "&key=AIzaSyB72zLudOuMncMtCOCIpwgMVvTBLFAfPI8";
         // output format
         String output = "json";
         // create url request

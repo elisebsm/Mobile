@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-package="com.example.cafeteriaappmuc">
+    package="com.example.cafeteriaappmuc">
 
-<!--
-     The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-     Google Maps Android API v2, but you must specify either coarse or fine
-     location permissions for the 'MyLocation' functionality.
--->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 
     <application
@@ -30,10 +26,13 @@ package="com.example.cafeteriaappmuc">
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
-        <activity android:name=".activities.FoodServiceActivity" />
-        <activity android:name=".activities.ProfileSetupActivity"
-            android:parentActivityName=".activities.MainActivity" />
-        <activity android:name=".activities.MainActivity">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+        <activity android:name=".Activities.FoodServiceActivity" />
+        <activity android:name=".Activities.ProfileSetupActivity"
+            android:parentActivityName=".Activities.MainActivity" />
+        <activity android:name=".Activities.MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,23 +41,9 @@ package="com.example.cafeteriaappmuc">
         </intent-filter>
     </activity>
 
-    <activity android:name=".activities.AddNewDishActivity"></activity>
-    <activity android:name=".activities.DishActivity" />
-    <activity android:name=".activities.MenuOfTheDayActivity"/>
+    <activity android:name=".Activities.AddNewDishActivity"></activity>
+    <activity android:name=".Activities.DishActivity" />
+    <activity android:name=".Activities.MenuOfTheDayActivity"/>
 
 </application>
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
 </manifest>
