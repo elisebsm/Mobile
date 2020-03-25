@@ -199,8 +199,8 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         String sensor = "sensor=false";
         //mode for finding direction
         String mode = "mode=walking";
-        //Build the full param
-        String param = str_org + "&" + str_dest + "&" + sensor + "&" + mode + "&key=AIzaSyBaSw5RCtu8Fy4pYPuUvMk8eZVRBQ9eymo";
+        //Build the full param TODO: make the key work without hard coding it.
+        String param = str_org + "&" + str_dest + "&" + sensor + "&" + mode + "&key=AIzaSyB72zLudOuMncMtCOCIpwgMVvTBLFAfPI8";
         // output format
         String output = "json";
         // create url request
