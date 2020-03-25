@@ -25,17 +25,29 @@
         android:id="@+id/imageView3"
         android:layout_width="114dp"
         android:layout_height="101dp"
-        app:srcCompat="@android:drawable/ic_menu_gallery"
-        tools:layout_editor_absoluteX="148dp"
-        tools:layout_editor_absoluteY="273dp" />
+        android:layout_marginStart="148dp"
+        android:layout_marginTop="273dp"
+        android:layout_marginEnd="149dp"
+        android:layout_marginBottom="357dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_gallery" />
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="114dp"
         android:layout_height="101dp"
-        app:srcCompat="@android:drawable/ic_menu_gallery"
-        tools:layout_editor_absoluteX="281dp"
-        tools:layout_editor_absoluteY="273dp" />
+        android:layout_marginStart="281dp"
+        android:layout_marginTop="273dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="357dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_gallery" />
 
     <TextView
         android:id="@+id/dishName"
@@ -56,7 +68,56 @@
         android:id="@+id/imageView"
         android:layout_width="114dp"
         android:layout_height="101dp"
-        app:srcCompat="@android:drawable/ic_menu_gallery"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="273dp" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="273dp"
+        android:layout_marginEnd="281dp"
+        android:layout_marginBottom="356dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+    <TextView
+        android:id="@+id/dishPrice"
+        android:layout_width="162dp"
+        android:layout_height="23dp"
+        android:layout_marginStart="84dp"
+        android:layout_marginTop="162dp"
+        android:layout_marginEnd="262dp"
+        android:layout_marginBottom="543dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="211dp"
+        android:layout_marginEnd="319dp"
+        android:layout_marginBottom="501dp"
+        android:text="Description:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/dishDescription"
+        android:layout_width="273dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="113dp"
+        android:layout_marginTop="211dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="480dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

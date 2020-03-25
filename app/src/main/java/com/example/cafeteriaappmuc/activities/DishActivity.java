@@ -16,9 +16,20 @@ public class DishActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dish);
 
         Intent intent = getIntent();
-        String dishName = intent.getStringExtra(MenuOfTheDayActivity.dishName);
+        String dishName = intent.getStringExtra(MenuOfTheDayActivity.DISH_NAME);
+        String dishPrice = intent.getStringExtra(MenuOfTheDayActivity.DISH_PRICE);
+        String dishDescription = intent.getStringExtra(MenuOfTheDayActivity.DISH_DESCRIPTION);
 
-        TextView textView = findViewById(R.id.dishName);
-        textView.setText(dishName);
+
+        TextView nameTextView = findViewById(R.id.dishName);
+        nameTextView.setText(dishName);
+
+        TextView priceTextView = findViewById(R.id.dishPrice);
+        priceTextView.setText(dishPrice + " Euros");
+
+        TextView descriptionTextView = findViewById(R.id.dishDescription);
+        descriptionTextView.setText(dishDescription);
+
+
     }
 }
