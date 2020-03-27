@@ -44,6 +44,9 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
     private double latitude;
     private double longitude;
 
+    //TODO: add opening hours
+    //TODO: show walking time, update every second minute or so??
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +144,7 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         listPoints.add(latLngCurrentLoc);
 
         //sets zoom level
-        float zoomLevel = 16.0f; //This goes up to 21
+        float zoomLevel = 19.0f; //This goes up to 21
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngCurrentLoc, zoomLevel));
 
         LatLng latLngDestination = new LatLng(latitude,longitude);
