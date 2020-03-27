@@ -4,8 +4,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
+
+import android.os.AsyncTask;
+import android.os.Bundle;
+
+import android.util.Log;
 
 import android.view.Menu;
 
@@ -22,11 +29,22 @@ import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
 import com.example.cafeteriaappmuc.MyDataListMain;
 import com.example.cafeteriaappmuc.Profile;
 import com.example.cafeteriaappmuc.R;
+import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Serializable {
 
     private List<String> campusesAll = new ArrayList<>();
 
@@ -40,10 +58,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<MyDataListMain> arrayList = new ArrayList<>();
     AdapterListViewMainFoodServices adapterFoodServices;
 
-    //TODO: get time to walk
-    //Time to walk value
-    private ArrayList<String> timeToWalkList;
 
+    private int counterDisplayFoodServiceInList = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +90,11 @@ public class MainActivity extends AppCompatActivity {
                 if(adapterView.getItemAtPosition(position).equals("Choose Campus")){
                     // do nothing
                 }else {
+
                     System.out.println("button clicked. Person saved as "+ getUserProfile() );
+
+                    counterDisplayFoodServiceInList = 0;
+
                     displayChosenCampus(adapterView.getItemAtPosition(position).toString());
                     removeCurrentCampusFromList(currentCampus);
                     updateSpinner(adapterView.getItemAtPosition(position).toString());
@@ -86,8 +106,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         displayMainFoodServicesList();
-
     }
+
+
     //load menu options from profilemenu.xml
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -98,13 +119,11 @@ public class MainActivity extends AppCompatActivity {
     //handle events on click
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.item1:
-                showProfileSetup();
-                return true;
-            default:
-                return super.onContextItemSelected(item);
+        if (item.getItemId() == R.id.item1) {
+            showProfileSetup();
+            return true;
         }
+        return super.onContextItemSelected(item);
     }
 
 
@@ -145,24 +164,29 @@ public class MainActivity extends AppCompatActivity {
         return campuses;
     }
 
-
-    //Shows dining places based on status
+   // int numberofservices = 0;
+    List<String> services = new ArrayList<>();
+    /**
+     * Shows dining places based on status
+     */
     // TODO: connect this to profile, add specification for status
     private void displayDiningOptions(String status, String campus){
-        //List<String> foodServicesAlameda = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section", "South Tower", "Mathematics Building", "Interdisciplinary Building");
         //List<String> foodServicesTaguspark = Arrays.asList("Ground floor", "Taguspark Campus Restaurant", "Floor -1");
+        //List<String> foodServicesAlameda = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section", "South Tower", "Mathematics Building", "Interdisciplinary Building");
 
         switch (status) {
             case "Student":
                 if (campus.equals("Alameda")) {
-                    arrayList.clear();
-                    arrayList.add(new MyDataListMain("Main Building", 4, 5));
-                    arrayList.add(new MyDataListMain("Civil Building", 12, 7));
-                    displayMainFoodServicesList();
+                    //TODO: add accurate food services according to status
+                    List<String> foodServices = Arrays.asList( "Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
+                    services = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
+                    //numberofservices += foodServices.size();
+                    getDistanceValues(foodServices);
+
                 } else {
+                    //TODO append foddservices to services
                     arrayList.clear();
-                    arrayList.add(new MyDataListMain("Ground floor", 33, 5));
-                    arrayList.add(new MyDataListMain("Taguspark Campus Restaurant", 4, 3));
+
                     displayMainFoodServicesList();
                 }
                 break;
@@ -176,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
             case "Researcher":
                 if (campus.equals("Alameda")) {
                     //TODO: add food services for researcher
-                    arrayList.add(new MyDataListMain("Ground floor", 5, 5));
+                    arrayList.add(new MyDataListMain("Ground floor", "5", 5));
                     arrayList.clear();
                 } else {
                     arrayList.clear();
@@ -185,13 +209,125 @@ public class MainActivity extends AppCompatActivity {
             case "Staff":
                 if (campus.equals("Alameda")) {
                     //TODO: add food services for staff
-                    arrayList.add(new MyDataListMain("Taguspark Campus Restaurant", 6, 3));
+                    arrayList.add(new MyDataListMain("Taguspark Campus Restaurant", "6", 3));
                     arrayList.clear();
                 } else {
                     arrayList.clear();
                 }
                 break;
         }
+    }
+
+
+
+    // TODO: make the key work without hard coding it.
+    private String getRequestUrl(LatLng origin, LatLng dest) {
+        String str_org = "origin=" + origin.latitude + "," + origin.longitude;
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+        return "https://maps.googleapis.com/maps/api/directions/json?" + str_org + "&" + str_dest + "&sensor=false&mode=walking&key=AIzaSyB72zLudOuMncMtCOCIpwgMVvTBLFAfPI8";
+    }
+
+// BRUKES FOR Å LAGE LISTEN OVER SPISESTEDER
+   // private ArrayList<String> servicesToBeDisplayed = new ArrayList<>();
+
+
+    //private List<String> walkDistances  = new ArrayList<>();
+    private void getDistanceValues(List<String> foodServices) {
+
+        //TODO: change back to current after testing
+        /* // Get current location
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider = LocationManager.NETWORK_PROVIDER;
+        @SuppressLint("MissingPermission") android.location.Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+        double userLat = lastKnownLocation.getLatitude();
+        double userLong = lastKnownLocation.getLongitude();*/
+        double userLat = 38.738300;
+        double userLong = -9.139040;
+        LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
+
+        List<LatLng> latLngs = new ArrayList<>();
+        for (String foodService: foodServices){
+            if (foodService.equals("Main Building")) {
+                double latitude = 38.736574;
+                double longitude = -9.139561;
+                LatLng latLngDest = new LatLng(latitude, longitude);
+                latLngs.add(latLngDest);
+
+                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                taskRequestDirections.execute(url);
+
+               // servicesToBeDisplayed.add("Main Building");
+
+
+            } if(foodService.equals("Civil Building")) {
+                double latitude = 38.7370555;
+                double longitude = -9.140102;
+                LatLng latLngDest = new LatLng(latitude, longitude);
+                latLngs.add(latLngDest);
+
+                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                taskRequestDirections.execute(url);
+                //servicesToBeDisplayed.add("Civil Building");
+            } if(foodService.equals("North Tower")) {
+                double latitude = 38.7376027;
+                double longitude = -9.1386528;
+                LatLng latLngDest = new LatLng(latitude, longitude);
+                latLngs.add(latLngDest);
+
+                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                taskRequestDirections.execute(url);
+                //servicesToBeDisplayed.add("North Tower");
+
+            } if(foodService.equals("Mechanics Building II")) {
+                double latitude = 38.737145;
+                double longitude = -9.137595;
+                LatLng latLngDest = new LatLng(latitude, longitude);
+
+                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                taskRequestDirections.execute(url);
+                //servicesToBeDisplayed.add("Mechanics Building II");
+
+            } if(foodService.equals("AEIST Building")) {
+                double latitude = 38.736386;
+                double longitude = -9.136973;
+                LatLng latLngDest = new LatLng(latitude, longitude);
+
+                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                taskRequestDirections.execute(url);
+                //servicesToBeDisplayed.add("AEIST Building");
+            } if(foodService.equals("Copy Section")) {
+                double latitude = 38.736346;
+                double longitude = -9.137839;
+                LatLng latLngDest = new LatLng(latitude, longitude);
+
+                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                taskRequestDirections.execute(url);
+                //servicesToBeDisplayed.add("Copy Section");
+            } if(foodService.equals("South Tower")) {
+                double latitude = 38.7359943;
+                double longitude = -9.138551;
+                LatLng latLngDest = new LatLng(latitude, longitude);
+            } if(foodService.equals("Mathematics Building")) {
+                double latitude = 38.735502;
+                double longitude = -9.139760;
+                LatLng latLngDest = new LatLng(latitude, longitude);
+            } if(foodService.equals("Interdisciplinary Building")) {
+                double latitude = 38.736039;
+                double longitude = -9.140131;
+                LatLng latLngDest = new LatLng(latitude, longitude);
+            } if(foodService.equals("Ground floor")) {
+               //TODO: find lat/lng
+            } if(foodService.equals("Taguspark Campus Restaurant")) {
+                //TODO: find lat/lng
+            }
+        }
+
     }
 
 
@@ -222,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(intentProfileSetup);
     }
+
     //get user profile selected in profile
     private String getUserProfile(){
         //retreiving global variable saved in Profile
@@ -229,7 +366,104 @@ public class MainActivity extends AppCompatActivity {
         String userProfile =profileVariable.getProfile();
         Toast.makeText(getApplicationContext(), "User previously saved as: "+userProfile, Toast.LENGTH_SHORT).show();
         return userProfile;
+
+
+
+    // method to get direction using httpurlconnection
+    private String requestDirection(String reqUrl) throws IOException {
+        String responseString = "";
+        InputStream inputStream = null;
+        HttpURLConnection httpURLConnection = null;
+        try {
+            URL url = new URL(reqUrl);
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.connect();
+
+            //Get the response request
+            inputStream = httpURLConnection.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            StringBuffer stringBuffer = new StringBuffer();
+            String line = "";
+            while((line= bufferedReader.readLine())!= null){
+                stringBuffer.append(line);
+            }
+
+            responseString = stringBuffer.toString();
+            bufferedReader.close();
+            inputStreamReader.close();
+
+
+        }catch (IOException e ){
+            e.printStackTrace();
+        } finally {
+            if(inputStream != null){
+                inputStream.close();
+            }
+            if (httpURLConnection != null) {
+                httpURLConnection.disconnect();
+            }
+        }
+        return responseString;
     }
 
+
+    /**
+     * TaskRequestDirection and TarskParser are used for the AsyncTask to get time to walk
+     * TODO: put them in their own class??
+     */
+    // creates AsyncTask to call request Direction
+    public class TaskRequestDirections extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String responseString = "";
+            try {
+                responseString = requestDirection(strings[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return responseString;
+        }
+
+        // parse json result
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //parse json result here
+            TaskParser taskParser = new TaskParser();
+            taskParser.execute(s);
+        }
+    }
+
+    public class TaskParser extends AsyncTask<String, Void, String>{
+
+        @Override
+        protected String doInBackground(String... strings) {
+            JSONObject jsonObject = null;
+            String duration = null;
+            try {
+                jsonObject = new JSONObject(strings[0]);
+                duration = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").get("text").toString();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return duration;
+        }
+
+        protected void onPostExecute(String duration) {
+            Log.d("DURATION", duration);
+           // String foodService = "";
+
+            arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), duration, 5));
+            displayMainFoodServicesList();
+            counterDisplayFoodServiceInList++;
+
+
+
+        }
+    }
 
 }
