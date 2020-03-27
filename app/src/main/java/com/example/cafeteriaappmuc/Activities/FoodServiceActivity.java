@@ -49,6 +49,9 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
     private double latitude;
     private double longitude;
 
+    //TODO: add opening hours
+    //TODO: show walking time, update every second minute or so??
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,7 +149,7 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         listPoints.add(latLngCurrentLoc);
 
         //sets zoom level
-        float zoomLevel = 16.0f; //This goes up to 21
+        float zoomLevel = 19.0f; //This goes up to 21
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngCurrentLoc, zoomLevel));
 
         LatLng latLngDestination = new LatLng(latitude,longitude);
@@ -199,8 +202,8 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         String sensor = "sensor=false";
         //mode for finding direction
         String mode = "mode=walking";
-        //Build the full param
-        String param = str_org + "&" + str_dest + "&" + sensor + "&" + mode + "&key=AIzaSyBaSw5RCtu8Fy4pYPuUvMk8eZVRBQ9eymo";
+        //Build the full param TODO: make the key work without hard coding it.
+        String param = str_org + "&" + str_dest + "&" + sensor + "&" + mode + "&key=AIzaSyB72zLudOuMncMtCOCIpwgMVvTBLFAfPI8";
         // output format
         String output = "json";
         // create url request
