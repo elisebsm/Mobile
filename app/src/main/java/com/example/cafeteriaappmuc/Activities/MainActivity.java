@@ -2,28 +2,28 @@ package com.example.cafeteriaappmuc.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuInflater;
 
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
 import com.example.cafeteriaappmuc.MyDataListMain;
+import com.example.cafeteriaappmuc.Profile;
 import com.example.cafeteriaappmuc.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 if(adapterView.getItemAtPosition(position).equals("Choose Campus")){
                     // do nothing
                 }else {
+                    System.out.println("button clicked. Person saved as "+ getUserProfile() );
                     displayChosenCampus(adapterView.getItemAtPosition(position).toString());
                     removeCurrentCampusFromList(currentCampus);
                     updateSpinner(adapterView.getItemAtPosition(position).toString());
@@ -221,8 +222,14 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(intentProfileSetup);
     }
-
-
+    //get user profile selected in profile
+    private String getUserProfile(){
+        //retreiving global variable saved in Profile
+        Profile profileVariable = (Profile) getApplicationContext();
+        String userProfile =profileVariable.getProfile();
+        Toast.makeText(getApplicationContext(), "User previously saved as: "+userProfile, Toast.LENGTH_SHORT).show();
+        return userProfile;
+    }
 
 
 }
