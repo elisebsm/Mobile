@@ -42,6 +42,7 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements Serializable {
@@ -360,13 +361,13 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
     //get user profile selected in profile
-    private String getUserProfile(){
+    private String getUserProfile() {
         //retreiving global variable saved in Profile
         Profile profileVariable = (Profile) getApplicationContext();
-        String userProfile =profileVariable.getProfile();
-        Toast.makeText(getApplicationContext(), "User previously saved as: "+userProfile, Toast.LENGTH_SHORT).show();
+        String userProfile = profileVariable.getProfile();
+        Toast.makeText(getApplicationContext(), "User previously saved as: " + userProfile, Toast.LENGTH_SHORT).show();
         return userProfile;
-
+    }
 
 
     // method to get direction using httpurlconnection
