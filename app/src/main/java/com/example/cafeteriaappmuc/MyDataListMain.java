@@ -7,10 +7,10 @@ public class MyDataListMain {
      */
 
     private String textViewFoodService;
-    private int textViewEstimatedTimeToWalk;
+    private String textViewEstimatedTimeToWalk;
     private int textViewExpectedQueueWaitingTime;
 
-    public MyDataListMain(String foodService, int timeToWalk, int queueTime) {
+    public MyDataListMain(String foodService, String timeToWalk, int queueTime) {
         this.textViewFoodService = foodService;
         this.textViewEstimatedTimeToWalk = timeToWalk;
         this.textViewExpectedQueueWaitingTime = queueTime;
@@ -21,10 +21,10 @@ public class MyDataListMain {
     public void setFoodService(String foodService) {
         this.textViewFoodService = foodService;
     }
-    public int getTimeToWalk() {
+    public String getTimeToWalk() {
         return textViewEstimatedTimeToWalk;
     }
-    public void setTimeToWalk(int timeToWalk) {
+    public void setTimeToWalk(String timeToWalk) {
         this.textViewEstimatedTimeToWalk = timeToWalk;
     }
     public int getQueueTime() {
