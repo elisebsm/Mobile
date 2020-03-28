@@ -42,6 +42,7 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements Serializable {
@@ -87,11 +88,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         spinnerListCampuses.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                if(adapterView.getItemAtPosition(position).equals("Choose Campus")){
+                if (adapterView.getItemAtPosition(position).equals("Choose Campus")) {
                     // do nothing
-                }else {
+                } else {
 
-                    System.out.println("button clicked. Person saved as "+ getUserProfile() );
+                    System.out.println("button clicked. Person saved as " + getUserProfile());
 
                     counterDisplayFoodServiceInList = 0;
 
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                     displayDiningOptions(status, currentCampus);
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
@@ -127,8 +129,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
 
-
-    private void updateSpinner(String chosenCampus){
+    private void updateSpinner(String chosenCampus) {
         Spinner spinnerUpdatetList = findViewById(R.id.spinnerListOfCampus);
         List<String> campusesUpdated = removeCurrentCampusFromList(chosenCampus);
 
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
 
-    private void displayChosenCampus(String campusName){
+    private void displayChosenCampus(String campusName) {
         currentCampus = campusName;
         TextView textViewMainCurrentCampusSet = findViewById(R.id.textViewMainCurrentCampus);
         textViewMainCurrentCampusSet.setText(campusName);
@@ -152,11 +153,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
 
-    private List<String> removeCurrentCampusFromList (String currentCampus) {
+    private List<String> removeCurrentCampusFromList(String currentCampus) {
         int numberOfCampuses = campusesAll.size();
         List<String> campuses = new ArrayList<>();
         campuses.add(0, "Choose Campus");
-        for (int i = 0; i < numberOfCampuses ; i++) {
+        for (int i = 0; i < numberOfCampuses; i++) {
             if (!campusesAll.get(i).equals(currentCampus)) {
                 campuses.add(campusesAll.get(i));
             }
@@ -164,13 +165,14 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         return campuses;
     }
 
-   // int numberofservices = 0;
+    // int numberofservices = 0;
     List<String> services = new ArrayList<>();
+
     /**
      * Shows dining places based on status
      */
     // TODO: connect this to profile, add specification for status
-    private void displayDiningOptions(String status, String campus){
+    private void displayDiningOptions(String status, String campus) {
         //List<String> foodServicesTaguspark = Arrays.asList("Ground floor", "Taguspark Campus Restaurant", "Floor -1");
         //List<String> foodServicesAlameda = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section", "South Tower", "Mathematics Building", "Interdisciplinary Building");
 
@@ -178,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             case "Student":
                 if (campus.equals("Alameda")) {
                     //TODO: add accurate food services according to status
-                    List<String> foodServices = Arrays.asList( "Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
+                    List<String> foodServices = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
                     services = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
                     //numberofservices += foodServices.size();
                     getDistanceValues(foodServices);
@@ -219,7 +221,6 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
 
-
     // TODO: make the key work without hard coding it.
     private String getRequestUrl(LatLng origin, LatLng dest) {
         String str_org = "origin=" + origin.latitude + "," + origin.longitude;
@@ -228,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
 // BRUKES FOR Å LAGE LISTEN OVER SPISESTEDER
-   // private ArrayList<String> servicesToBeDisplayed = new ArrayList<>();
+    // private ArrayList<String> servicesToBeDisplayed = new ArrayList<>();
 
 
     //private List<String> walkDistances  = new ArrayList<>();
@@ -246,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
 
         List<LatLng> latLngs = new ArrayList<>();
-        for (String foodService: foodServices){
+        for (String foodService : foodServices) {
             if (foodService.equals("Main Building")) {
                 double latitude = 38.736574;
                 double longitude = -9.139561;
@@ -257,10 +258,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                 taskRequestDirections.execute(url);
 
-               // servicesToBeDisplayed.add("Main Building");
+                // servicesToBeDisplayed.add("Main Building");
 
 
-            } if(foodService.equals("Civil Building")) {
+            }
+            if (foodService.equals("Civil Building")) {
                 double latitude = 38.7370555;
                 double longitude = -9.140102;
                 LatLng latLngDest = new LatLng(latitude, longitude);
@@ -270,7 +272,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                 taskRequestDirections.execute(url);
                 //servicesToBeDisplayed.add("Civil Building");
-            } if(foodService.equals("North Tower")) {
+            }
+            if (foodService.equals("North Tower")) {
                 double latitude = 38.7376027;
                 double longitude = -9.1386528;
                 LatLng latLngDest = new LatLng(latitude, longitude);
@@ -281,7 +284,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 taskRequestDirections.execute(url);
                 //servicesToBeDisplayed.add("North Tower");
 
-            } if(foodService.equals("Mechanics Building II")) {
+            }
+            if (foodService.equals("Mechanics Building II")) {
                 double latitude = 38.737145;
                 double longitude = -9.137595;
                 LatLng latLngDest = new LatLng(latitude, longitude);
@@ -291,7 +295,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 taskRequestDirections.execute(url);
                 //servicesToBeDisplayed.add("Mechanics Building II");
 
-            } if(foodService.equals("AEIST Building")) {
+            }
+            if (foodService.equals("AEIST Building")) {
                 double latitude = 38.736386;
                 double longitude = -9.136973;
                 LatLng latLngDest = new LatLng(latitude, longitude);
@@ -300,7 +305,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                 taskRequestDirections.execute(url);
                 //servicesToBeDisplayed.add("AEIST Building");
-            } if(foodService.equals("Copy Section")) {
+            }
+            if (foodService.equals("Copy Section")) {
                 double latitude = 38.736346;
                 double longitude = -9.137839;
                 LatLng latLngDest = new LatLng(latitude, longitude);
@@ -309,21 +315,26 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                 taskRequestDirections.execute(url);
                 //servicesToBeDisplayed.add("Copy Section");
-            } if(foodService.equals("South Tower")) {
+            }
+            if (foodService.equals("South Tower")) {
                 double latitude = 38.7359943;
                 double longitude = -9.138551;
                 LatLng latLngDest = new LatLng(latitude, longitude);
-            } if(foodService.equals("Mathematics Building")) {
+            }
+            if (foodService.equals("Mathematics Building")) {
                 double latitude = 38.735502;
                 double longitude = -9.139760;
                 LatLng latLngDest = new LatLng(latitude, longitude);
-            } if(foodService.equals("Interdisciplinary Building")) {
+            }
+            if (foodService.equals("Interdisciplinary Building")) {
                 double latitude = 38.736039;
                 double longitude = -9.140131;
                 LatLng latLngDest = new LatLng(latitude, longitude);
-            } if(foodService.equals("Ground floor")) {
-               //TODO: find lat/lng
-            } if(foodService.equals("Taguspark Campus Restaurant")) {
+            }
+            if (foodService.equals("Ground floor")) {
+                //TODO: find lat/lng
+            }
+            if (foodService.equals("Taguspark Campus Restaurant")) {
                 //TODO: find lat/lng
             }
         }
@@ -331,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
 
-    private void displayMainFoodServicesList(){
+    private void displayMainFoodServicesList() {
         listViewFoodServices = findViewById(R.id.listViewFoodServices);
         adapterFoodServices = new AdapterListViewMainFoodServices(this, arrayList);
         listViewFoodServices.setAdapter(adapterFoodServices);
@@ -346,125 +357,220 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         });
     }
 
-    private void showFoodService(String foodService){
+    private void showFoodService(String foodService) {
         Intent intentFoodService = new Intent(this, FoodServiceActivity.class);
         intentFoodService.putExtra("foodService", foodService);
         startActivity(intentFoodService);
     }
 
     //starter profile setup activity
-    private void showProfileSetup(){
+    private void showProfileSetup() {
         Intent intentProfileSetup = new Intent(this, ProfileSetupActivity.class);
 
         startActivity(intentProfileSetup);
     }
 
     //get user profile selected in profile
-    private String getUserProfile(){
+    private String getUserProfile() {
         //retreiving global variable saved in Profile
         Profile profileVariable = (Profile) getApplicationContext();
-        String userProfile =profileVariable.getProfile();
-        Toast.makeText(getApplicationContext(), "User previously saved as: "+userProfile, Toast.LENGTH_SHORT).show();
+        String userProfile = profileVariable.getProfile();
+        Toast.makeText(getApplicationContext(), "User previously saved as: " + userProfile, Toast.LENGTH_SHORT).show();
         return userProfile;
-
-
-
-    // method to get direction using httpurlconnection
-    private String requestDirection(String reqUrl) throws IOException {
-        String responseString = "";
-        InputStream inputStream = null;
-        HttpURLConnection httpURLConnection = null;
-        try {
-            URL url = new URL(reqUrl);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.connect();
-
-            //Get the response request
-            inputStream = httpURLConnection.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            StringBuffer stringBuffer = new StringBuffer();
-            String line = "";
-            while((line= bufferedReader.readLine())!= null){
-                stringBuffer.append(line);
-            }
-
-            responseString = stringBuffer.toString();
-            bufferedReader.close();
-            inputStreamReader.close();
-
-
-        }catch (IOException e ){
-            e.printStackTrace();
-        } finally {
-            if(inputStream != null){
-                inputStream.close();
-            }
-            if (httpURLConnection != null) {
-                httpURLConnection.disconnect();
-            }
-        }
-        return responseString;
     }
 
-
-    /**
-     * TaskRequestDirection and TarskParser are used for the AsyncTask to get time to walk
-     * TODO: put them in their own class??
-     */
-    // creates AsyncTask to call request Direction
-    public class TaskRequestDirections extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
+        // method to get direction using httpurlconnection
+        private String requestDirection (String reqUrl) throws IOException {
             String responseString = "";
+            InputStream inputStream = null;
+            HttpURLConnection httpURLConnection = null;
             try {
-                responseString = requestDirection(strings[0]);
+                URL url = new URL(reqUrl);
+                httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.connect();
+
+                //Get the response request
+                inputStream = httpURLConnection.getInputStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuffer stringBuffer = new StringBuffer();
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    stringBuffer.append(line);
+                }
+
+                responseString = stringBuffer.toString();
+                bufferedReader.close();
+                inputStreamReader.close();
+
+
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (httpURLConnection != null) {
+                    httpURLConnection.disconnect();
+                }
             }
             return responseString;
         }
 
-        // parse json result
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            //parse json result here
-            TaskParser taskParser = new TaskParser();
-            taskParser.execute(s);
-        }
 
-    }
+        /**
+         * TaskRequestDirection and TarskParser are used for the AsyncTask to get time to walk
+         * TODO: put them in their own class??
+         */
+        // creates AsyncTask to call request Direction
+        public class TaskRequestDirections extends AsyncTask<String, Void, String> {
 
-    public class TaskParser extends AsyncTask<String, Void, String>{
-
-        @Override
-        protected String doInBackground(String... strings) {
-            JSONObject jsonObject = null;
-            String duration = null;
-            try {
-                jsonObject = new JSONObject(strings[0]);
-                duration = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").get("text").toString();
-
-            } catch (JSONException e) {
-                e.printStackTrace();
+            @Override
+            protected String doInBackground(String... strings) {
+                String responseString = "";
+                try {
+                    responseString = requestDirection(strings[0]);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return responseString;
             }
-            return duration;
+
+            // parse json result
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                //parse json result here
+                FoodServiceActivity.TaskParser taskParser = new TaskParser();
+                taskParser.execute(s);
+            }
+
         }
 
-        protected void onPostExecute(String duration) {
+        public class TaskParser extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected String doInBackground(String... strings) {
+                JSONObject jsonObject = null;
+                String duration = null;
+                try {
+                    jsonObject = new JSONObject(strings[0]);
+                    duration = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").get("text").toString();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return duration;
+            }
+
+            protected void onPostExecute(String duration) {
+                Log.d("DURATION", duration);
+                // String foodService = "";
+
+                arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), duration, 5));
+                displayMainFoodServicesList();
+                counterDisplayFoodServiceInList++;
+
+
+            }
+        }
+
+        // method to get direction using httpurlconnection
+        private String requestDirection (String reqUrl) throws IOException {
+            String responseString = "";
+            InputStream inputStream = null;
+            HttpURLConnection httpURLConnection = null;
+            try {
+                URL url = new URL(reqUrl);
+                httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.connect();
+
+                //Get the response request
+                inputStream = httpURLConnection.getInputStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuffer stringBuffer = new StringBuffer();
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    stringBuffer.append(line);
+                }
+
+                responseString = stringBuffer.toString();
+                bufferedReader.close();
+                inputStreamReader.close();
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (httpURLConnection != null) {
+                    httpURLConnection.disconnect();
+                }
+            }
+            return responseString;
+        }
+
+
+        /**
+         * TaskRequestDirection and TarskParser are used for the AsyncTask to get time to walk
+         * TODO: put them in their own class??
+         */
+        // creates AsyncTask to call request Direction
+        public class TaskRequestDirections extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected String doInBackground(String... strings) {
+                String responseString = "";
+                try {
+                    responseString = requestDirection(strings[0]);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return responseString;
+            }
+
+            // parse json result
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                //parse json result here
+                TaskParser taskParser = new TaskParser();
+                taskParser.execute(s);
+            }
+        }
+
+        public class TaskParser extends AsyncTask<String, Void, String> {
+
+            @Override
+            protected String doInBackground(String... strings) {
+                JSONObject jsonObject = null;
+                String duration = null;
+                try {
+                    jsonObject = new JSONObject(strings[0]);
+                    duration = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").get("text").toString();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return duration;
+            }
+        }
+
+        protected void onPostExecute (String duration){
             Log.d("DURATION", duration);
-           // String foodService = "";
+            // String foodService = "";
 
             arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), duration, 5));
             displayMainFoodServicesList();
             counterDisplayFoodServiceInList++;
 
 
-
         }
     }
 
-}
+
