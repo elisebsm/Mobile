@@ -15,6 +15,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -318,5 +319,9 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         }
     }
 
-
+    public void showMenuOfTheDayClick(View view){
+        Intent menuIntent = new Intent(this, MenuOfTheDayActivity.class);
+        //komme seg til menu
+        startActivity(menuIntent);
+    }
 }
