@@ -29,6 +29,7 @@ import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
 import com.example.cafeteriaappmuc.MyDataListMain;
 import com.example.cafeteriaappmuc.Profile;
 import com.example.cafeteriaappmuc.R;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
@@ -379,189 +380,93 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         return userProfile;
     }
 
-        // method to get direction using httpurlconnection
-        private String requestDirection (String reqUrl) throws IOException {
+    // method to get direction using httpurlconnection
+    private String requestDirection(String reqUrl) throws IOException {
+        String responseString = "";
+        InputStream inputStream = null;
+        HttpURLConnection httpURLConnection = null;
+        try {
+            URL url = new URL(reqUrl);
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.connect();
+
+            //Get the response request
+            inputStream = httpURLConnection.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            StringBuffer stringBuffer = new StringBuffer();
+            String line = "";
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuffer.append(line);
+            }
+
+            responseString = stringBuffer.toString();
+            bufferedReader.close();
+            inputStreamReader.close();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (httpURLConnection != null) {
+                httpURLConnection.disconnect();
+            }
+        }
+        return responseString;
+    }
+
+
+    /**
+     * TaskRequestDirection and TarskParser are used for the AsyncTask to get time to walk
+     * TODO: put them in their own class??
+     */
+    // creates AsyncTask to call request Direction
+    public class TaskRequestDirections extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
             String responseString = "";
-            InputStream inputStream = null;
-            HttpURLConnection httpURLConnection = null;
             try {
-                URL url = new URL(reqUrl);
-                httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.connect();
-
-                //Get the response request
-                inputStream = httpURLConnection.getInputStream();
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-                StringBuffer stringBuffer = new StringBuffer();
-                String line = "";
-                while ((line = bufferedReader.readLine()) != null) {
-                    stringBuffer.append(line);
-                }
-
-                responseString = stringBuffer.toString();
-                bufferedReader.close();
-                inputStreamReader.close();
-
-
+                responseString = requestDirection(strings[0]);
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-                if (httpURLConnection != null) {
-                    httpURLConnection.disconnect();
-                }
             }
             return responseString;
         }
 
-
-        /**
-         * TaskRequestDirection and TarskParser are used for the AsyncTask to get time to walk
-         * TODO: put them in their own class??
-         */
-        // creates AsyncTask to call request Direction
-        public class TaskRequestDirections extends AsyncTask<String, Void, String> {
-
-            @Override
-            protected String doInBackground(String... strings) {
-                String responseString = "";
-                try {
-                    responseString = requestDirection(strings[0]);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return responseString;
-            }
-
-            // parse json result
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                //parse json result here
-                FoodServiceActivity.TaskParser taskParser = new TaskParser();
-                taskParser.execute(s);
-            }
-
+        // parse json result
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            //parse json result here
+            TaskParser taskParser = new TaskParser();
+            taskParser.execute(s);
         }
 
-        public class TaskParser extends AsyncTask<String, Void, String> {
-
-            @Override
-            protected String doInBackground(String... strings) {
-                JSONObject jsonObject = null;
-                String duration = null;
-                try {
-                    jsonObject = new JSONObject(strings[0]);
-                    duration = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").get("text").toString();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return duration;
-            }
-
-            protected void onPostExecute(String duration) {
-                Log.d("DURATION", duration);
-                // String foodService = "";
-
-                arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), duration, 5));
-                displayMainFoodServicesList();
-                counterDisplayFoodServiceInList++;
+    }
 
 
-            }
-        }
+    public class TaskParser extends AsyncTask<String, Void, String> {
 
-        // method to get direction using httpurlconnection
-        private String requestDirection (String reqUrl) throws IOException {
-            String responseString = "";
-            InputStream inputStream = null;
-            HttpURLConnection httpURLConnection = null;
+        @Override
+        protected String doInBackground(String... strings) {
+            JSONObject jsonObject = null;
+            String duration = null;
             try {
-                URL url = new URL(reqUrl);
-                httpURLConnection = (HttpURLConnection) url.openConnection();
-                httpURLConnection.connect();
+                jsonObject = new JSONObject(strings[0]);
+                duration = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").get("text").toString();
 
-                //Get the response request
-                inputStream = httpURLConnection.getInputStream();
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-                StringBuffer stringBuffer = new StringBuffer();
-                String line = "";
-                while ((line = bufferedReader.readLine()) != null) {
-                    stringBuffer.append(line);
-                }
-
-                responseString = stringBuffer.toString();
-                bufferedReader.close();
-                inputStreamReader.close();
-
-
-            } catch (IOException e) {
+            } catch (JSONException e) {
                 e.printStackTrace();
-            } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-                if (httpURLConnection != null) {
-                    httpURLConnection.disconnect();
-                }
             }
-            return responseString;
+            return duration;
         }
 
-
-        /**
-         * TaskRequestDirection and TarskParser are used for the AsyncTask to get time to walk
-         * TODO: put them in their own class??
-         */
-        // creates AsyncTask to call request Direction
-        public class TaskRequestDirections extends AsyncTask<String, Void, String> {
-
-            @Override
-            protected String doInBackground(String... strings) {
-                String responseString = "";
-                try {
-                    responseString = requestDirection(strings[0]);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return responseString;
-            }
-
-            // parse json result
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                //parse json result here
-                TaskParser taskParser = new TaskParser();
-                taskParser.execute(s);
-            }
-        }
-
-        public class TaskParser extends AsyncTask<String, Void, String> {
-
-            @Override
-            protected String doInBackground(String... strings) {
-                JSONObject jsonObject = null;
-                String duration = null;
-                try {
-                    jsonObject = new JSONObject(strings[0]);
-                    duration = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").get("text").toString();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                return duration;
-            }
-        }
-
-        protected void onPostExecute (String duration){
+        protected void onPostExecute(String duration) {
             Log.d("DURATION", duration);
             // String foodService = "";
 
@@ -572,5 +477,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 
         }
     }
+
+}
 
 
