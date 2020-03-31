@@ -3,6 +3,8 @@
 
     <string name="profile_setup">Profile setup</string>
     <string name="userprofile_prompt">Select university user status</string>
+    <string name="saved_profile_key">Saved profile as</string>
+    <string name="saved_profile_default_key">No user selected</string>
     <string name="save">Save</string>
     <string-array name="userprofile_arrays">
         <item>Select user group</item>
@@ -11,6 +13,15 @@
         <item>Staff</item>
         <item>Researcher</item>
         <item>General Public</item>
+    </string-array>
+
+    <string-array name="userprofile_arrays_values">
+        <item>Select_user_group</item>
+        <item>Student</item>
+        <item>Professor</item>
+        <item>Staff</item>
+        <item>Researcher</item>
+        <item>General_Public</item>
     </string-array>
 
 
