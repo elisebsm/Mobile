@@ -3,9 +3,10 @@
 
     <string name="profile_setup">Profile setup</string>
     <string name="userprofile_prompt">Select university user status</string>
-    <string name="saved_profile_key">Saved profile as</string>
-    <string name="saved_profile_default_key">No user selected</string>
+    <string name="saved_profile_key">null</string>
+    <string name="saved_profile_default_key">Select user profile</string>
     <string name="save">Save</string>
+    <string name="previously_selected_profile">None</string>
     <string-array name="userprofile_arrays">
         <item>Select user group</item>
         <item>Student</item>
@@ -44,6 +45,11 @@
     <string name="profile" />
     <string name="profileItem">Profile</string>
     <string name="mainItem">Main Page</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="edit_name_for_image">Edit name for image</string>
+    <string name="preview_image">Preview image</string>
+    <string name="profile_selected">Profile selected:</string>
 
 </resources>
 
