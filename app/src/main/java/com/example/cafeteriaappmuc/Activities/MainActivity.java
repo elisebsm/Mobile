@@ -126,6 +126,12 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             showProfileSetup();
             return true;
         }
+
+        //only for testing. Move to dish activity when done
+        if (item.getItemId() == R.id.item2) {
+            showUploadImageActivity();
+            return true;
+        }
         return super.onContextItemSelected(item);
     }
 
@@ -357,6 +363,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             }
         });
     }
+    //show Upload image activity. Only for testing
+    private void showUploadImageActivity() {
+        Intent intentUploadImageActivity = new Intent(this, UploadImageActivity.class);
+        startActivity(intentUploadImageActivity);
+    }
 
     private void showFoodService(String foodService) {
         Intent intentFoodService = new Intent(this, FoodServiceActivity.class);
@@ -369,6 +380,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         Intent intentProfileSetup = new Intent(this, ProfileSetupActivity.class);
         startActivity(intentProfileSetup);
     }
+
 
 //TODO : SLETTE PROFILE?
     //get user profile selected in profile
