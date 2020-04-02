@@ -50,6 +50,7 @@
     <string name="edit_name_for_image">Edit name for image</string>
     <string name="preview_image">Preview image</string>
     <string name="profile_selected">Profile selected:</string>
+    <string name="save_button">Save</string>
 
 </resources>
 

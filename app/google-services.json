@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "242142357772",
+    "firebase_url": "https://cafeteriaappmuc.firebaseio.com",
+    "project_id": "cafeteriaappmuc",
+    "storage_bucket": "cafeteriaappmuc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242142357772:android:02d43e850bceff43138129",
+        "android_client_info": {
+          "package_name": "com.example.cafeteriaappmuc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "242142357772-ocmkiutqahb218mctavkk3uuth36pvs3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7OpfKR6sGaIx62eH-YOgxwmpSp3AzoC8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "242142357772-ocmkiutqahb218mctavkk3uuth36pvs3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
