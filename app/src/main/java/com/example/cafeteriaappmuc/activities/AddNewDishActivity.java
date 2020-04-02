@@ -5,9 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.cafeteriaappmuc.Dish;
+import com.example.cafeteriaappmuc.DishType;
 import com.example.cafeteriaappmuc.R;
 import com.example.cafeteriaappmuc.io.LocalDishIO;
 
@@ -17,6 +20,12 @@ public class AddNewDishActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_dish);
+
+        Spinner typeSpinner = findViewById(R.id.newDishType);
+        ArrayAdapter<DishType> typeAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, DishType.values());
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeSpinner.setAdapter(typeAdapter);
     }
 
     public void addNewDish(View view) {
@@ -30,8 +39,13 @@ public class AddNewDishActivity extends AppCompatActivity {
         TextView descriptionTextView = findViewById(R.id.newDishDescription);
         String newDishDescription = descriptionTextView.getText().toString();
 
-        Dish newDish = new Dish(newDishName, newDishPrice, newDishDescription);
+        Spinner typeSpinner = findViewById(R.id.newDishType);
+        DishType newDishType = (DishType) typeSpinner.getSelectedItem();  //gjør om til DishType (Caster!!)
+
+        Dish newDish = new Dish(newDishName, newDishPrice, newDishDescription, newDishType);
         LocalDishIO.saveDish(newDish);
+
+
 
         Intent goBackToMenuIntent = new Intent (this, MenuOfTheDayActivity.class);
         startActivity(goBackToMenuIntent);
