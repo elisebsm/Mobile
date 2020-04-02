@@ -21,7 +21,6 @@ import com.example.cafeteriaappmuc.R;
 public class ProfileSetupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private Spinner users_spinner;
     private String selectedSpinnerVal=null;
-    private Profile profileVariable = (Profile) getApplicationContext();
 
 
     @Override
@@ -54,6 +53,7 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
 
                     //Store the same variable in profile object as Global Variable. Easy retreival for other classes.
                     String sharedPrefProfile = retrieveData(key);
+                    Profile profileVariable = (Profile) getApplicationContext();
                     profileVariable.setProfile(sharedPrefProfile);
                     Toast.makeText(getApplicationContext(), "User saved as: " + selectedSpinnerVal, Toast.LENGTH_SHORT).show();
                     Log.i("OnClick", "Person saved" + selectedSpinnerVal);

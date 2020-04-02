@@ -5,7 +5,6 @@ import android.app.Application;
 public class Profile extends Application {
 
     private String userProfile;
-    private Boolean studentHours;
 
     public String getProfile(){
         return userProfile;
