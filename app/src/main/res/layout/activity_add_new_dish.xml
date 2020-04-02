@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.AddNewDishActivity">
+    tools:context=".Activities.AddNewDishActivity">
 
     <TextView
         android:id="@+id/textView3"
@@ -38,7 +38,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/addNewPrice"
+        android:id="@+id/newDishPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="41dp"
@@ -54,7 +54,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/addNewDescription"
+        android:id="@+id/newDishDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="41dp"
@@ -73,11 +73,26 @@
         android:id="@+id/button4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="282dp"
-        android:layout_marginTop="502dp"
-        android:layout_marginEnd="41dp"
-        android:layout_marginBottom="181dp"
+        android:layout_marginStart="278dp"
+        android:layout_marginTop="609dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="74dp"
+        android:onClick="addNewDish"
         android:text="Add dish"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/newDishType"
+        android:layout_width="387dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="483dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="224dp"
+        android:spinnerMode="dropdown"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
