@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.cafeteriaappmuc.Profile;
 import com.example.cafeteriaappmuc.R;
 
@@ -22,8 +21,6 @@ import com.example.cafeteriaappmuc.R;
 public class ProfileSetupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private Spinner users_spinner;
     private String selectedSpinnerVal=null;
-
-
 
 
     @Override
@@ -110,8 +107,5 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
         return profileVal;
 
     }
-
-
-
 
 }
