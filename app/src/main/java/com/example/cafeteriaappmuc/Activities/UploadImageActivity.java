@@ -60,6 +60,7 @@ public class UploadImageActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_image);
 
+        //TODO:FIRX BACK BUTTON
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // initialise views

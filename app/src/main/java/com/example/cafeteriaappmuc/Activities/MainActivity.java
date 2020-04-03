@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         setContentView(R.layout.activity_main);
         displayChosenCampus(currentCampus);
 
-        // TODO: set status based on profile
-        status = "Student";
+        //use getUserProfile() to get selected user. Returns user or null if user not selected
+        status = getUserProfile();
 
         Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
         campusesAll.add("Alameda");
@@ -92,8 +92,6 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 if (adapterView.getItemAtPosition(position).equals("Choose Campus")) {
                     // do nothing
                 } else {
-                    //use getUserProfile() to get selected user. Returns user or null if user not selected
-                    System.out.println("button clicked. Person saved as " + getUserProfile());
 
                     counterDisplayFoodServiceInList = 0;
 
@@ -382,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     }
 
 
-//TODO : SLETTE PROFILE?
+//TODO : maybe remove profile class and only use shared preferences
     //get user profile selected in profile
     private String getUserProfile() {
         //retreiving global variable saved in Profile if it exists
