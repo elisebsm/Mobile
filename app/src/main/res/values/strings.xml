@@ -16,14 +16,7 @@
         <item>General Public</item>
     </string-array>
 
-    <string-array name="userprofile_arrays_values">
-        <item>Select_user_group</item>
-        <item>Student</item>
-        <item>Professor</item>
-        <item>Staff</item>
-        <item>Researcher</item>
-        <item>General_Public</item>
-    </string-array>
+
 
 
     <string name="title_activity_maps">Map</string>
@@ -51,6 +44,7 @@
     <string name="preview_image">Preview image</string>
     <string name="profile_selected">Profile selected:</string>
     <string name="save_button">Save</string>
+    <string name="photoItem">Photo</string>
 
 </resources>
 

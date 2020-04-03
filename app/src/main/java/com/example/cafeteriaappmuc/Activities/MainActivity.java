@@ -69,8 +69,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         setContentView(R.layout.activity_main);
         displayChosenCampus(currentCampus);
 
-        // TODO: set status based on profile
-        status = "Student";
+        //use getUserProfile() to get selected user. Returns user or null if user not selected
+        status = getUserProfile();
 
         Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
         campusesAll.add("Alameda");
@@ -92,8 +92,6 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 if (adapterView.getItemAtPosition(position).equals("Choose Campus")) {
                     // do nothing
                 } else {
-                    //use getUserProfile() to get selected user. Returns user or null if user not selected
-                    System.out.println("button clicked. Person saved as " + getUserProfile());
 
                     counterDisplayFoodServiceInList = 0;
 
@@ -124,6 +122,12 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.item1) {
             showProfileSetup();
+            return true;
+        }
+
+        //only for testing. Move to dish activity when done
+        if (item.getItemId() == R.id.item2) {
+            showUploadImageActivity();
             return true;
         }
         return super.onContextItemSelected(item);
@@ -357,6 +361,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             }
         });
     }
+    //show Upload image activity. Only for testing
+    private void showUploadImageActivity() {
+        Intent intentUploadImageActivity = new Intent(this, UploadImageActivity.class);
+        startActivity(intentUploadImageActivity);
+    }
 
     private void showFoodService(String foodService) {
         Intent intentFoodService = new Intent(this, FoodServiceActivity.class);
@@ -370,7 +379,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         startActivity(intentProfileSetup);
     }
 
-//TODO : SLETTE PROFILE?
+
+//TODO : maybe remove profile class and only use shared preferences
     //get user profile selected in profile
     private String getUserProfile() {
         //retreiving global variable saved in Profile if it exists
