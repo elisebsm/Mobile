@@ -62,6 +62,9 @@ public class UploadImageActivity extends AppCompatActivity  {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //TODO:Image path (dish spesific imported. Get intent?)
+
+
         // initialise views
         btnSelect = findViewById(R.id.btnSelect);
         btnUpload = findViewById(R.id.btnUpload);
@@ -168,6 +171,7 @@ public class UploadImageActivity extends AppCompatActivity  {
             progressDialog.show();
 
             // Defining the child of storageReference
+            //TODO: set image path to match so that image is saved to spesific dish at cafeteria
             StorageReference ref
                     = storageReference
                     .child(

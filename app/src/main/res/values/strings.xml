@@ -45,6 +45,12 @@
     <string name="profile_selected">Profile selected:</string>
     <string name="save_button">Save</string>
     <string name="photoItem">Photo</string>
+    <string name="new_dish">New dish</string>
+    <string name="name">Name:</string>
+    <string name="description">Description:</string>
+    <string name="add_dish">Add dish</string>
+    <string name="price">Price:</string>
+    <string name="Upload_new_dish_image">Upload image</string>
 
 </resources>
 
