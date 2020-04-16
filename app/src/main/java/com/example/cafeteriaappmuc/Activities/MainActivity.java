@@ -10,7 +10,6 @@ import android.os.Bundle;
 
 
 import android.os.AsyncTask;
-import android.os.Bundle;
 
 import android.util.Log;
 
@@ -27,7 +26,6 @@ import android.widget.Toast;
 
 import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
 import com.example.cafeteriaappmuc.MyDataListMain;
-import com.example.cafeteriaappmuc.Profile;
 import com.example.cafeteriaappmuc.R;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -125,11 +123,6 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             return true;
         }
 
-        //only for testing. Move to dish activity when done
-        if (item.getItemId() == R.id.item2) {
-            showUploadImageActivity();
-            return true;
-        }
         return super.onContextItemSelected(item);
     }
 
@@ -358,6 +351,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String foodService = arrayList.get(position).getFoodService();
                 showFoodService(foodService);
+
             }
         });
     }
@@ -383,10 +377,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 //TODO : maybe remove profile class and only use shared preferences
     //get user profile selected in profile
     private String getUserProfile() {
-        //retreiving global variable saved in Profile if it exists
 
-        //Profile profileVariable = (Profile) getApplicationContext();
-       // String userProfile = profileVariable.getProfile();
         final String key =getString(R.string.saved_profile_key);
         final String defValue = getString(R.string.saved_profile_default_key);
         SharedPreferences sharedPref = getSharedPreferences("settings",

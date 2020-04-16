@@ -9,7 +9,7 @@
 
 
     <application
-        android:name=".Profile"
+        android:name=".GlobalClass"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -30,12 +30,13 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
         <activity android:name=".Activities.FoodServiceActivity" />
+        <activity android:name=".Activities.DisplayImagesActivity"
+            android:parentActivityName=".Activities.MenuOfTheDayActivity"/>
         <activity android:name=".Activities.UploadImageActivity"
-            android:parentActivityName=".Activities.MainActivity" />
+            android:parentActivityName=".Activities.MenuOfTheDayActivity" />
         <activity android:name=".Activities.ProfileSetupActivity"
             android:parentActivityName=".Activities.MainActivity" />
         <activity android:name=".Activities.MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,8 +44,10 @@
         </intent-filter>
     </activity>
 
-    <activity android:name=".Activities.AddNewDishActivity"></activity>
-    <activity android:name=".Activities.DishActivity" />
+    <activity android:name=".Activities.AddNewDishActivity"
+        android:parentActivityName=".Activities.DishActivity"/>
+    <activity android:name=".Activities.DishActivity"
+        android:parentActivityName=".Activities.MenuOfTheDayActivity"/>
     <activity android:name=".Activities.MenuOfTheDayActivity"/>
 
 </application>

@@ -30,6 +30,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'com.google.android.material:material:1.1.0'
+    
+    //glide library for cachi
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
@@ -42,6 +44,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-functions:19.0.2'
     //Cloud storage
     implementation 'com.google.firebase:firebase-storage:19.1.1'
+    //firebaseUI
+    implementation 'com.firebaseui:firebase-ui-storage:6.2.0'
+    implementation 'com.google.firebase:firebase-database:19.2.1'
+    implementation "androidx.cardview:cardview:1.0.0"
+  
+
 
 
 }

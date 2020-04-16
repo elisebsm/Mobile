@@ -5,6 +5,7 @@ import android.Manifest;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,19 +15,23 @@ import android.os.Bundle;
 
 import android.provider.MediaStore;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.cafeteriaappmuc.GlobalClass;
+import com.example.cafeteriaappmuc.ImageUploadInfo;
 import com.example.cafeteriaappmuc.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -42,8 +47,11 @@ public class UploadImageActivity extends AppCompatActivity  {
     // view for image view
     private ImageView imageView;
 
+
     // Uri indicates, where the image will be picked from
     private Uri filePath;
+
+    String TempImageName;
 
     // request code
     private final int PICK_IMAGE_REQUEST = 22;
@@ -54,6 +62,18 @@ public class UploadImageActivity extends AppCompatActivity  {
     // instance for firebase storage and StorageReference
     FirebaseStorage storage;
     StorageReference storageReference;
+    DatabaseReference databaseReference;
+
+    //names of dish and cafeteria selected
+    private String dishName, foodService;
+
+
+    // Folder path for Firebase Storage.
+    //TODO: ADD REAL PATH
+    private String Storage_Path ;
+
+    // Root Database Name for Firebase Database.
+    public static String Database_Path ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +82,13 @@ public class UploadImageActivity extends AppCompatActivity  {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //TODO:Image path (dish spesific imported. Get intent?)
+        //getting dish name for folder name
+        dishName=((GlobalClass) this.getApplication()).getDishName();
+        foodService=((GlobalClass) this.getApplication()).getFoodService();
 
+        //TODO: ADD REAL PATH
+        Database_Path =  ("images/"+foodService+"/"+dishName);
+        Storage_Path = ("images/"+foodService+"/"+dishName+"/");
 
         // initialise views
         btnSelect = findViewById(R.id.btnSelect);
@@ -71,9 +96,9 @@ public class UploadImageActivity extends AppCompatActivity  {
         imageView = findViewById(R.id.imgView);
 
         // get the Firebase  storage reference
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
+        storageReference = FirebaseStorage.getInstance().getReference();
 
+        databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path);
 
         // on pressing btnSelect SelectImage() is called
         btnSelect.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +123,7 @@ public class UploadImageActivity extends AppCompatActivity  {
             @Override
             public void onClick(View v)
             {
-                uploadImage();
+                uploadImageFileToFirebaseStorage();
             }
         });
     }
@@ -158,11 +183,24 @@ public class UploadImageActivity extends AppCompatActivity  {
             }
         }
     }
+    // Creating Method to get the selected image file Extension from File Path URI.
+    public String GetFileExtension(Uri uri) {
+
+        ContentResolver contentResolver = getContentResolver();
+
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+
+        // Returning the file Extension.
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri)) ;
+
+    }
 
     // UploadImage method
-    private void uploadImage()
+    private void uploadImageFileToFirebaseStorage()
     {
         if (filePath != null) {
+
+
 
             // Code for showing progressDialog while uploading
             final ProgressDialog progressDialog
@@ -172,11 +210,13 @@ public class UploadImageActivity extends AppCompatActivity  {
 
             // Defining the child of storageReference
             //TODO: set image path to match so that image is saved to spesific dish at cafeteria
-            StorageReference ref
-                    = storageReference
-                    .child(
-                            "images/"
-                                    + UUID.randomUUID().toString());
+
+
+            // Getting image name from EditText and store into string variable.
+            TempImageName = UUID.randomUUID().toString();
+
+                    StorageReference ref
+                    = storageReference.child(Storage_Path+TempImageName);
 
             // adding listeners on upload
             // or failure of image
@@ -189,6 +229,7 @@ public class UploadImageActivity extends AppCompatActivity  {
                                         UploadTask.TaskSnapshot taskSnapshot)
                                 {
 
+
                                     // Image uploaded successfully
                                     // Dismiss dialog
                                     progressDialog.dismiss();
@@ -197,6 +238,15 @@ public class UploadImageActivity extends AppCompatActivity  {
                                                     "Image Uploaded!!",
                                                     Toast.LENGTH_SHORT)
                                             .show();
+
+                                     @SuppressWarnings("VisibleForTests")
+                                       ImageUploadInfo imageUploadInfo = new ImageUploadInfo(TempImageName, taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+
+                                    // Getting image upload ID.
+                                    String ImageUploadId = databaseReference.push().getKey();
+                                    // Adding image upload id s child element into databaseReference.
+                                    databaseReference.child(ImageUploadId).setValue(imageUploadInfo);
+
                                 }
                             })
 
@@ -272,6 +322,8 @@ public class UploadImageActivity extends AppCompatActivity  {
             }
         }
     }
+
+
 
 
 
