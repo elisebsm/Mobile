@@ -2,24 +2,20 @@ package com.example.cafeteriaappmuc.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cafeteriaappmuc.DirectionsParser;
+import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.PermissionUtils;
 import com.example.cafeteriaappmuc.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -49,6 +45,7 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
     int LOCATION_PERMISSION_REQUEST_CODE = 101;
     private double latitude;
     private double longitude;
+    private String foodService;
 
     //TODO: add opening hours
     //TODO: show walking time, update every second minute or so??
@@ -58,7 +55,7 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        String foodService = intent.getStringExtra("foodService");
+        foodService = intent.getStringExtra("foodService");
 
         switch (foodService) {
             case "Main Building":
@@ -324,7 +321,7 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
 
     public void showMenuOfTheDayClick(View view){
         Intent menuIntent = new Intent(this, MenuOfTheDayActivity.class);
-        //komme seg til menu
+        ((GlobalClass) this.getApplication()).setFoodService(foodService);
         startActivity(menuIntent);
     }
 }

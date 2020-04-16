@@ -45,6 +45,22 @@
     <string name="profile_selected">Profile selected:</string>
     <string name="save_button">Save</string>
     <string name="photoItem">Photo</string>
+    <string name="new_dish">New dish</string>
+    <string name="name">Name:</string>
+    <string name="description">Description:</string>
+    <string name="add_dish">Add dish</string>
+    <string name="price">Price:</string>
+    <string name="Upload_new_dish_image">Upload image</string>
+    <string name="dish_image_1">image1</string>
+    <string name="dish_image_2">image2</string>
+    <string name="dish_image_3">image3</string>
+    <string name="Show_images_button">Show images</string>
+    <string name="json_image_name">JSon Image Name</string>
+    <string name="imageRandom">something random</string>
+    <string name="test_Image">testing image</string>
+    <string name="imageShow">testing</string>
+    <string name="ImageNameEditText">Edit text name</string>
+    <string name="enter_image_name_here">Enter Image Name Here</string>
 
 </resources>
 

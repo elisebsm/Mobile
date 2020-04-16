@@ -20,6 +20,7 @@ public class AddNewDishActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_dish);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Spinner typeSpinner = findViewById(R.id.newDishType);
         ArrayAdapter<DishType> typeAdapter = new ArrayAdapter<>(this,
@@ -44,8 +45,6 @@ public class AddNewDishActivity extends AppCompatActivity {
 
         Dish newDish = new Dish(newDishName, newDishPrice, newDishDescription, newDishType);
         LocalDishIO.saveDish(newDish);
-
-
 
         Intent goBackToMenuIntent = new Intent (this, MenuOfTheDayActivity.class);
         startActivity(goBackToMenuIntent);

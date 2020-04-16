@@ -39,6 +39,7 @@ public class MenuOfTheDayActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(view.getContext(), DishActivity.class);
                 //finne ut hvilken dish den skal til
+               // intent.putExtra("foodService",foodService);
                 intent.putExtra(DISH_NAME, selectedDish.name);
                 intent.putExtra(DISH_PRICE, Double.toString(selectedDish.price));
                 intent.putExtra(DISH_DESCRIPTION, selectedDish.description);
@@ -46,10 +47,9 @@ public class MenuOfTheDayActivity extends AppCompatActivity {
             }
         });
     }
-
+    //Add new dish
     public void goToAddNewDish(View view) {
         Intent intent = new Intent(this, AddNewDishActivity.class);
-        //legge til ny dish
         startActivity(intent);
     }
 }
