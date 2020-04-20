@@ -10,8 +10,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.cafeteriaappmuc.Dish;
+import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.R;
-import com.example.cafeteriaappmuc.io.LocalDishIO;
+import com.example.cafeteriaappmuc.io.DishIO;
+
+import java.util.List;
 
 public class MenuOfTheDayActivity extends AppCompatActivity {
 
@@ -24,29 +27,34 @@ public class MenuOfTheDayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_of_the_day);
 
-        //Senere: Kan bytte ut med NetworkDishIO for å endre input
-        final Dish[] dishes = LocalDishIO.getAllDishes();
+        String foodService = ((GlobalClass) this.getApplication()).getFoodService();
 
-        ArrayAdapter adapter = new ArrayAdapter<Dish>(this,
-                R.layout.dish_list_element, dishes);
-
-        ListView listView = (ListView) findViewById(R.id.dishList);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        DishIO.getAllDishes(foodService, new DishIO.FirebaseCallback() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Dish selectedDish = dishes[position];
+            public void onCallback(List<Dish> list) {
+                final Dish[] dishes = list.toArray(new Dish[list.size()]);
 
-                Intent intent = new Intent(view.getContext(), DishActivity.class);
-                //finne ut hvilken dish den skal til
-               // intent.putExtra("foodService",foodService);
-                intent.putExtra(DISH_NAME, selectedDish.name);
-                intent.putExtra(DISH_PRICE, Double.toString(selectedDish.price));
-                intent.putExtra(DISH_DESCRIPTION, selectedDish.description);
-                startActivity(intent);
+                ArrayAdapter adapter = new ArrayAdapter<Dish>(getApplicationContext(),
+                        R.layout.dish_list_element, dishes);
+
+                ListView listView = (ListView) findViewById(R.id.dishList);
+                listView.setAdapter(adapter);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Dish selectedDish = dishes[position];
+
+                        Intent intent = new Intent(view.getContext(), DishActivity.class);
+                        intent.putExtra(DISH_NAME, selectedDish.name);
+                        intent.putExtra(DISH_PRICE, Double.toString(selectedDish.price));
+                        intent.putExtra(DISH_DESCRIPTION, selectedDish.description);
+                        startActivity(intent);
+                    }
+                });
             }
         });
     }
+
     //Add new dish
     public void goToAddNewDish(View view) {
         Intent intent = new Intent(this, AddNewDishActivity.class);

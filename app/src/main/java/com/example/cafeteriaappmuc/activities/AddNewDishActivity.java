@@ -11,8 +11,9 @@ import android.widget.TextView;
 
 import com.example.cafeteriaappmuc.Dish;
 import com.example.cafeteriaappmuc.DishType;
+import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.R;
-import com.example.cafeteriaappmuc.io.LocalDishIO;
+import com.example.cafeteriaappmuc.io.DishIO;
 
 public class AddNewDishActivity extends AppCompatActivity {
 
@@ -44,7 +45,8 @@ public class AddNewDishActivity extends AppCompatActivity {
         DishType newDishType = (DishType) typeSpinner.getSelectedItem();  //gjør om til DishType (Caster!!)
 
         Dish newDish = new Dish(newDishName, newDishPrice, newDishDescription, newDishType);
-        LocalDishIO.saveDish(newDish);
+        String foodService = ((GlobalClass) this.getApplication()).getFoodService();
+        DishIO.saveDish(foodService, newDish);
 
         Intent goBackToMenuIntent = new Intent (this, MenuOfTheDayActivity.class);
         startActivity(goBackToMenuIntent);
