@@ -48,8 +48,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-storage:6.2.0'
     implementation 'com.google.firebase:firebase-database:19.2.1'
     implementation "androidx.cardview:cardview:1.0.0"
-  
-
+    implementation project(path: ':Termite-WifiP2P-API')
 
 
 }
