@@ -61,6 +61,8 @@
     <string name="imageShow">testing</string>
     <string name="ImageNameEditText">Edit text name</string>
     <string name="enter_image_name_here">Enter Image Name Here</string>
+    <string name="userSelectedTextView">User previously selected as:</string>
+
 
 </resources>
 

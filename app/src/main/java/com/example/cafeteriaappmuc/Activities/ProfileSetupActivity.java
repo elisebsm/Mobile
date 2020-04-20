@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.cafeteriaappmuc.GlobalClass;
@@ -37,8 +38,9 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
         //checking if profile value is selected previously (Aka if something else than default value is selected)
         String selectedUserProfile = retrieveData(key);
         if (selectedUserProfile!=getString(R.string.saved_profile_default_key)) {
-            //TODO: DISPLAY previously selected profile setting
-            //quickfix
+            //TODO: set prev selected profile
+            //TextView textView = (TextView) findViewById(R.id.textViewName);
+            //textView.setText("text you want to display");
             Toast.makeText(getApplicationContext(), "User previously saved as: " + selectedUserProfile, Toast.LENGTH_SHORT).show();
         }
         //saving profile value selected on the spinner(dropdown menu)

@@ -44,6 +44,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
+import pt.inesc.termite.wifidirect.SimWifiP2pManager;
+import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
+import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
+
 public class MainActivity extends AppCompatActivity implements Serializable {
 
     private List<String> campusesAll = new ArrayList<>();
@@ -81,6 +86,14 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 
         // Dropdown layout style
         campusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        // terminte (beacon)
+        SimWifiP2pBroadcast broadcast = new SimWifiP2pBroadcast();
+        SimWifiP2pManager mManager = null;
+        SimWifiP2pManager.Channel mChannel = null;
+        SimWifiP2pSocketServer mSrvSocket = null;
+        SimWifiP2pSocket mCliSocket = null;
 
         //attaching data adapterFoodServices to spinner
         spinnerListCampuses.setAdapter(campusAdapter);
