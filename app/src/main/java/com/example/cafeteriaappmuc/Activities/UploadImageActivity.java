@@ -87,7 +87,7 @@ public class UploadImageActivity extends AppCompatActivity  {
         foodService=((GlobalClass) this.getApplication()).getFoodService();
 
         //TODO: ADD REAL PATH
-        Database_Path =  ("images/"+foodService+"/"+dishName);
+        Database_Path =  ("images/"+foodService+"/"+dishName); // endre pathen her
         Storage_Path = ("images/"+foodService+"/"+dishName+"/");
 
         // initialise views
@@ -240,7 +240,7 @@ public class UploadImageActivity extends AppCompatActivity  {
                                             .show();
 
                                      @SuppressWarnings("VisibleForTests")
-                                       ImageUploadInfo imageUploadInfo = new ImageUploadInfo(TempImageName, taskSnapshot.getMetadata().getReference().getDownloadUrl().toString());
+                                       ImageUploadInfo imageUploadInfo = new ImageUploadInfo(TempImageName, taskSnapshot.getMetadata().getReference().getDownloadUrl().toString(), "");
 
                                     // Getting image upload ID.
                                     String ImageUploadId = databaseReference.push().getKey();
