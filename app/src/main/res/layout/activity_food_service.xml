@@ -45,10 +45,11 @@
         android:id="@+id/buttonShowMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/show_menu_of_the_day"
         android:layout_gravity="center"
         android:layout_margin="10dp"
-        android:textSize="20sp"/>
+        android:onClick="showMenuOfTheDayClick"
+        android:text="@string/show_menu_of_the_day"
+        android:textSize="20sp" />
 
 
 </LinearLayout>

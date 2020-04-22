@@ -11,6 +11,7 @@ import android.widget.ListView;
 
 import com.example.cafeteriaappmuc.Dish;
 import com.example.cafeteriaappmuc.R;
+import com.example.cafeteriaappmuc.io.LocalDishIO;
 
 public class MenuOfTheDayActivity extends AppCompatActivity {
 
@@ -18,17 +19,13 @@ public class MenuOfTheDayActivity extends AppCompatActivity {
     static String DISH_PRICE = "DISH_PRICE";
     static String DISH_DESCRIPTION = "DISH_DESCRIPTION";
 
-    Dish[] dishes = {new Dish("Pasta Carbonara", 5.4, "Traditional italian dish."),
-            new Dish("Salad", 3.5, "Crispy with tomatoes."),
-            new Dish("Pastel de Nata", 1.20, "Traditional Portuguese cake from 18th century."),
-            new Dish("Risotto", 6.3, "Rice with mushrooms and aspargues."),
-            new Dish("Pulled pork", 4.5, "Pork with majonees."),
-            new Dish("Soup", 2.40, "Brocolee soup of the house.")};
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_of_the_day);
+
+        //Senere: Kan bytte ut med NetworkDishIO for å endre input
+        final Dish[] dishes = LocalDishIO.getAllDishes();
 
         ArrayAdapter adapter = new ArrayAdapter<Dish>(this,
                 R.layout.dish_list_element, dishes);
@@ -42,6 +39,7 @@ public class MenuOfTheDayActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(view.getContext(), DishActivity.class);
                 //finne ut hvilken dish den skal til
+               // intent.putExtra("foodService",foodService);
                 intent.putExtra(DISH_NAME, selectedDish.name);
                 intent.putExtra(DISH_PRICE, Double.toString(selectedDish.price));
                 intent.putExtra(DISH_DESCRIPTION, selectedDish.description);
@@ -49,10 +47,9 @@ public class MenuOfTheDayActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void addNewDish(View view) {
+    //Add new dish
+    public void goToAddNewDish(View view) {
         Intent intent = new Intent(this, AddNewDishActivity.class);
-        //legge til ny dish
         startActivity(intent);
     }
 }

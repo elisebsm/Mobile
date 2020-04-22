@@ -3,9 +3,10 @@
 
     <string name="profile_setup">Profile setup</string>
     <string name="userprofile_prompt">Select university user status</string>
-    <string name="saved_profile_key">Saved profile as</string>
-    <string name="saved_profile_default_key">No user selected</string>
+    <string name="saved_profile_key">null</string>
+    <string name="saved_profile_default_key">Select user profile</string>
     <string name="save">Save</string>
+    <string name="previously_selected_profile">None</string>
     <string-array name="userprofile_arrays">
         <item>Select user group</item>
         <item>Student</item>
@@ -15,14 +16,7 @@
         <item>General Public</item>
     </string-array>
 
-    <string-array name="userprofile_arrays_values">
-        <item>Select_user_group</item>
-        <item>Student</item>
-        <item>Professor</item>
-        <item>Staff</item>
-        <item>Researcher</item>
-        <item>General_Public</item>
-    </string-array>
+
 
 
     <string name="title_activity_maps">Map</string>
@@ -44,6 +38,31 @@
     <string name="profile" />
     <string name="profileItem">Profile</string>
     <string name="mainItem">Main Page</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="choose_image">Choose Image</string>
+    <string name="edit_name_for_image">Edit name for image</string>
+    <string name="preview_image">Preview image</string>
+    <string name="profile_selected">Profile selected:</string>
+    <string name="save_button">Save</string>
+    <string name="photoItem">Photo</string>
+    <string name="new_dish">New dish</string>
+    <string name="name">Name:</string>
+    <string name="description">Description:</string>
+    <string name="add_dish">Add dish</string>
+    <string name="price">Price:</string>
+    <string name="Upload_new_dish_image">Upload image</string>
+    <string name="dish_image_1">image1</string>
+    <string name="dish_image_2">image2</string>
+    <string name="dish_image_3">image3</string>
+    <string name="Show_images_button">Show images</string>
+    <string name="json_image_name">JSon Image Name</string>
+    <string name="imageRandom">something random</string>
+    <string name="test_Image">testing image</string>
+    <string name="imageShow">testing</string>
+    <string name="ImageNameEditText">Edit text name</string>
+    <string name="enter_image_name_here">Enter Image Name Here</string>
+    <string name="userSelectedTextView">User previously selected as:</string>
+
 
 </resources>
 

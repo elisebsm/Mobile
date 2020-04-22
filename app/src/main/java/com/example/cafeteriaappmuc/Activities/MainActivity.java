@@ -10,7 +10,6 @@ import android.os.Bundle;
 
 
 import android.os.AsyncTask;
-import android.os.Bundle;
 
 import android.util.Log;
 
@@ -27,7 +26,6 @@ import android.widget.Toast;
 
 import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
 import com.example.cafeteriaappmuc.MyDataListMain;
-import com.example.cafeteriaappmuc.Profile;
 import com.example.cafeteriaappmuc.R;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -45,6 +43,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
+import pt.inesc.termite.wifidirect.SimWifiP2pManager;
+import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
+import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 
 public class MainActivity extends AppCompatActivity implements Serializable {
 
@@ -69,8 +72,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         setContentView(R.layout.activity_main);
         displayChosenCampus(currentCampus);
 
-        // TODO: set status based on profile
-        status = "Student";
+        //use getUserProfile() to get selected user. Returns user or null if user not selected
+        status = getUserProfile();
 
         Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
         campusesAll.add("Alameda");
@@ -84,6 +87,14 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         // Dropdown layout style
         campusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+
+        // terminte (beacon)
+        SimWifiP2pBroadcast broadcast = new SimWifiP2pBroadcast();
+        SimWifiP2pManager mManager = null;
+        SimWifiP2pManager.Channel mChannel = null;
+        SimWifiP2pSocketServer mSrvSocket = null;
+        SimWifiP2pSocket mCliSocket = null;
+
         //attaching data adapterFoodServices to spinner
         spinnerListCampuses.setAdapter(campusAdapter);
         spinnerListCampuses.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -92,8 +103,6 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 if (adapterView.getItemAtPosition(position).equals("Choose Campus")) {
                     // do nothing
                 } else {
-
-                    System.out.println("button clicked. Person saved as " + getUserProfile());
 
                     counterDisplayFoodServiceInList = 0;
 
@@ -126,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             showProfileSetup();
             return true;
         }
+
         return super.onContextItemSelected(item);
     }
 
@@ -354,8 +364,14 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 String foodService = arrayList.get(position).getFoodService();
                 showFoodService(foodService);
+
             }
         });
+    }
+    //show Upload image activity. Only for testing
+    private void showUploadImageActivity() {
+        Intent intentUploadImageActivity = new Intent(this, UploadImageActivity.class);
+        startActivity(intentUploadImageActivity);
     }
 
     private void showFoodService(String foodService) {
@@ -363,21 +379,34 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         intentFoodService.putExtra("foodService", foodService);
         startActivity(intentFoodService);
     }
-
-    //starter profile setup activity
+    //profile realted methods
+    //starting profile setup activity
     private void showProfileSetup() {
         Intent intentProfileSetup = new Intent(this, ProfileSetupActivity.class);
-
         startActivity(intentProfileSetup);
     }
 
+
+//TODO : maybe remove profile class and only use shared preferences
     //get user profile selected in profile
     private String getUserProfile() {
-        //retreiving global variable saved in Profile
-        Profile profileVariable = (Profile) getApplicationContext();
-        String userProfile = profileVariable.getProfile();
-        Toast.makeText(getApplicationContext(), "User previously saved as: " + userProfile, Toast.LENGTH_SHORT).show();
-        return userProfile;
+
+        final String key =getString(R.string.saved_profile_key);
+        final String defValue = getString(R.string.saved_profile_default_key);
+        SharedPreferences sharedPref = getSharedPreferences("settings",
+                Context.MODE_PRIVATE);
+        String selectedUserProfile = sharedPref.getString(key, defValue);
+        //check if profile is saved as something else than default
+        if (selectedUserProfile==getString(R.string.saved_profile_default_key)){
+            Toast.makeText(getApplicationContext(), "No user selected. Please select user profile ", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        else {
+            //profileVariable.setProfile(selectedUserProfile);
+            Toast.makeText(getApplicationContext(), "User saved as: " + selectedUserProfile , Toast.LENGTH_SHORT).show();
+            return selectedUserProfile;
+        }
+
     }
 
     // method to get direction using httpurlconnection

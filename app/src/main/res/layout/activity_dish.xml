@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.DishActivity">
+    tools:context=".Activities.DishActivity">
 
     <TextView
         android:id="@+id/textView2"
@@ -21,34 +21,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="114dp"
-        android:layout_height="101dp"
-        android:layout_marginStart="148dp"
-        android:layout_marginTop="273dp"
-        android:layout_marginEnd="149dp"
-        android:layout_marginBottom="357dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_gallery" />
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="114dp"
-        android:layout_height="101dp"
-        android:layout_marginStart="281dp"
-        android:layout_marginTop="273dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="357dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_gallery" />
-
     <TextView
         android:id="@+id/dishName"
         android:layout_width="wrap_content"
@@ -64,34 +36,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="114dp"
-        android:layout_height="101dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="273dp"
-        android:layout_marginEnd="281dp"
-        android:layout_marginBottom="356dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_gallery" />
-
     <TextView
         android:id="@+id/dishPrice"
         android:layout_width="162dp"
         android:layout_height="23dp"
-        android:layout_marginStart="84dp"
-        android:layout_marginTop="162dp"
-        android:layout_marginEnd="262dp"
-        android:layout_marginBottom="543dp"
+        android:layout_marginStart="101dp"
+        android:layout_marginTop="163dp"
+        android:layout_marginEnd="148dp"
+        android:layout_marginBottom="545dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView"
@@ -120,4 +76,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Button
+        android:id="@+id/uploadImagebtn"
+        android:layout_width="403dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="470dp"
+        android:layout_marginBottom="180dp"
+        android:text="@string/Upload_new_dish_image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.575" />
+
+    <Button
+        android:id="@+id/showImagesBtn"
+        android:layout_width="410dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="400dp"
+        android:layout_marginBottom="250dp"
+        android:text="@string/Show_images_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.64" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

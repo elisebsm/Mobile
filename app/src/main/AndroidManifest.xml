@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.cafeteriaappmuc">
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -9,13 +10,15 @@
 
 
     <application
-        android:name=".Profile"
+        android:name=".GlobalClass"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="andorid:icon">
+
 
 
         <!--
@@ -30,10 +33,13 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
         <activity android:name=".Activities.FoodServiceActivity" />
+        <activity android:name=".Activities.DisplayImagesActivity"
+            android:parentActivityName=".Activities.MenuOfTheDayActivity"/>
+        <activity android:name=".Activities.UploadImageActivity"
+            android:parentActivityName=".Activities.MenuOfTheDayActivity" />
         <activity android:name=".Activities.ProfileSetupActivity"
             android:parentActivityName=".Activities.MainActivity" />
         <activity android:name=".Activities.MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,8 +47,10 @@
         </intent-filter>
     </activity>
 
-    <activity android:name=".Activities.AddNewDishActivity"></activity>
-    <activity android:name=".Activities.DishActivity" />
+    <activity android:name=".Activities.AddNewDishActivity"
+        android:parentActivityName=".Activities.DishActivity"/>
+    <activity android:name=".Activities.DishActivity"
+        android:parentActivityName=".Activities.MenuOfTheDayActivity"/>
     <activity android:name=".Activities.MenuOfTheDayActivity"/>
 
 </application>
