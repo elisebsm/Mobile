@@ -48,8 +48,7 @@ public class DishIO {
 
     public static void saveDish(String foodService, Dish dish) {
         DatabaseReference databaseReference = ref.child(foodService);
-        String key = databaseReference.push().getKey();
         Map<String, Object> dishValues = dish.toMap();
-        databaseReference.child(key).updateChildren(dishValues);
+        databaseReference.child(dish.name).updateChildren(dishValues);
     }
 }

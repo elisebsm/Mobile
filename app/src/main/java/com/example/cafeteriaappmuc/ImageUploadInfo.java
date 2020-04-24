@@ -6,17 +6,14 @@ public class ImageUploadInfo {
 
     public String imageURL;
 
-    public String dishName;
-
     public ImageUploadInfo() {
 
     }
 
-    public ImageUploadInfo(String name, String url, String dishName) {
+    public ImageUploadInfo(String name, String url) {
 
         this.imageName = name;
         this.imageURL= url;
-        this.dishName = dishName;
     }
 
     public String getImageName() {
@@ -26,7 +23,5 @@ public class ImageUploadInfo {
     public String getImageURL() {
         return imageURL;
     }
-
-    public String getImageDishName() {return dishName;}
 
 }
