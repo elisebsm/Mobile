@@ -39,9 +39,9 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
         String selectedUserProfile = retrieveData(key);
         if (selectedUserProfile!=getString(R.string.saved_profile_default_key)) {
             //TODO: set prev selected profile
-            //TextView textView = (TextView) findViewById(R.id.textViewName);
-            //textView.setText("text you want to display");
-            Toast.makeText(getApplicationContext(), "User previously saved as: " + selectedUserProfile, Toast.LENGTH_SHORT).show();
+            TextView textViewProfile = (TextView) findViewById(R.id.prevSelectedDisplay);
+            textViewProfile.setText(selectedUserProfile);
+           // Toast.makeText(getApplicationContext(), "User previously saved as: " + selectedUserProfile, Toast.LENGTH_SHORT).show();
         }
         //saving profile value selected on the spinner(dropdown menu)
         button.setOnClickListener(new View.OnClickListener() {
