@@ -29,22 +29,22 @@ public class MenuOfTheDayActivity extends AppCompatActivity {
 
         String foodService = ((GlobalClass) this.getApplication()).getFoodService();
 
-        DishIO.getAllDishes(foodService, new DishIO.FirebaseCallback() {
+        DishIO.getAllDishes(foodService, new DishIO.FirebaseCallback() { //henter alle disher fra DishIO
             @Override
-            public void onCallback(List<Dish> list) {
+            public void onCallback(List<Dish> list) { //Bruker callback og asynkron kode for å være sikker på å få alle elementene vi trenger før vi kjører koden
                 final Dish[] dishes = list.toArray(new Dish[list.size()]);
 
                 ArrayAdapter adapter = new ArrayAdapter<Dish>(getApplicationContext(),
                         R.layout.dish_list_element, dishes);
 
                 ListView listView = (ListView) findViewById(R.id.dishList);
-                listView.setAdapter(adapter);
+                listView.setAdapter(adapter); //bruker adapter for å fylle en liste
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) { //lager en listner på "On click" for all dishene, som sender deg til riktig dish
                         Dish selectedDish = dishes[position];
 
-                        Intent intent = new Intent(view.getContext(), DishActivity.class);
+                        Intent intent = new Intent(view.getContext(), DishActivity.class); //bruker intent og extras til å sende info om dishene til dishActivity
                         intent.putExtra(DISH_NAME, selectedDish.name);
                         intent.putExtra(DISH_PRICE, Double.toString(selectedDish.price));
                         intent.putExtra(DISH_DESCRIPTION, selectedDish.description);

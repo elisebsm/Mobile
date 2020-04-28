@@ -30,7 +30,7 @@ public class Dish {
     }
 
     @Exclude
-    public Map<String, Object> toMap() {
+    public Map<String, Object> toMap() { //lager et Map (dictionary) med alle feltene. Dette fordi det er måten firebase kan lagre data.
         HashMap<String, Object> result = new HashMap<>();
         result.put("name", name);
         result.put("price", price);

@@ -25,7 +25,7 @@ public class DishIO {
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                dishList.clear();
+                dishList.clear(); // to make sure we don't get the same dishes a lot of times
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     Dish dish = ds.getValue(Dish.class);
                     System.out.println(dish);
