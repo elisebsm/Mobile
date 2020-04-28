@@ -23,18 +23,19 @@ public class DishActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dish);
         Intent intent = getIntent();
-        final String dishName = intent.getStringExtra(MenuOfTheDayActivity.DISH_NAME);
+        final String dishName = intent.getStringExtra(MenuOfTheDayActivity.DISH_NAME); //henter "extra"ene som er sendt med intent, henter dish navnet
         String dishPrice = intent.getStringExtra(MenuOfTheDayActivity.DISH_PRICE);
         String dishDescription = intent.getStringExtra(MenuOfTheDayActivity.DISH_DESCRIPTION);
+
         TextView nameTextView = findViewById(R.id.dishName);
         nameTextView.setText(dishName);
 
-        TextView priceTextView = findViewById(R.id.dishPrice);
+        TextView priceTextView = findViewById(R.id.dishPrice); //id i xml-en der prisen faktisk skal stå
         priceTextView.setText(dishPrice + " Euros");
 
         ((GlobalClass) this.getApplication()).setDishName(dishName);
 
-        TextView descriptionTextView = findViewById(R.id.dishDescription);
+        TextView descriptionTextView = findViewById(R.id.dishDescription); //tilsvarende her
         descriptionTextView.setText(dishDescription);
 
         //adding back home button
