@@ -32,7 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 
 
 
-public class DishActivity extends AppCompatActivity {
+public class DishesActivity extends AppCompatActivity {
 
     //for displayImages
 
@@ -61,9 +61,9 @@ public class DishActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dish);
         Intent intent = getIntent();
-        final String dishName = intent.getStringExtra(MenuOfTheDayActivity.DISH_NAME); //get exas that are sent with intent, get dish name
-        String dishPrice = intent.getStringExtra(MenuOfTheDayActivity.DISH_PRICE);
-        String dishDescription = intent.getStringExtra(MenuOfTheDayActivity.DISH_DESCRIPTION);
+        final String dishName = intent.getStringExtra(MenuDayActivity.DISH_NAME); //get exas that are sent with intent, get dish name
+        String dishPrice = intent.getStringExtra(MenuDayActivity.DISH_PRICE);
+        String dishDescription = intent.getStringExtra(MenuDayActivity.DISH_DESCRIPTION);
         foodService=((GlobalClass) this.getApplication()).getFoodService();
         TextView nameTextView = findViewById(R.id.dishName);
         nameTextView.setText(dishName);
@@ -103,10 +103,10 @@ public class DishActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
 
         // Setting RecyclerView layout as LinearLayout.
-        recyclerView.setLayoutManager(new LinearLayoutManager(DishActivity.this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(DishesActivity.this));
 
         // Assign activity this to progress dialog.
-        progressDialog = new ProgressDialog(DishActivity.this);
+        progressDialog = new ProgressDialog(DishesActivity.this);
 
         // Setting up message in Progress dialog.
         progressDialog.setMessage("Loading Images From Firebase.");

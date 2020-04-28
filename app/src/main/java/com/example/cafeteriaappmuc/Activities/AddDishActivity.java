@@ -48,7 +48,7 @@ public class AddNewDishActivity extends AppCompatActivity {
         String foodService = ((GlobalClass) this.getApplication()).getFoodService(); //henter rikitg foodservice (global class)
         DishIO.saveDish(foodService, newDish);
 
-        Intent goBackToMenuIntent = new Intent (this, MenuOfTheDayActivity.class); //tilbake til meny
+        Intent goBackToMenuIntent = new Intent (this, MenuDayActivity.class); //tilbake til meny
         startActivity(goBackToMenuIntent);
     }
 }

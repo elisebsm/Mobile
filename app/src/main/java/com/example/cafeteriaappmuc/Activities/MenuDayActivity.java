@@ -16,7 +16,7 @@ import com.example.cafeteriaappmuc.io.DishIO;
 
 import java.util.List;
 
-public class MenuOfTheDayActivity extends AppCompatActivity {
+public class MenuDayActivity extends AppCompatActivity {
 
     static String DISH_NAME = "DISH_NAME";
     static String DISH_PRICE = "DISH_PRICE";
@@ -44,7 +44,7 @@ public class MenuOfTheDayActivity extends AppCompatActivity {
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) { //lager en listner på "On click" for all dishene, som sender deg til riktig dish
                         Dish selectedDish = dishes[position];
 
-                        Intent intent = new Intent(view.getContext(), DishActivity.class); //bruker intent og extras til å sende info om dishene til dishActivity
+                        Intent intent = new Intent(view.getContext(), DishesActivity.class); //bruker intent og extras til å sende info om dishene til dishActivity
                         intent.putExtra(DISH_NAME, selectedDish.name);
                         intent.putExtra(DISH_PRICE, Double.toString(selectedDish.price));
                         intent.putExtra(DISH_DESCRIPTION, selectedDish.description);

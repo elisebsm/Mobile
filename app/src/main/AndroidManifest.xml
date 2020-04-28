@@ -34,7 +34,7 @@
             android:value="@string/google_maps_key" />
         <activity android:name=".Activities.FoodServiceActivity" />
         <activity android:name=".Activities.UploadImageActivity"
-            android:parentActivityName=".Activities.MenuOfTheDayActivity" />
+            android:parentActivityName=".Activities.MenuDayActivity" />
         <activity android:name=".Activities.ProfileSetupActivity"
             android:parentActivityName=".Activities.MainActivity" />
         <activity android:name=".Activities.MainActivity">
@@ -46,10 +46,10 @@
     </activity>
 
     <activity android:name=".Activities.AddNewDishActivity"
-        android:parentActivityName=".Activities.DishActivity"/>
-    <activity android:name=".Activities.DishActivity"
-        android:parentActivityName=".Activities.MenuOfTheDayActivity"/>
-    <activity android:name=".Activities.MenuOfTheDayActivity"/>
+        android:parentActivityName=".Activities.DishesActivity"/>
+    <activity android:name=".Activities.DishesActivity"
+        android:parentActivityName=".Activities.MenuDayActivity"/>
+    <activity android:name=".Activities.MenuDayActivity"/>
 
 </application>
 </manifest>
