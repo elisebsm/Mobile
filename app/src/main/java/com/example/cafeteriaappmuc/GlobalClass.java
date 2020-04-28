@@ -2,11 +2,14 @@ package com.example.cafeteriaappmuc;
 
 import android.app.Application;
 
+import com.google.firebase.database.DatabaseReference;
+
 public class GlobalClass extends Application {
 
     private String userProfile;
     private String dishName;
     private String foodService;
+
 
     public String getProfile(){
         return userProfile;
@@ -30,6 +33,7 @@ public class GlobalClass extends Application {
     public String getDishName(){
         return dishName;
     }
+
 
     //TODO: legge til åpningstider for hver gruppe/bruker. Finen metode å bruke dette
 }
