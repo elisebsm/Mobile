@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 
 import android.os.AsyncTask;
 
+import android.os.Messenger;
 import android.util.Log;
 
 import android.view.Menu;
@@ -28,6 +30,7 @@ import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
 import com.example.cafeteriaappmuc.MyDataListMain;
 import com.example.cafeteriaappmuc.R;
 
+import com.example.cafeteriaappmuc.SimWifiP2pBroadcastReceiver;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
@@ -45,11 +48,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
+import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
 import pt.inesc.termite.wifidirect.SimWifiP2pManager;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
+import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketManager;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 
-public class MainActivity extends AppCompatActivity implements Serializable {
+public class MainActivity extends AppCompatActivity implements Serializable, SimWifiP2pManager.PeerListListener {
 
     private List<String> campusesAll = new ArrayList<>();
 
@@ -57,6 +62,19 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     private String currentCampus = " ";
     private String status;
     //final Button button = findViewById(R.id.profile_button);
+
+    /**
+     * copied from lab 4
+     */
+    private SimWifiP2pManager manager = null;
+    private SimWifiP2pManager.Channel channel = null;
+    private Messenger service = null;
+    private boolean bound = false;
+    private SimWifiP2pSocketServer socketServer = null;
+    private SimWifiP2pSocket socket = null;
+    private TextView mTextInput;
+    private TextView mTextOutput;
+    private SimWifiP2pBroadcastReceiver broadcastReceiver;
 
 
     ListView listViewFoodServices;
@@ -88,12 +106,6 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         campusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
-        // terminte (beacon)
-        SimWifiP2pBroadcast broadcast = new SimWifiP2pBroadcast();
-        SimWifiP2pManager mManager = null;
-        SimWifiP2pManager.Channel mChannel = null;
-        SimWifiP2pSocketServer mSrvSocket = null;
-        SimWifiP2pSocket mCliSocket = null;
 
         //attaching data adapterFoodServices to spinner
         spinnerListCampuses.setAdapter(campusAdapter);
@@ -109,7 +121,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                     displayChosenCampus(adapterView.getItemAtPosition(position).toString());
                     removeCurrentCampusFromList(currentCampus);
                     updateSpinner(adapterView.getItemAtPosition(position).toString());
-                    displayDiningOptions(status, currentCampus);
+                    if (getUserProfile()==null){
+                        Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
+                    } else{
+                        displayDiningOptions(status, currentCampus);
+                    }
                 }
             }
 
@@ -118,6 +134,21 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             }
         });
         displayMainFoodServicesList();
+
+        // initialize the WDSim API
+        SimWifiP2pSocketManager.Init(getApplicationContext());
+
+        // register broadcast receiver
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
+        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
+        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
+        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
+        broadcastReceiver = new SimWifiP2pBroadcastReceiver(this);
+        registerReceiver(broadcastReceiver, filter);
+
+        //manager.requestPeers(channel, MainActivity.this);
+
     }
 
 
@@ -239,11 +270,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         return "https://maps.googleapis.com/maps/api/directions/json?" + str_org + "&" + str_dest + "&sensor=false&mode=walking&key=AIzaSyB72zLudOuMncMtCOCIpwgMVvTBLFAfPI8";
     }
 
-// BRUKES FOR Å LAGE LISTEN OVER SPISESTEDER
-    // private ArrayList<String> servicesToBeDisplayed = new ArrayList<>();
 
 
-    //private List<String> walkDistances  = new ArrayList<>();
     private void getDistanceValues(List<String> foodServices) {
 
         //TODO: change back to current after testing
@@ -398,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         String selectedUserProfile = sharedPref.getString(key, defValue);
         //check if profile is saved as something else than default
         if (selectedUserProfile==getString(R.string.saved_profile_default_key)){
-            Toast.makeText(getApplicationContext(), "No user selected. Please select user profile ", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile ", Toast.LENGTH_SHORT).show();
             return null;
         }
         else {
@@ -446,6 +474,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             }
         }
         return responseString;
+    }
+
+    @Override
+    public void onPeersAvailable(SimWifiP2pDeviceList simWifiP2pDeviceList) {
+        // TODO: something
     }
 
 
