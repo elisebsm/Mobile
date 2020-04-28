@@ -15,7 +15,7 @@ import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.R;
 import com.example.cafeteriaappmuc.io.DishIO;
 
-public class AddNewDishActivity extends AppCompatActivity {
+public class AddDishActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

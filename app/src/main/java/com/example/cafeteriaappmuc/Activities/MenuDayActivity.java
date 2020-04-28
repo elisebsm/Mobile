@@ -57,7 +57,7 @@ public class MenuDayActivity extends AppCompatActivity {
 
     //Add new dish
     public void goToAddNewDish(View view) {
-        Intent intent = new Intent(this, AddNewDishActivity.class);
+        Intent intent = new Intent(this, AddDishActivity.class);
         startActivity(intent);
     }
 }

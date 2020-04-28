@@ -45,7 +45,7 @@
         </intent-filter>
     </activity>
 
-    <activity android:name=".Activities.AddNewDishActivity"
+    <activity android:name=".Activities.AddDishActivity"
         android:parentActivityName=".Activities.DishesActivity"/>
     <activity android:name=".Activities.DishesActivity"
         android:parentActivityName=".Activities.MenuDayActivity"/>
