@@ -1,6 +1,9 @@
 package com.example.cafeteriaappmuc.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.app.ProgressDialog;
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -10,32 +13,67 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.cafeteriaappmuc.GlobalClass;
+import com.example.cafeteriaappmuc.ImageUploadInfo;
 import com.example.cafeteriaappmuc.R;
+import com.google.firebase.database.DatabaseReference;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import com.example.cafeteriaappmuc.Adapter.RecyclerViewAdapter;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 
 public class DishActivity extends AppCompatActivity {
 
-    private Button uploadImagebtn,showImagesBtn;
+    //for displayImages
+
+    private Button uploadImagebtn;
+
+    // Creating DatabaseReference.
+    DatabaseReference databaseReference;
+
+    // Creating RecyclerView.
+    RecyclerView recyclerView;
+
+    // Creating RecyclerView.Adapter.
+    RecyclerView.Adapter adapter ;
+
+    // Creating Progress dialog
+    ProgressDialog progressDialog;
+
+    // Creating List of ImageUploadInfo class.
+    List<ImageUploadInfo> list = new ArrayList<>();
+
+    private String foodService;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dish);
         Intent intent = getIntent();
-        final String dishName = intent.getStringExtra(MenuOfTheDayActivity.DISH_NAME); //henter "extra"ene som er sendt med intent, henter dish navnet
+        final String dishName = intent.getStringExtra(MenuOfTheDayActivity.DISH_NAME); //get exas that are sent with intent, get dish name
         String dishPrice = intent.getStringExtra(MenuOfTheDayActivity.DISH_PRICE);
         String dishDescription = intent.getStringExtra(MenuOfTheDayActivity.DISH_DESCRIPTION);
-
+        foodService=((GlobalClass) this.getApplication()).getFoodService();
         TextView nameTextView = findViewById(R.id.dishName);
         nameTextView.setText(dishName);
 
-        TextView priceTextView = findViewById(R.id.dishPrice); //id i xml-en der prisen faktisk skal stå
+        TextView priceTextView = findViewById(R.id.dishPrice); //id in xml where price actually is
         priceTextView.setText(dishPrice + " Euros");
 
         ((GlobalClass) this.getApplication()).setDishName(dishName);
 
-        TextView descriptionTextView = findViewById(R.id.dishDescription); //tilsvarende her
+        TextView descriptionTextView = findViewById(R.id.dishDescription); //same here
         descriptionTextView.setText(dishDescription);
 
         //adding back home button
@@ -43,7 +81,7 @@ public class DishActivity extends AppCompatActivity {
 
         //initializing buttons
         uploadImagebtn = findViewById(R.id.uploadImagebtn);
-        showImagesBtn = findViewById(R.id.showImagesBtn);
+      //  showImagesBtn = findViewById(R.id.showImagesBtn);
 
         // on pressing upload button is called
         uploadImagebtn.setOnClickListener(new View.OnClickListener() {
@@ -55,14 +93,62 @@ public class DishActivity extends AppCompatActivity {
             }
         });
 
-        // on pressing show images button is called
-        showImagesBtn.setOnClickListener(new View.OnClickListener() {
+        //display images
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Assign id to RecyclerView.
+        recyclerView = findViewById(R.id.recyclerViewImage);
+
+        // Setting RecyclerView size true.
+        recyclerView.setHasFixedSize(true);
+
+        // Setting RecyclerView layout as LinearLayout.
+        recyclerView.setLayoutManager(new LinearLayoutManager(DishActivity.this));
+
+        // Assign activity this to progress dialog.
+        progressDialog = new ProgressDialog(DishActivity.this);
+
+        // Setting up message in Progress dialog.
+        progressDialog.setMessage("Loading Images From Firebase.");
+
+        // Showing progress dialog.
+        progressDialog.show();
+
+        // Setting up Firebase image upload folder path in databaseReference.
+        // The path is already defined in MainActivity.
+        databaseReference = FirebaseDatabase.getInstance().getReference("Dishes/"+foodService+"/"+dishName + "/images");
+
+        // Adding Add Value Event Listener to databaseReference.
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v)
-            {
-                showDisplayImagesActivity(dishName);
+            public void onDataChange(DataSnapshot snapshot) {
+
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+
+                    ImageUploadInfo imageUploadInfo = postSnapshot.getValue(ImageUploadInfo.class);
+
+                    list.add(imageUploadInfo);
+                }
+
+                adapter = new RecyclerViewAdapter(getApplicationContext(), list,foodService,dishName);
+
+                recyclerView.setAdapter(adapter);
+
+
+
+                // Hiding the progress dialog.
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+                // Hiding the progress dialog.
+                progressDialog.dismiss();
+
             }
         });
+
 
     }
 
@@ -71,11 +157,6 @@ public class DishActivity extends AppCompatActivity {
         startActivity(intentUploadImage);
 
     }
-    private void showDisplayImagesActivity(String dishName){
-        Intent intentDisplayImg = new Intent(this, DisplayImagesActivity.class);
-        startActivity(intentDisplayImg);
-    }
-
 
 
     }

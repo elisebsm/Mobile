@@ -33,8 +33,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
         <activity android:name=".Activities.FoodServiceActivity" />
-        <activity android:name=".Activities.DisplayImagesActivity"
-            android:parentActivityName=".Activities.MenuOfTheDayActivity"/>
         <activity android:name=".Activities.UploadImageActivity"
             android:parentActivityName=".Activities.MenuOfTheDayActivity" />
         <activity android:name=".Activities.ProfileSetupActivity"
