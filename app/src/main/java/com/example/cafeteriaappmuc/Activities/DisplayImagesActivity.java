@@ -70,7 +70,7 @@ public class DisplayImagesActivity extends AppCompatActivity {
 
                 // Setting up Firebase image upload folder path in databaseReference.
                 // The path is already defined in MainActivity.
-                databaseReference = FirebaseDatabase.getInstance().getReference("images/"+foodService+"/"+dishName);
+                databaseReference = FirebaseDatabase.getInstance().getReference("Dishes/"+foodService+"/"+dishName + "/images");
 
                 // Adding Add Value Event Listener to databaseReference.
                 databaseReference.addValueEventListener(new ValueEventListener() {

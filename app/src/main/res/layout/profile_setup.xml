@@ -22,48 +22,63 @@
     <Spinner
 
         android:id="@+id/spinner_users"
-        android:layout_width="223dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="172dp"
+        android:layout_width="242dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="300dp"
+        android:layout_marginEnd="130dp"
+        android:layout_marginBottom="370dp"
         android:entries="@array/userprofile_arrays"
         android:prompt="@string/userprofile_prompt"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.085"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/save_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="160dp"
+        android:layout_marginTop="300dp"
+        android:layout_marginBottom="370dp"
         android:text="@string/save"
         android:textColorHighlight="#884747"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.826"
+        app:layout_constraintHorizontal_bias="0.467"
         app:layout_constraintStart_toEndOf="@+id/spinner_users"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/prevSelected"
+        android:layout_width="174dp"
+        android:layout_height="27dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="130dp"
+        android:layout_marginEnd="180dp"
+        android:layout_marginBottom="50dp"
+        android:text="@string/Prev_selected_profile_display_string"
+        app:layout_constraintBottom_toTopOf="@+id/spinner_users"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.118"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/userSelectedTextView"
-        android:layout_width="143dp"
-        android:layout_height="25dp"
+        android:id="@+id/prevSelectedDisplay"
+        android:layout_width="112dp"
+        android:layout_height="19dp"
         android:layout_marginTop="112dp"
-        android:text="TextView"
+        android:layout_marginBottom="28dp"
+        android:text="@string/Profile_display_string"
+        app:layout_constraintBottom_toTopOf="@+id/spinner_users"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.149"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="110dp"
-        android:layout_height="22dp"
-        android:layout_marginTop="104dp"
-        android:text="TextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.74"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.407"
+        app:layout_constraintStart_toEndOf="@+id/prevSelected"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.465" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
