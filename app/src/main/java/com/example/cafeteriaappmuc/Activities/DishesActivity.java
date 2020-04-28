@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -12,9 +13,11 @@ import android.widget.Button;
 
 import android.widget.TextView;
 
+
 import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.ImageUploadInfo;
 import com.example.cafeteriaappmuc.R;
+import com.example.cafeteriaappmuc.RecyclerItemClickListener;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
@@ -31,8 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 
-
-public class DishesActivity extends AppCompatActivity {
+public class DishesActivity extends AppCompatActivity  {
 
     //for displayImages
 
@@ -54,13 +56,14 @@ public class DishesActivity extends AppCompatActivity {
     List<ImageUploadInfo> list = new ArrayList<>();
 
     private String foodService;
+    private Context context;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dish);
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         final String dishName = intent.getStringExtra(MenuDayActivity.DISH_NAME); //get exas that are sent with intent, get dish name
         String dishPrice = intent.getStringExtra(MenuDayActivity.DISH_PRICE);
         String dishDescription = intent.getStringExtra(MenuDayActivity.DISH_DESCRIPTION);
@@ -93,8 +96,7 @@ public class DishesActivity extends AppCompatActivity {
             }
         });
 
-        //display images
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         // Assign id to RecyclerView.
         recyclerView = findViewById(R.id.recyclerViewImage);
@@ -115,9 +117,29 @@ public class DishesActivity extends AppCompatActivity {
         progressDialog.show();
 
         // Setting up Firebase image upload folder path in databaseReference.
-        // The path is already defined in MainActivity.
-        databaseReference = FirebaseDatabase.getInstance().getReference("Dishes/"+foodService+"/"+dishName + "/images");
 
+        databaseReference = FirebaseDatabase.getInstance().getReference("Dishes/"+foodService+"/"+dishName + "/images");
+        final Intent intentDisplayImage = new Intent(this, DisplayImageActivity.class);
+
+        //viewing images in full size when click
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(context, recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+
+                        ImageUploadInfo imageUpload =list.get(position);
+                        String imageName= imageUpload.getImageName();
+                        intentDisplayImage.putExtra("imageName", imageName);
+
+                        startActivity(intentDisplayImage);
+
+
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );
         // Adding Add Value Event Listener to databaseReference.
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override

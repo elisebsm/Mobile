@@ -64,6 +64,9 @@
     <string name="ImageNameEditText">Edit text name</string>
     <string name="enter_image_name_here">Enter Image Name Here</string>
     <string name="userSelectedTextView">User previously selected as:</string>
+    <string name="randomDesc">describing full size image</string>
+    <string name="FullImageView">Full image view</string>
+
 
 
 </resources>
