@@ -320,7 +320,7 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
     }
 
     public void showMenuOfTheDayClick(View view){
-        Intent menuIntent = new Intent(this, MenuOfTheDayActivity.class);
+        Intent menuIntent = new Intent(this, MenuDayActivity.class);
         ((GlobalClass) this.getApplication()).setFoodService(foodService);
         startActivity(menuIntent);
     }
