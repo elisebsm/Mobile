@@ -69,8 +69,7 @@ public class UploadImageActivity extends AppCompatActivity {
 
 
     // Folder path for Firebase Storage.
-    //TODO: ADD REAL PATH
-    private String Storage_Path;
+    private String Storage_Path ;
 
     // Root Database Name for Firebase Database.
     public static String Database_Path;
@@ -86,7 +85,6 @@ public class UploadImageActivity extends AppCompatActivity {
         dishName = ((GlobalClass) this.getApplication()).getDishName();
         foodService = ((GlobalClass) this.getApplication()).getFoodService();
 
-        //TODO: ADD REAL PATH
         Database_Path = ("Dishes/" + foodService + "/" + dishName + "/images/"); // endret pathen her
         Storage_Path = ("images/" + foodService + "/" + dishName + "/");
 
@@ -202,8 +200,6 @@ public class UploadImageActivity extends AppCompatActivity {
             progressDialog.show();
 
             // Defining the child of storageReference
-            //TODO: set image path to match so that image is saved to spesific dish at cafeteria
-
 
             // Getting image name from EditText and store into string variable.
             TempImageName = UUID.randomUUID().toString();
@@ -313,6 +309,9 @@ public class UploadImageActivity extends AppCompatActivity {
             }
         }
     }
+
+
+
 
 
 }

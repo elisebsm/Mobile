@@ -7,6 +7,8 @@
     <string name="saved_profile_default_key">Select user profile</string>
     <string name="save">Save</string>
     <string name="previously_selected_profile">None</string>
+    <string name="Prev_selected_profile_display_string">Previously selected profile:</string>
+    <string name="Profile_display_string">None</string>
     <string-array name="userprofile_arrays">
         <item>Select user group</item>
         <item>Student</item>
@@ -36,8 +38,12 @@
     <!-- -->
     <string name="change_campus">Change campus:</string>
     <string name="profile" />
+
+    <!-- menu items -->
     <string name="profileItem">Profile</string>
     <string name="mainItem">Main Page</string>
+
+    <!-- Upload photo-->
     <string name="upload_image">Upload Image</string>
     <string name="choose_image">Choose Image</string>
     <string name="edit_name_for_image">Edit name for image</string>
@@ -61,6 +67,8 @@
     <string name="imageShow">testing</string>
     <string name="ImageNameEditText">Edit text name</string>
     <string name="enter_image_name_here">Enter Image Name Here</string>
+    <string name="userSelectedTextView">User previously selected as:</string>
+
 
 </resources>
 
