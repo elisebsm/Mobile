@@ -300,25 +300,21 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         //get openinghours list
         OpeningHours openHours = new OpeningHours();
         List<String> foodServicesOpen ;
-        foodServicesOpen= openHours.CafeteriasOpen(status);
-       // System.out.println(foodServicesOpen);
+        foodServicesOpen= openHours.CafeteriasOpen(status,campus);
+        //foodServicesOpen= openHours.CafeteriasOpen(status,campus);
+        List<String> foodServices= foodServicesOpen;
 
         switch (status) {
             case "Student":
                 if (campus.equals("Alameda")) {
+                // System.out.println(foodServicesOpen);
 
-                        //List<String> foodServices = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
-                        services = foodServicesOpen;
-                        List<String> foodServices= foodServicesOpen;
-                        //numberofservices += foodServices.size();
-                        getDistanceValues(foodServices);
-
-
-
+                services = foodServicesOpen;
+                //numberofservices += foodServices.size();
+                getDistanceValues(foodServices);
 
                 } else {
-                    //TODO append foddservices to services
-                    services = Arrays.asList("Main building");
+                    services = Arrays.asList("Main Building");
                     arrayList.clear();
 
                     displayMainFoodServicesList();
@@ -327,8 +323,16 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             case "Professor":
                 if (campus.equals("Alameda")) {
                     arrayList.clear();
+
+                    services = foodServicesOpen;
+                    //numberofservices += foodServices.size();
+                    getDistanceValues(foodServices);
+
+                    displayMainFoodServicesList();
+
                 } else {
                     arrayList.clear();
+
                 }
                 break;
             case "Researcher":
@@ -349,7 +353,15 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                     arrayList.clear();
                 }
                 break;
+            // case "General Public":
+
+            //   arrayList.clear();
+
+            //     arrayList.clear();
+            //  }
+            // break;
         }
+
     }
 
 
@@ -538,12 +550,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
 
         }
-
-
-
     }
-
-
 
 
     // method to get direction using httpurlconnection

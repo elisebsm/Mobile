@@ -22,33 +22,54 @@ import java.util.List;
 
 public class OpeningHours extends AppCompatActivity {
 
+    List<String> foodServicesTaguspark = Arrays.asList("Ground floor", "Taguspark Campus Restaurant", "Floor -1");
+    List<String> foodServicesAlameda = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", "Copy Section", "South Tower", "Mathematics Building", "Interdisciplinary Building");
 
-    private List<String> foodServices = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
+    //private List<String> foodServices = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "Copy Section","AEIST Building");
     private List<String> openingHours = new ArrayList<>();
     private List<String> closingHours = new ArrayList<>();
     private List<String> foodServicesOpen = new ArrayList<>();
     //List<String> foodServicesClosed = new ArrayList<>();
     private  int counter=0;
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public  List<String> CafeteriasOpen(String selectedUserVal) {
+    public  List<String> CafeteriasOpen(String selectedUserVal, String campus) {
 
-        //GlobalClass globalAssetsVariable = (GlobalClass) getApplicationContext();
+        if (campus.equals("Alameda")) {
 
-        if (selectedUserVal.equals("Student")){
-            openingHours = Arrays.asList("09:00:00","07:30:00","08:00:00","08:00:00","08:30:00","08:00:00");
-            closingHours= Arrays.asList("17:00:00","19:00:00","16:00:00","16:00:00","16:30:00","18:00:00");
+            if (selectedUserVal.equals("Student")) {
+                openingHours = Arrays.asList("09:00:00", "07:30:00", "08:00:00", "08:00:00", "08:30:00", "08:00:00", "08:00:00","08:00:00","08:00:00");
+                closingHours = Arrays.asList("17:00:00", "19:00:00", "16:00:00", "16:00:00", "16:30:00", "20:00:00", "17:00:00", "14:30:00", "16:00:00");
 
+            } else if (selectedUserVal.equals("General Public")) {
+                openingHours = Arrays.asList("09:00:00", "09:30:00", "10:00:00", "08:00:00", "08:30:00", "09:00:00" ,"08:00:00","08:00:00","08:00:00");
+                closingHours = Arrays.asList("20:00:00", "19:00:00", "14:00:00", "16:00:00", "15:30:00", "15:00:00", "17:00:00", "14:30:00", "16:00:00");
+            }
+            //staff, researcher, prof etc
+            else {
+                openingHours = Arrays.asList("07:00:00", "07:30:00", "08:00:00", "07:00:00", "07:30:00", "08:00:00",  "08:00:00","08:00:00","08:00:00");
+                closingHours = Arrays.asList("20:00:00", "15:00:00", "20:00:00", "17:00:00", "14:30:00", "16:00:00", "17:00:00", "14:30:00", "16:00:00");
+
+            }
         }
-         else if(selectedUserVal.equals("General Public")){
-             openingHours = Arrays.asList("09:00:00","09:30:00","10:00:00","08:00:00","08:30:00","09:00:00");
-             closingHours= Arrays.asList("17:00:00","18:00:00","14:00:00","16:00:00","15:30:00","15:00:00");
-        }
-         //staff, researcher, prof etc
-        else {
-            openingHours =Arrays.asList("07:00:00","07:30:00","08:00:00","07:00:00","07:30:00","08:00:00");
-            closingHours= Arrays.asList("17:00:00","15:00:00","17:00:00","14:00:00","14:30:00","16:00:00");
+        else{
 
-        }
+            if (selectedUserVal.equals("Student")) {
+                openingHours = Arrays.asList("09:00:00", "07:30:00", "08:00:00");
+                closingHours = Arrays.asList("17:00:00", "20:00:00", "16:00:00");
+
+            } else if (selectedUserVal.equals("General Public")) {
+                openingHours = Arrays.asList("09:00:00", "09:30:00", "10:00:00");
+                closingHours = Arrays.asList("17:00:00", "18:00:00", "14:00:00");
+            }
+            //staff, researcher, prof etc
+            else {
+                openingHours = Arrays.asList("07:00:00", "07:30:00", "08:00:00");
+                closingHours = Arrays.asList("20:00:00", "15:00:00", "21:00:00");
+
+            }
+            }
+
+
 
         for (int i=0 ; i <openingHours.size(); i++){
             try {
@@ -76,19 +97,24 @@ public class OpeningHours extends AppCompatActivity {
                 if (timeOfNow.after(calendar1.getTime()) && timeOfNow.before(calendar2.getTime())) {
                     //checkes whether the current time is between
 
+                    if (campus.equals("Alameda")){
+                          foodServicesOpen.add(counter,foodServicesAlameda.get(i));
+                          counter++;
+                    }
+                    else{
+                         foodServicesOpen.add(counter,foodServicesTaguspark.get(i));
+                         counter++;
+                    }
 
-                    foodServicesOpen.add(counter,foodServices.get(i));
-                    counter++;
+
                 }
-
-
 
 
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
-        System.out.println(counter);
+        System.out.println(foodServicesOpen);
         return foodServicesOpen;
 
 
