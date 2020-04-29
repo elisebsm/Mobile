@@ -284,75 +284,27 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     /**
      * Shows dining places based on status
      */
-    // TODO: connect this to profile, add specification for status
+    // TODO: display dining options for taguspark as well
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void displayDiningOptions(String status, String campus) {
         //List<String> foodServicesTaguspark = Arrays.asList("Ground floor", "Taguspark Campus Restaurant", "Floor -1");
         //List<String> foodServicesAlameda = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section", "South Tower", "Mathematics Building", "Interdisciplinary Building");
 
-        //get openinghours list
-        OpeningHours openHours = new OpeningHours();
-        List<String> foodServicesOpen ;
-        foodServicesOpen= openHours.CafeteriasOpen(status,campus);
-        //foodServicesOpen= openHours.CafeteriasOpen(status,campus);
-        List<String> foodServices= foodServicesOpen;
+        //get openinghours list (only displays for alameda at the moment)
+        if (campus.equals("Alameda")){
+            OpeningHours openHours = new OpeningHours();
+            List<String> foodServicesOpen ;
+            foodServicesOpen= openHours.CafeteriasOpen(status,campus);
+            //foodServicesOpen= openHours.CafeteriasOpen(status,campus);
+            List<String> foodServices= foodServicesOpen;
+            services = foodServicesOpen;
+            getDistanceValues(foodServices);
+        }
+        else if (campus.equals("Taguspark")){
 
-        switch (status) {
-            case "Student":
-                if (campus.equals("Alameda")) {
-                    // System.out.println(foodServicesOpen);
-
-                    services = foodServicesOpen;
-                    //numberofservices += foodServices.size();
-                    getDistanceValues(foodServices);
-
-                } else {
-                    services = Arrays.asList("Main Building");
-                    arrayList.clear();
-
-                    displayMainFoodServicesList();
-                }
-                break;
-            case "Professor":
-                if (campus.equals("Alameda")) {
-                    arrayList.clear();
-
-                    services = foodServicesOpen;
-                    //numberofservices += foodServices.size();
-                    getDistanceValues(foodServices);
-
-                    displayMainFoodServicesList();
-
-                } else {
-                    arrayList.clear();
-
-                }
-                break;
-            case "Researcher":
-                if (campus.equals("Alameda")) {
-                    //TODO: add food services for researcher
-                    arrayList.add(new MyDataListMain("Ground floor", "5", 5));
-                    arrayList.clear();
-                } else {
-                    arrayList.clear();
-                }
-                break;
-            case "Staff":
-                if (campus.equals("Alameda")) {
-                    //TODO: add food services for staff
-                    arrayList.add(new MyDataListMain("Taguspark Campus Restaurant", "6", 3));
-                    arrayList.clear();
-                } else {
-                    arrayList.clear();
-                }
-                break;
-            // case "General Public":
-
-            //   arrayList.clear();
-
-            //     arrayList.clear();
-            //  }
-            // break;
+            services.clear();
+            arrayList.clear();
+            displayMainFoodServicesList();
         }
 
     }
