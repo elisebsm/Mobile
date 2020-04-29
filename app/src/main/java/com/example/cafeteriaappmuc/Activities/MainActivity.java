@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         //use getUserProfile() to get selected user. Returns user or null if user not selected
 
         status = getUserProfile();
-        isOpen();
+
 
         /*Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
         campusesAll.add("Alameda");
@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         //attaching data adapterFoodServices to spinner
         spinnerListCampuses.setAdapter(campusAdapter);
         spinnerListCampuses.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 if (adapterView.getItemAtPosition(position).equals("Choose Campus")) {
@@ -261,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         spinnerUpdatetList.setAdapter(campusAdapterUpdater);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void displayChosenCampus(String campusName) {
         currentCampus = campusName;
         TextView textViewMainCurrentCampusSet = findViewById(R.id.textViewMainCurrentCampus);
@@ -283,28 +285,40 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
 
     // int numberofservices = 0;
-    List<String> services = new ArrayList<>();
+    List<String> services =new ArrayList<>();
+
 
     /**
      * Shows dining places based on status
      */
     // TODO: connect this to profile, add specification for status
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void displayDiningOptions(String status, String campus) {
         //List<String> foodServicesTaguspark = Arrays.asList("Ground floor", "Taguspark Campus Restaurant", "Floor -1");
         //List<String> foodServicesAlameda = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section", "South Tower", "Mathematics Building", "Interdisciplinary Building");
 
+        //get openinghours list
+        OpeningHours openHours = new OpeningHours();
+        List<String> foodServicesOpen ;
+        foodServicesOpen= openHours.CafeteriasOpen(status);
+       // System.out.println(foodServicesOpen);
+
         switch (status) {
             case "Student":
                 if (campus.equals("Alameda")) {
-                    //TODO: add accurate food services according to status
-                    List<String> foodServices = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
-                    services = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
-                    //numberofservices += foodServices.size();
-                    getDistanceValues(foodServices);
+
+                        //List<String> foodServices = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
+                        services = foodServicesOpen;
+                        List<String> foodServices= foodServicesOpen;
+                        //numberofservices += foodServices.size();
+                        getDistanceValues(foodServices);
+
+
+
 
                 } else {
                     //TODO append foddservices to services
-                    services = Arrays.asList("Main Building");
+                    services = Arrays.asList("Main building");
                     arrayList.clear();
 
                     displayMainFoodServicesList();
@@ -530,19 +544,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
 
 
-    //get openinghours based on selected profile group
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private Boolean isOpen(){
-            status = getUserProfile();
 
-            //String val =globalAssetsVariable.getProfile();
-            OpeningHours openHours = new OpeningHours();
-            isOpen = openHours.isCafeteriaOpen(status);
-
-            Toast.makeText(getApplicationContext(), "cafeteria is open"+isOpen, Toast.LENGTH_SHORT).show();
-            return isOpen;
-
-        }
 
     // method to get direction using httpurlconnection
     private String requestDirection(String reqUrl) throws IOException {
@@ -690,6 +692,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             return distance;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.O)
         protected void onPostExecute(String distance) {
             Log.d("DISTANCE", distance);
             checkedDistanceToCampusCounter += 1;
