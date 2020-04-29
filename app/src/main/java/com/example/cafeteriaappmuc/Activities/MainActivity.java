@@ -113,17 +113,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         campusesAll.add("Alameda");
         campusesAll.add("Taguspark");
         List<String> campuses = removeCurrentCampusFromList(currentCampus);
-
         // Style and populate the spinner
         ArrayAdapter<String> campusAdapter;
         campusAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, campuses);
-
         // Dropdown layout style
         campusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
         displayCampus();
-
         //attaching data adapterFoodServices to spinner
         spinnerListCampuses.setAdapter(campusAdapter);
         spinnerListCampuses.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -133,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                     // do nothing
                 } else {
                     counterDisplayFoodServiceInList = 0;
-
                     displayChosenCampus(adapterView.getItemAtPosition(position).toString());
                     removeCurrentCampusFromList(currentCampus);
                     updateSpinner(adapterView.getItemAtPosition(position).toString());
@@ -144,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                     }
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
@@ -307,11 +300,11 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         switch (status) {
             case "Student":
                 if (campus.equals("Alameda")) {
-                // System.out.println(foodServicesOpen);
+                    // System.out.println(foodServicesOpen);
 
-                services = foodServicesOpen;
-                //numberofservices += foodServices.size();
-                getDistanceValues(foodServices);
+                    services = foodServicesOpen;
+                    //numberofservices += foodServices.size();
+                    getDistanceValues(foodServices);
 
                 } else {
                     services = Arrays.asList("Main Building");
@@ -544,8 +537,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             //set global variable
             GlobalClass globalAssetsVariable = (GlobalClass) getApplicationContext();
             globalAssetsVariable.setProfile(selectedUserProfile);
-          //  String val =globalAssetsVariable.getProfile();
-           // Toast.makeText(getApplicationContext(), "Selected user"+val, Toast.LENGTH_LONG).show();
+            //  String val =globalAssetsVariable.getProfile();
+            // Toast.makeText(getApplicationContext(), "Selected user"+val, Toast.LENGTH_LONG).show();
             return selectedUserProfile;
 
 
@@ -713,10 +706,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                 if(checkedDistanceToCampusCounter==2 && currentCampus.equals("")){
                     displayListForChoosingCampus();
                 }
-
             }*/
         }
     }
 }
-
-
