@@ -21,34 +21,33 @@ public class OpeningHours extends AppCompatActivity {
     private String openingHours;
     private String closingHours;
     private String studentHoursOpening= "08:00:00";
-    private String studentHoursClosing= "10:00:00";
+    private String studentHoursClosing= "18:00:00";
     private String staffHoursOpening= "07:30:00";
-    private String staffHoursClosing= "18:00:00";
+    private String staffHoursClosing= "17:00:00";
     private String generalHoursOpening= "09:00:00";
-    private String generalHoursClosing = "10:30:00";
+    private String generalHoursClosing = "15:30:00";
     private Boolean isTrue;
 
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public  Boolean isCafeteriaOpen() {
-       GlobalClass globalAssetsVariable = (GlobalClass) getApplicationContext();
-       String selectedUserProfile=globalAssetsVariable.getProfile();
+    public  Boolean isCafeteriaOpen(String selectedUserVal) {
 
-        if (selectedUserProfile=="Student"){
+        //GlobalClass globalAssetsVariable = (GlobalClass) getApplicationContext();
+
+        if (selectedUserVal.equals("Student")){
             openingHours = studentHoursOpening;
             closingHours = studentHoursClosing;
 
-
         }
-         if (selectedUserProfile=="General Public"){
+         else if(selectedUserVal.equals("General Public")){
             openingHours=generalHoursOpening;
             closingHours=generalHoursClosing;
         }
         else {
             openingHours=staffHoursOpening;
             closingHours=staffHoursClosing;
-
+            System.out.println("selected staff");
         }
 
         try {

@@ -35,12 +35,7 @@ public class GlobalClass extends Application {
         return dishName;
     }
 
-    public void setOpenStatus(Boolean openStatus){
-        this.open=open;
-    }
-    public Boolean getOpenStatus(){
-        return open;
-    }
+
 
 
     //TODO: legge til åpningstider for hver gruppe/bruker. Finen metode å bruke dette

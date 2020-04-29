@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         //displayChosenCampus(currentCampus);
 
         //use getUserProfile() to get selected user. Returns user or null if user not selected
+
         status = getUserProfile();
         isOpen();
 
@@ -517,22 +518,29 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             //set global variable
             GlobalClass globalAssetsVariable = (GlobalClass) getApplicationContext();
             globalAssetsVariable.setProfile(selectedUserProfile);
+          //  String val =globalAssetsVariable.getProfile();
+           // Toast.makeText(getApplicationContext(), "Selected user"+val, Toast.LENGTH_LONG).show();
             return selectedUserProfile;
+
 
         }
 
 
 
     }
+
+
     //get openinghours based on selected profile group
     @RequiresApi(api = Build.VERSION_CODES.O)
     private Boolean isOpen(){
+            status = getUserProfile();
 
+            //String val =globalAssetsVariable.getProfile();
             OpeningHours openHours = new OpeningHours();
-            isOpen = openHours.isCafeteriaOpen();
+            isOpen = openHours.isCafeteriaOpen(status);
 
-            Toast.makeText(getApplicationContext(), "Cafeteria is"+isOpen, Toast.LENGTH_SHORT).show();
-            return isOpen();
+            Toast.makeText(getApplicationContext(), "cafeteria is open"+isOpen, Toast.LENGTH_SHORT).show();
+            return isOpen;
 
         }
 

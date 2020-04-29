@@ -9,6 +9,7 @@
     <string name="previously_selected_profile">None</string>
     <string name="Prev_selected_profile_display_string">Previously selected profile:</string>
     <string name="Profile_display_string">None</string>
+    <string name="Student">Student</string>
     <string-array name="userprofile_arrays">
         <item>Select user group</item>
         <item>Student</item>
