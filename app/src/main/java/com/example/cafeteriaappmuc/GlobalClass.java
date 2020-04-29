@@ -9,6 +9,7 @@ public class GlobalClass extends Application {
     private String userProfile;
     private String dishName;
     private String foodService;
+    private Boolean open;
 
 
     public String getProfile(){
@@ -32,6 +33,13 @@ public class GlobalClass extends Application {
     }
     public String getDishName(){
         return dishName;
+    }
+
+    public void setOpenStatus(Boolean openStatus){
+        this.open=open;
+    }
+    public Boolean getOpenStatus(){
+        return open;
     }
 
 

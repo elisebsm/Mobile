@@ -1,5 +1,6 @@
 package com.example.cafeteriaappmuc.Activities;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
@@ -11,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 
 
@@ -31,7 +33,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
+import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.MyDataListMain;
+import com.example.cafeteriaappmuc.OpeningHours;
 import com.example.cafeteriaappmuc.PermissionUtils;
 import com.example.cafeteriaappmuc.R;
 
@@ -66,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     //TODO: set current campus based on profile
     private String currentCampus = "";
     private String status;
+    private static String hoursOpen;
+    private Boolean isOpen;
     //final Button button = findViewById(R.id.profile_button);
 
     /**
@@ -91,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
     private int counterDisplayFoodServiceInList = 0;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
         //use getUserProfile() to get selected user. Returns user or null if user not selected
         status = getUserProfile();
+        isOpen();
 
         /*Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
         campusesAll.add("Alameda");
@@ -479,11 +487,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             }
         });
     }
-    //show Upload image activity. Only for testing
-    private void showUploadImageActivity() {
-        Intent intentUploadImageActivity = new Intent(this, UploadImageActivity.class);
-        startActivity(intentUploadImageActivity);
-    }
 
     private void showFoodService(String foodService) {
         Intent intentFoodService = new Intent(this, FoodServiceActivity.class);
@@ -498,10 +501,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
 
 
-//TODO : maybe remove profile class and only use shared preferences
     //get user profile selected in profile
     private String getUserProfile() {
-
         final String key =getString(R.string.saved_profile_key);
         final String defValue = getString(R.string.saved_profile_default_key);
         SharedPreferences sharedPref = getSharedPreferences("settings",
@@ -509,16 +510,31 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         String selectedUserProfile = sharedPref.getString(key, defValue);
         //check if profile is saved as something else than default
         if (selectedUserProfile==getString(R.string.saved_profile_default_key)){
-            //Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile ", Toast.LENGTH_LONG).show();
             return null;
         }
         else {
-            //profileVariable.setProfile(selectedUserProfile);
-            Toast.makeText(getApplicationContext(), "User saved as: " + selectedUserProfile , Toast.LENGTH_SHORT).show();
+            //set global variable
+            GlobalClass globalAssetsVariable = (GlobalClass) getApplicationContext();
+            globalAssetsVariable.setProfile(selectedUserProfile);
             return selectedUserProfile;
+
         }
 
+
+
     }
+    //get openinghours based on selected profile group
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private Boolean isOpen(){
+
+            OpeningHours openHours = new OpeningHours();
+            isOpen = openHours.isCafeteriaOpen();
+
+            Toast.makeText(getApplicationContext(), "Cafeteria is"+isOpen, Toast.LENGTH_SHORT).show();
+            return isOpen();
+
+        }
 
     // method to get direction using httpurlconnection
     private String requestDirection(String reqUrl) throws IOException {
