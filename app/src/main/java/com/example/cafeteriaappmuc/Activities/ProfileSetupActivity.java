@@ -3,6 +3,7 @@ package com.example.cafeteriaappmuc.Activities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,8 +13,11 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.cafeteriaappmuc.GlobalClass;
+import com.example.cafeteriaappmuc.OpeningHours;
 import com.example.cafeteriaappmuc.R;
 
 
@@ -36,11 +40,11 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
         final String key =getString(R.string.saved_profile_key);
 
         //checking if profile value is selected previously (Aka if something else than default value is selected)
-        String selectedUserProfile = retrieveData(key);
+        final String selectedUserProfile = retrieveData(key);
         if (selectedUserProfile!=getString(R.string.saved_profile_default_key)) {
-            //TODO: set prev selected profile
             TextView textViewProfile = (TextView) findViewById(R.id.prevSelectedDisplay);
             textViewProfile.setText(selectedUserProfile);
+
            // Toast.makeText(getApplicationContext(), "User previously saved as: " + selectedUserProfile, Toast.LENGTH_SHORT).show();
         }
         //saving profile value selected on the spinner(dropdown menu)
@@ -50,20 +54,24 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
                     Toast.makeText(getApplicationContext(), "Please select user value from bar", Toast.LENGTH_SHORT).show();
 
                 } else {
+
                     //Stored variables saved and updated every time "save Button" pushed
                     insertData(key, selectedSpinnerVal);
-
+                    System.out.println(selectedSpinnerVal);
                     //Store the same variable in profile object as Global Variable. Easy retreival for other classes.
                     String sharedPrefProfile = retrieveData(key);
                     GlobalClass globalAssetsVariable = (GlobalClass) getApplicationContext();
                     globalAssetsVariable.setProfile(sharedPrefProfile);
                     Toast.makeText(getApplicationContext(), "User saved as: " + selectedSpinnerVal, Toast.LENGTH_SHORT).show();
                     Log.i("OnClick", "Person saved" + selectedSpinnerVal);
+
                 }
 
             }
 
         });
+
+
 
 
         //populate spinner

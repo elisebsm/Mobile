@@ -9,6 +9,7 @@ public class GlobalClass extends Application {
     private String userProfile;
     private String dishName;
     private String foodService;
+    private Boolean open;
 
 
     public String getProfile(){
@@ -33,6 +34,8 @@ public class GlobalClass extends Application {
     public String getDishName(){
         return dishName;
     }
+
+
 
 
     //TODO: legge til åpningstider for hver gruppe/bruker. Finen metode å bruke dette

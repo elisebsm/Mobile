@@ -1,5 +1,6 @@
 package com.example.cafeteriaappmuc.Activities;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
@@ -11,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 
 
@@ -31,7 +33,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
+import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.MyDataListMain;
+import com.example.cafeteriaappmuc.OpeningHours;
 import com.example.cafeteriaappmuc.PermissionUtils;
 import com.example.cafeteriaappmuc.R;
 
@@ -66,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     //TODO: set current campus based on profile
     private String currentCampus = "";
     private String status;
+    private static String hoursOpen;
+    private Boolean isOpen;
     //final Button button = findViewById(R.id.profile_button);
 
     /**
@@ -91,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
     private int counterDisplayFoodServiceInList = 0;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +105,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         //displayChosenCampus(currentCampus);
 
         //use getUserProfile() to get selected user. Returns user or null if user not selected
+
         status = getUserProfile();
+
 
         /*Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
         campusesAll.add("Alameda");
@@ -176,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         //attaching data adapterFoodServices to spinner
         spinnerListCampuses.setAdapter(campusAdapter);
         spinnerListCampuses.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 if (adapterView.getItemAtPosition(position).equals("Choose Campus")) {
@@ -252,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         spinnerUpdatetList.setAdapter(campusAdapterUpdater);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void displayChosenCampus(String campusName) {
         currentCampus = campusName;
         TextView textViewMainCurrentCampusSet = findViewById(R.id.textViewMainCurrentCampus);
@@ -274,27 +285,35 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
 
     // int numberofservices = 0;
-    List<String> services = new ArrayList<>();
+    List<String> services =new ArrayList<>();
+
 
     /**
      * Shows dining places based on status
      */
     // TODO: connect this to profile, add specification for status
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void displayDiningOptions(String status, String campus) {
         //List<String> foodServicesTaguspark = Arrays.asList("Ground floor", "Taguspark Campus Restaurant", "Floor -1");
         //List<String> foodServicesAlameda = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section", "South Tower", "Mathematics Building", "Interdisciplinary Building");
 
+        //get openinghours list
+        OpeningHours openHours = new OpeningHours();
+        List<String> foodServicesOpen ;
+        foodServicesOpen= openHours.CafeteriasOpen(status,campus);
+        //foodServicesOpen= openHours.CafeteriasOpen(status,campus);
+        List<String> foodServices= foodServicesOpen;
+
         switch (status) {
             case "Student":
                 if (campus.equals("Alameda")) {
-                    //TODO: add accurate food services according to status
-                    List<String> foodServices = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
-                    services = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
-                    //numberofservices += foodServices.size();
-                    getDistanceValues(foodServices);
+                // System.out.println(foodServicesOpen);
+
+                services = foodServicesOpen;
+                //numberofservices += foodServices.size();
+                getDistanceValues(foodServices);
 
                 } else {
-                    //TODO append foddservices to services
                     services = Arrays.asList("Main Building");
                     arrayList.clear();
 
@@ -304,8 +323,16 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             case "Professor":
                 if (campus.equals("Alameda")) {
                     arrayList.clear();
+
+                    services = foodServicesOpen;
+                    //numberofservices += foodServices.size();
+                    getDistanceValues(foodServices);
+
+                    displayMainFoodServicesList();
+
                 } else {
                     arrayList.clear();
+
                 }
                 break;
             case "Researcher":
@@ -326,7 +353,15 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                     arrayList.clear();
                 }
                 break;
+            // case "General Public":
+
+            //   arrayList.clear();
+
+            //     arrayList.clear();
+            //  }
+            // break;
         }
+
     }
 
 
@@ -479,11 +514,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             }
         });
     }
-    //show Upload image activity. Only for testing
-    private void showUploadImageActivity() {
-        Intent intentUploadImageActivity = new Intent(this, UploadImageActivity.class);
-        startActivity(intentUploadImageActivity);
-    }
 
     private void showFoodService(String foodService) {
         Intent intentFoodService = new Intent(this, FoodServiceActivity.class);
@@ -498,10 +528,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
 
 
-//TODO : maybe remove profile class and only use shared preferences
     //get user profile selected in profile
     private String getUserProfile() {
-
         final String key =getString(R.string.saved_profile_key);
         final String defValue = getString(R.string.saved_profile_default_key);
         SharedPreferences sharedPref = getSharedPreferences("settings",
@@ -509,16 +537,21 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         String selectedUserProfile = sharedPref.getString(key, defValue);
         //check if profile is saved as something else than default
         if (selectedUserProfile==getString(R.string.saved_profile_default_key)){
-            //Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile ", Toast.LENGTH_LONG).show();
             return null;
         }
         else {
-            //profileVariable.setProfile(selectedUserProfile);
-            Toast.makeText(getApplicationContext(), "User saved as: " + selectedUserProfile , Toast.LENGTH_SHORT).show();
+            //set global variable
+            GlobalClass globalAssetsVariable = (GlobalClass) getApplicationContext();
+            globalAssetsVariable.setProfile(selectedUserProfile);
+          //  String val =globalAssetsVariable.getProfile();
+           // Toast.makeText(getApplicationContext(), "Selected user"+val, Toast.LENGTH_LONG).show();
             return selectedUserProfile;
-        }
 
+
+        }
     }
+
 
     // method to get direction using httpurlconnection
     private String requestDirection(String reqUrl) throws IOException {
@@ -666,6 +699,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             return distance;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.O)
         protected void onPostExecute(String distance) {
             Log.d("DISTANCE", distance);
             checkedDistanceToCampusCounter += 1;
