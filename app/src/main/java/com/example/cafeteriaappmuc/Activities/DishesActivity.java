@@ -79,8 +79,6 @@ public class DishesActivity extends AppCompatActivity  {
         TextView descriptionTextView = findViewById(R.id.dishDescription); //same here
         descriptionTextView.setText(dishDescription);
 
-        //adding back home button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //initializing buttons
         uploadImagebtn = findViewById(R.id.uploadImagebtn);
@@ -131,8 +129,6 @@ public class DishesActivity extends AppCompatActivity  {
                         intentDisplayImage.putExtra("imageName", imageName);
 
                         startActivity(intentDisplayImage);
-
-
                     }
 
                     @Override public void onLongItemClick(View view, int position) {
@@ -173,6 +169,7 @@ public class DishesActivity extends AppCompatActivity  {
 
 
     }
+
 
     private void showUploadImage(String dishName){
         Intent intentUploadImage = new Intent(this, UploadImageActivity.class);

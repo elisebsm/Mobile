@@ -2,9 +2,12 @@ package com.example.cafeteriaappmuc.Activities;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 
@@ -32,8 +35,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.FutureTarget;
 import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
+import com.example.cafeteriaappmuc.Adapter.RecyclerViewAdapter;
 import com.example.cafeteriaappmuc.GlobalClass;
+import com.example.cafeteriaappmuc.ImageUploadInfo;
 import com.example.cafeteriaappmuc.MyDataListMain;
 import com.example.cafeteriaappmuc.OpeningHours;
 import com.example.cafeteriaappmuc.PermissionUtils;
@@ -41,11 +49,19 @@ import com.example.cafeteriaappmuc.R;
 
 import com.example.cafeteriaappmuc.SimWifiP2pBroadcastReceiver;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -97,6 +113,21 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
     private int counterDisplayFoodServiceInList = 0;
 
+
+    //for downloading images on wifi
+    // Creating DatabaseReference.
+    DatabaseReference databaseReference;
+    private StorageReference imagesRef;
+
+    // Creating RecyclerView.
+    RecyclerView recyclerView;
+
+    // Creating RecyclerView.Adapter.
+    RecyclerView.Adapter adapter ;
+
+    // Creating List of ImageUploadInfo class.
+    List<ImageUploadInfo> list = new ArrayList<>();
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         //use getUserProfile() to get selected user. Returns user or null if user not selected
 
         status = getUserProfile();
-
+       // cacheImages();
 
         /*Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
         campusesAll.add("Alameda");
@@ -157,7 +188,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         registerReceiver(broadcastReceiver, filter);
 
         //manager.requestPeers(channel, MainActivity.this);
-        displayCampus();
+        if (getUserProfile()==null) {
+            Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
+        }else{
+            displayCampus();
+        }
+
 
     }
 
@@ -190,7 +226,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                     removeCurrentCampusFromList(currentCampus);
                     updateSpinner(adapterView.getItemAtPosition(position).toString());
                     if (getUserProfile()==null){
-                        Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "No user group . Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
+
                     } else{
                         displayDiningOptions(status, currentCampus);
                         displayMainFoodServicesList();
@@ -300,12 +337,13 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             services = foodServicesOpen;
             getDistanceValues(foodServices);
         }
-        else if (campus.equals("Taguspark")){
+        else {
 
             services.clear();
             arrayList.clear();
             displayMainFoodServicesList();
         }
+
 
     }
 
@@ -661,4 +699,63 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             }*/
         }
     }
+/*
+    private void wfifiDownloadImages(){
+        // Assign id to RecyclerView.
+        recyclerView = findViewById(R.id.recyclerViewImage);
+
+        // Setting RecyclerView size true.
+        recyclerView.setHasFixedSize(true);
+
+        // Setting RecyclerView layout as LinearLayout.
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
+
+        // Setting up Firebase image upload folder path in databaseReference.
+        final String foodService= "Main Building";
+        final String dishName="Pasta Carbonara";
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("Dishes/"+foodService+"/"+dishName + "/images");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+
+                    ImageUploadInfo imageUploadInfo = postSnapshot.getValue(ImageUploadInfo.class);
+
+                    list.add(imageUploadInfo);
+                }
+
+                adapter = new RecyclerViewAdapter(getApplicationContext(), list, foodService, dishName);
+
+                recyclerView.setAdapter(adapter);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+
+
+            }
+        });
+    }
+
+
+    private void cacheImages(){
+        // Setting up Firebase image upload folder path in databaseReference.
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        imagesRef = storageReference.child("/images/Main Building/Pasta Carbonara"+"/"+"5063426b-be36-4f2d-8624-b8e141c21341");
+
+        FutureTarget<File> future = Glide.with(this)
+               .load(imagesRef)
+                .downloadOnly(500, 500);
+    }
+    */
+
+
 }
