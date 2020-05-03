@@ -6,9 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.example.cafeteriaappmuc.Activities.DishesActivity;
 import com.example.cafeteriaappmuc.R;
 
 
@@ -17,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import com.example.cafeteriaappmuc.ImageUploadInfo;
-import com.example.cafeteriaappmuc.RecyclerItemClickListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
