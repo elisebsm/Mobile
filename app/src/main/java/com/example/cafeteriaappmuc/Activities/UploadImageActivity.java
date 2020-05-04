@@ -79,7 +79,7 @@ public class UploadImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_image);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         //getting dish name for folder name
         dishName = ((GlobalClass) this.getApplication()).getDishName();
