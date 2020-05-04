@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
@@ -15,6 +16,9 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -40,6 +44,7 @@ import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.FutureTarget;
 import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
 import com.example.cafeteriaappmuc.Adapter.RecyclerViewAdapter;
+import com.example.cafeteriaappmuc.BroadcastReceiver.WifiReceiver;
 import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.ImageUploadInfo;
 import com.example.cafeteriaappmuc.MyDataListMain;
@@ -86,9 +91,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     //TODO: set current campus based on profile
     private String currentCampus = "";
     private String status;
-    private static String hoursOpen;
-    private Boolean isOpen;
-    //final Button button = findViewById(R.id.profile_button);
+    private Context context;
+    private  Boolean result;
+
+
 
     /**
      * copied from lab 4
@@ -136,9 +142,18 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         //displayChosenCampus(currentCampus);
 
         //use getUserProfile() to get selected user. Returns user or null if user not selected
-
         status = getUserProfile();
-        cacheImages();
+
+
+        //checking for internet connection
+        MainActivity.hasInternetConn hasInternetConn= new MainActivity.hasInternetConn();
+        hasInternetConn.execute();
+        if(result=true){
+            System.out.println("network on");
+            Toast.makeText(getApplicationContext(),"internet access", Toast.LENGTH_SHORT).show();
+        }
+
+      //  Toast.makeText(getApplicationContext(), "wifi "+ state, Toast.LENGTH_LONG).show();
 
         /*Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
         campusesAll.add("Alameda");
@@ -539,40 +554,44 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     // method to get direction using httpurlconnection
     private String requestDirection(String reqUrl) throws IOException {
         String responseString = "";
-        InputStream inputStream = null;
-        HttpURLConnection httpURLConnection = null;
-        try {
-            URL url = new URL(reqUrl);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.connect();
 
-            //Get the response request
-            inputStream = httpURLConnection.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-            StringBuffer stringBuffer = new StringBuffer();
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuffer.append(line);
+            InputStream inputStream = null;
+            HttpURLConnection httpURLConnection = null;
+            try {
+                URL url = new URL(reqUrl);
+                httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.connect();
+
+                //Get the response request
+                inputStream = httpURLConnection.getInputStream();
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+                StringBuffer stringBuffer = new StringBuffer();
+                String line = "";
+                while ((line = bufferedReader.readLine()) != null) {
+                    stringBuffer.append(line);
+                }
+
+                responseString = stringBuffer.toString();
+                bufferedReader.close();
+                inputStreamReader.close();
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+                if (httpURLConnection != null) {
+                    httpURLConnection.disconnect();
+                }
             }
-
-            responseString = stringBuffer.toString();
-            bufferedReader.close();
-            inputStreamReader.close();
+            return responseString;
 
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
-            if (httpURLConnection != null) {
-                httpURLConnection.disconnect();
-            }
-        }
-        return responseString;
     }
 
     @Override
@@ -699,6 +718,85 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             }*/
         }
     }
+
+
+    //check for wifi status
+    private BroadcastReceiver wifiStateReceiver= new WifiReceiver();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        registerReceiver(wifiStateReceiver, intentFilter);
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(wifiStateReceiver);
+
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null;
+    }
+
+    public class hasInternetConn extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+
+            if (isNetworkAvailable()) {
+                try {
+                    HttpURLConnection urlc = (HttpURLConnection) (new URL("http://www.google.com").openConnection());
+                    urlc.setRequestProperty("User-Agent", "Test");
+                    urlc.setRequestProperty("Connection", "close");
+                    urlc.setConnectTimeout(1500);
+                    urlc.connect();
+                    if ((urlc.getResponseCode() == 200)){
+                        result = true;
+                        System.out.println("network on ");
+                    }
+
+
+                } catch (IOException e) {
+                    String err="no connection to internet";
+                    Log.d("Error_internet",err);
+                    result= false;
+                }
+
+            } else {
+                String err="No network available!";
+                Log.d("Error_netWork",err);
+                System.out.println("network not on ");
+                result= false;
+
+            }
+            return result;
+        }
+
+
+        protected void onPostExecute(Long result) {
+            String done= "done checking for internet";
+            Log.d("Error_netWork",done);
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
 /*
     private void wfifiDownloadImages(){
         // Assign id to RecyclerView.
@@ -745,7 +843,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
     */
 
-
+/*
     private void cacheImages(){
         // Setting up Firebase image upload folder path in databaseReference.
 
@@ -756,7 +854,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                .load(imagesRef)
                 .downloadOnly(500, 500);
     }
-
+*/
 
 
 }

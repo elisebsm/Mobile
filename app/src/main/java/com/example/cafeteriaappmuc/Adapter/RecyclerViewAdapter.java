@@ -39,7 +39,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     // Creating RecyclerView.
     private RecyclerView recyclerView;
-    private Boolean isConn;
+
 
     public RecyclerViewAdapter(Context context, List<ImageUploadInfo> TempList,String foodService, String dishName) {
 
@@ -71,7 +71,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         //getting image from firebase or cache
         StorageReference storageReference =FirebaseStorage.getInstance().getReference();
         imagesRef = storageReference.child("images/"+foodService+"/"+dishName+"/"+imageName);
-        //Glide.with(context).load(imagesRef).into(holder.imageView);
+        Glide.with(context).load(imagesRef).into(holder.imageView);
+
+       /*
         if (deviceOnWifi()) {
             //Loading image from Glide library when device on wifi.
             GlideApp
@@ -94,7 +96,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     )
                     .into(holder.imageView);
 
-        }
+        }*/
 
     }
 
@@ -118,26 +120,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-    //check if device is connected to wifi
-    private boolean deviceOnWifi() {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        if (activeNetwork != null) {
-            // connected to the internet
-            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
-                // connected to wifi
-                isConn=true;
-            }
-            else{
-                //if connected to something else like mobile data
-                isConn=false;
-            }
-        } else {
-           isConn=false;
 
-        }
-        return isConn;
-    }
 
 
 }
