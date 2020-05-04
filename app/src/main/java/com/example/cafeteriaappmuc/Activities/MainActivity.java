@@ -727,7 +727,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
 
 
-    //check for wifi status
+    //check for wifi status of broadcast receiver
     private BroadcastReceiver wifiStateReceiver= new WifiReceiver();
     @Override
     protected void onStart() {
@@ -744,7 +744,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
     }
 
-    //checking if decvice is connected to wireless network
+    //checking if decvice is connected to internet
     private boolean checkNetworkConnection() {
         ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkCapabilities capabilities = null;

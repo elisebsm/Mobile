@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 public class WifiReceiver extends BroadcastReceiver {
 
+    //checks if device is connected to wifi
     @Override
     public void onReceive(Context context, Intent intent) {
         int wifiStateExtra = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,
