@@ -40,8 +40,7 @@
         <activity android:name=".Activities.DisplayImageActivity" />
         <activity android:name=".Activities.UploadImageActivity"
             android:parentActivityName=".Activities.MenuDayActivity" />
-        <activity android:name=".Activities.ProfileSetupActivity"
-            android:parentActivityName=".Activities.MainActivity" />
+        <activity android:name=".Activities.ProfileSetupActivity"/>
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

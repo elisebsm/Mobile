@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         //use getUserProfile() to get selected user. Returns user or null if user not selected
 
         status = getUserProfile();
-       // cacheImages();
+        cacheImages();
 
         /*Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
         campusesAll.add("Alameda");
@@ -583,7 +583,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
     /**
      * TaskRequestDirection and TarskParser are used for the AsyncTask to get time to walk
-     * TODO: put them in their own class??
+     * TODO: put them in their own class?? What if userdoes not allow user to use gps? fault handeling
      */
     // creates AsyncTask to call request Direction
     public class TaskRequestDirections extends AsyncTask<String, Void, String> {
@@ -743,6 +743,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             }
         });
     }
+    */
 
 
     private void cacheImages(){
@@ -755,7 +756,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                .load(imagesRef)
                 .downloadOnly(500, 500);
     }
-    */
+
 
 
 }

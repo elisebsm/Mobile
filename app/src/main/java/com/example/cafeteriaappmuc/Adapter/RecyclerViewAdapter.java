@@ -71,13 +71,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         //getting image from firebase or cache
         StorageReference storageReference =FirebaseStorage.getInstance().getReference();
         imagesRef = storageReference.child("images/"+foodService+"/"+dishName+"/"+imageName);
-        Glide.with(context).load(imagesRef).into(holder.imageView);
-        /*if (deviceOnWifi()) {
+        //Glide.with(context).load(imagesRef).into(holder.imageView);
+        if (deviceOnWifi()) {
             //Loading image from Glide library when device on wifi.
             GlideApp
                     .with(context)
                     .load(imagesRef)
-                    //.diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.imageView);
         }
         else {
@@ -90,11 +90,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                             GlideApp
                                     .with(context)
                                     .load(imagesRef)
-                                   // .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     )
                     .into(holder.imageView);
 
-        }*/
+        }
 
     }
 
