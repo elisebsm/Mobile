@@ -1,6 +1,6 @@
+/*
 package com.example.cafeteriaappmuc.Activities;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
@@ -8,9 +8,6 @@ import android.content.Intent;
 
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkCapabilities;
-import android.os.Build;
 import android.os.Bundle;
 
 
@@ -31,9 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
-import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.MyDataListMain;
-import com.example.cafeteriaappmuc.OpeningHours;
 import com.example.cafeteriaappmuc.R;
 
 import com.example.cafeteriaappmuc.SimWifiP2pBroadcastReceiver;
@@ -50,6 +45,7 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
@@ -59,22 +55,20 @@ import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketManager;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 
-import static android.os.Build.VERSION_CODES.M;
-
 public class MainActivity extends AppCompatActivity implements Serializable, SimWifiP2pManager.PeerListListener {
 
     private List<String> campusesAll = new ArrayList<>();
 
     //TODO: set current campus based on profile
-    private String currentCampus = "";
+    private String currentCampus = " ";
     private String status;
-    private static String hoursOpen;
-    private Boolean isOpen;
     //final Button button = findViewById(R.id.profile_button);
 
-    /**
+    */
+/**
      * copied from lab 4
-     */
+     *//*
+
     private SimWifiP2pManager manager = null;
     private SimWifiP2pManager.Channel channel = null;
     private Messenger service = null;
@@ -86,27 +80,63 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     private SimWifiP2pBroadcastReceiver broadcastReceiver;
 
 
-    private ListView listViewFoodServices;
-    private ArrayList<MyDataListMain> arrayList = new ArrayList<>();
-    private AdapterListViewMainFoodServices adapterFoodServices;
+    ListView listViewFoodServices;
+    ArrayList<MyDataListMain> arrayList = new ArrayList<>();
+    AdapterListViewMainFoodServices adapterFoodServices;
 
-
-    public int checkedDistanceToCampusCounter = 0;
 
     private int counterDisplayFoodServiceInList = 0;
 
-
-    private List<String> services =new ArrayList<>();
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //displayChosenCampus(currentCampus);
+        displayChosenCampus(currentCampus);
 
         //use getUserProfile() to get selected user. Returns user or null if user not selected
         status = getUserProfile();
+
+        Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
+        campusesAll.add("Alameda");
+        campusesAll.add("Taguspark");
+        List<String> campuses = removeCurrentCampusFromList(currentCampus);
+
+        // Style and populate the spinner
+        ArrayAdapter<String> campusAdapter;
+        campusAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, campuses);
+
+        // Dropdown layout style
+        campusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+
+        //attaching data adapterFoodServices to spinner
+        spinnerListCampuses.setAdapter(campusAdapter);
+        spinnerListCampuses.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                if (adapterView.getItemAtPosition(position).equals("Choose Campus")) {
+                    // do nothing
+                } else {
+
+                    //counterDisplayFoodServiceInList = 0;
+
+                    displayChosenCampus(adapterView.getItemAtPosition(position).toString());
+                    removeCurrentCampusFromList(currentCampus);
+                    updateSpinner(adapterView.getItemAtPosition(position).toString());
+                    if (getUserProfile()==null){
+                        Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
+                    } else{
+                        displayDiningOptions(status, currentCampus);
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+        displayMainFoodServicesList();
 
         // initialize the WDSim API
         SimWifiP2pSocketManager.Init(getApplicationContext());
@@ -121,58 +151,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         registerReceiver(broadcastReceiver, filter);
 
         //manager.requestPeers(channel, MainActivity.this);
-        checkDistanceToCampuses();
 
-    }
-
-
-    private void checkDistanceToCampuses(){
-        LatLng latLngAlameda = new LatLng(38.736574, -9.139561);
-        LatLng latLngTaguspark = new LatLng(38.737505, -9.302475);
-        getDistance(latLngAlameda);
-        getDistance(latLngTaguspark);
-    }
-
-
-    private void displayListForChoosingCampus(){
-        Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
-        campusesAll.add("Alameda");
-        campusesAll.add("Taguspark");
-        List<String> campuses = removeCurrentCampusFromList(currentCampus);
-
-        // Style and populate the spinner
-        ArrayAdapter<String> campusAdapter;
-        campusAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, campuses);
-
-        // Dropdown layout style
-        campusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        //attaching data adapterFoodServices to spinner
-        spinnerListCampuses.setAdapter(campusAdapter);
-        spinnerListCampuses.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                if (adapterView.getItemAtPosition(position).equals("Choose Campus")) {
-                    // do nothing
-                } else {
-                    counterDisplayFoodServiceInList = 0;
-
-                    displayCampusName(adapterView.getItemAtPosition(position).toString());
-                    removeCurrentCampusFromList(currentCampus);
-                    updateSpinner(adapterView.getItemAtPosition(position).toString());
-                    if (getUserProfile()==null){
-                        Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
-                    } else{
-                        displayDiningOptions(status, currentCampus);
-                        displayMainFoodServicesList();
-                    }
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
     }
 
 
@@ -190,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             showProfileSetup();
             return true;
         }
+
         return super.onContextItemSelected(item);
     }
 
@@ -210,12 +190,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
 
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void displayCampusName(String campusName) {
+    private void displayChosenCampus(String campusName) {
         currentCampus = campusName;
         TextView textViewMainCurrentCampusSet = findViewById(R.id.textViewMainCurrentCampus);
         textViewMainCurrentCampusSet.setText(campusName);
-        displayDiningOptions(status, currentCampus);
 //       TODO: show campus from what the user chose for the main campus
     }
 
@@ -232,27 +210,58 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         return campuses;
     }
 
+    // int numberofservices = 0;
+    List<String> services = new ArrayList<>();
 
-    /**
+    */
+/**
      * Shows dining places based on status
-     */
-    // TODO: display dining options for taguspark as well
-    @RequiresApi(api = Build.VERSION_CODES.O)
+     *//*
+
+    // TODO: connect this to profile, add specification for status
     private void displayDiningOptions(String status, String campus) {
-        //get openinghours list (only displays for alameda at the moment)
-        if (campus.equals("Alameda")){
-            OpeningHours openHours = new OpeningHours();
-            List<String> foodServicesOpen ;
-            foodServicesOpen= openHours.CafeteriasOpen(status,campus);
-            //foodServicesOpen= openHours.CafeteriasOpen(status,campus);
-            List<String> foodServices= foodServicesOpen;
-            services = foodServicesOpen;
-            getDistanceValues(foodServices);
-        }
-        else if (campus.equals("Taguspark")){
-            services.clear();
-            arrayList.clear();
-            displayMainFoodServicesList();
+
+        switch (status) {
+            case "Student":
+                if (campus.equals("Alameda")) {
+                    //TODO: add accurate food services according to status
+                    List<String> foodServices = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
+                    services = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", " Copy Section");
+                    //numberofservices += foodServices.size();
+                    getDistanceValues(foodServices);
+
+                } else {
+                    //TODO append foddservices to services
+                    arrayList.clear();
+
+                    displayMainFoodServicesList();
+                }
+                break;
+            case "Professor":
+                if (campus.equals("Alameda")) {
+                    arrayList.clear();
+                } else {
+                    arrayList.clear();
+                }
+                break;
+            case "Researcher":
+                if (campus.equals("Alameda")) {
+                    //TODO: add food services for researcher
+                    arrayList.add(new MyDataListMain("Ground floor", "5", 5));
+                    arrayList.clear();
+                } else {
+                    arrayList.clear();
+                }
+                break;
+            case "Staff":
+                if (campus.equals("Alameda")) {
+                    //TODO: add food services for staff
+                    arrayList.add(new MyDataListMain("Taguspark Campus Restaurant", "6", 3));
+                    arrayList.clear();
+                } else {
+                    arrayList.clear();
+                }
+                break;
         }
     }
 
@@ -265,39 +274,18 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
 
 
-    private void getDistance(LatLng latLngCampus){
-        //TODO make actual currentlocation latLngCurrentLoc when delivering project
-        /*LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        String locationProvider = LocationManager.NETWORK_PROVIDER;
-        @SuppressLint("MissingPermission") android.location.Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
-        double userLat = lastKnownLocation.getLatitude();
-        double userLong = lastKnownLocation.getLongitude();
-        LatLng latLngCurrentLoc = new LatLng(userLat, userLong);*/
-
-        double userLatAl = 38.738300;
-        double userLongAl = -9.139040;
-        double userLatTa = 38.735580;
-        double userLongTa = -9.299288;
-        LatLng latLngCurrentLoc = new LatLng(userLatAl, userLongAl);
-
-
-        String url = getRequestUrl(latLngCurrentLoc, latLngCampus);
-        MainActivity.TaskRequestDistanceToCampuses taskRequestDistanceToCampuses= new MainActivity.TaskRequestDistanceToCampuses();
-        taskRequestDistanceToCampuses.execute(url);
-
-    }
-
-
 
     private void getDistanceValues(List<String> foodServices) {
 
         //TODO: change back to current after testing
-        /* // Get current location
+        */
+/* // Get current location
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         String locationProvider = LocationManager.NETWORK_PROVIDER;
         @SuppressLint("MissingPermission") android.location.Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
         double userLat = lastKnownLocation.getLatitude();
-        double userLong = lastKnownLocation.getLongitude();*/
+        double userLong = lastKnownLocation.getLongitude();*//*
+
         double userLat = 38.738300;
         double userLong = -9.139040;
         LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
@@ -313,7 +301,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                 String url = getRequestUrl(latLngCurrentLoc, latLngDest);
                 MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                 taskRequestDirections.execute(url);
+
                 // servicesToBeDisplayed.add("Main Building");
+
+
             }
             if (foodService.equals("Civil Building")) {
                 double latitude = 38.7370555;
@@ -336,6 +327,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                 MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                 taskRequestDirections.execute(url);
                 //servicesToBeDisplayed.add("North Tower");
+
             }
             if (foodService.equals("Mechanics Building II")) {
                 double latitude = 38.737145;
@@ -346,6 +338,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                 MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                 taskRequestDirections.execute(url);
                 //servicesToBeDisplayed.add("Mechanics Building II");
+
             }
             if (foodService.equals("AEIST Building")) {
                 double latitude = 38.736386;
@@ -389,6 +382,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                 //TODO: find lat/lng
             }
         }
+
     }
 
 
@@ -406,6 +400,11 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             }
         });
     }
+    //show Upload image activity. Only for testing
+    private void showUploadImageActivity() {
+        Intent intentUploadImageActivity = new Intent(this, UploadImageActivity.class);
+        startActivity(intentUploadImageActivity);
+    }
 
     private void showFoodService(String foodService) {
         Intent intentFoodService = new Intent(this, FoodServiceActivity.class);
@@ -420,8 +419,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
 
 
+    //TODO : maybe remove profile class and only use shared preferences
     //get user profile selected in profile
     private String getUserProfile() {
+
         final String key =getString(R.string.saved_profile_key);
         final String defValue = getString(R.string.saved_profile_default_key);
         SharedPreferences sharedPref = getSharedPreferences("settings",
@@ -429,19 +430,16 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         String selectedUserProfile = sharedPref.getString(key, defValue);
         //check if profile is saved as something else than default
         if (selectedUserProfile==getString(R.string.saved_profile_default_key)){
-            Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile ", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile ", Toast.LENGTH_SHORT).show();
             return null;
         }
         else {
-            //set global variable
-            GlobalClass globalAssetsVariable = (GlobalClass) getApplicationContext();
-            globalAssetsVariable.setProfile(selectedUserProfile);
-            //  String val =globalAssetsVariable.getProfile();
-            // Toast.makeText(getApplicationContext(), "Selected user"+val, Toast.LENGTH_LONG).show();
+            //profileVariable.setProfile(selectedUserProfile);
+            Toast.makeText(getApplicationContext(), "User saved as: " + selectedUserProfile , Toast.LENGTH_SHORT).show();
             return selectedUserProfile;
         }
-    }
 
+    }
 
     // method to get direction using httpurlconnection
     private String requestDirection(String reqUrl) throws IOException {
@@ -463,9 +461,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             while ((line = bufferedReader.readLine()) != null) {
                 stringBuffer.append(line);
             }
+
             responseString = stringBuffer.toString();
             bufferedReader.close();
             inputStreamReader.close();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -485,10 +486,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
 
 
-    /**
+    */
+/**
      * TaskRequestDirection and TarskParser are used for the AsyncTask to get time to walk
      * TODO: put them in their own class??
-     */
+     *//*
+
     // creates AsyncTask to call request Direction
     public class TaskRequestDirections extends AsyncTask<String, Void, String> {
 
@@ -511,8 +514,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             TaskParser taskParser = new TaskParser();
             taskParser.execute(s);
         }
-    }
 
+    }
 
 
     public class TaskParser extends AsyncTask<String, Void, String> {
@@ -524,6 +527,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             try {
                 jsonObject = new JSONObject(strings[0]);
                 duration = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").get("text").toString();
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -532,76 +536,14 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
         protected void onPostExecute(String duration) {
             Log.d("DURATION", duration);
-            if(counterDisplayFoodServiceInList<=services.size()-1){
-                arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), duration, 5));
-                displayMainFoodServicesList();
-                counterDisplayFoodServiceInList++;
-            }
+            arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), duration, 5));
+            displayMainFoodServicesList();
+            counterDisplayFoodServiceInList++;
+
+
         }
     }
 
-
-    /**
-     * TaskRequestDistanceToCampuses and TarskParserDistance are used for the AsyncTask to
-     * get distance to Taguspark and Alameda from current location
-     * TODO: put them in their own class??
-     */
-
-    // creates AsyncTask to call request Direction
-    public class TaskRequestDistanceToCampuses extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
-            String responseString = "";
-            try {
-                responseString = requestDirection(strings[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return responseString;
-        }
-
-        // parse json result
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            //parse json result here
-            TaskParserDistance taskParserDistance = new TaskParserDistance();
-            taskParserDistance.execute(s);
-        }
-    }
-
-
-    public class TaskParserDistance extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... strings) {
-            JSONObject jsonObject;
-            String distance = null;
-            try {
-                jsonObject = new JSONObject(strings[0]);
-                distance = jsonObject.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("distance").get("value").toString();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return distance;
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.O)
-        protected void onPostExecute(String distance) {
-            Log.d("DISTANCE", distance);
-            checkedDistanceToCampusCounter += 1;
-            if (Integer.parseInt(distance) <= 1000 && checkedDistanceToCampusCounter==1){
-                //displayChosenCampus("Alameda");
-                currentCampus = "Alameda";
-            } else if(Integer.parseInt(distance) <= 1000 && checkedDistanceToCampusCounter==2){
-                //displayChosenCampus("Taguspark");
-                currentCampus = "Taguspark";
-            }
-            if (checkedDistanceToCampusCounter == 2){
-                displayCampusName(currentCampus);
-                displayListForChoosingCampus();
-            }
-        }
-    }
 }
+
+*/
