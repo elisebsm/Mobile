@@ -24,10 +24,11 @@ public final class MyAppGlideModule extends AppGlideModule {
                 new FirebaseImageLoader.Factory());
     }
 
-    //override cache size
+    //override cache size to 100 MB. Limits cache that evicts items using an LRU algorithm (LrUResourceCache)
     @Override
     public void applyOptions(Context context, GlideBuilder builder) {
         long SizeInBytes= 100000000;
+       // long SizeInBytes= 20000000;
         builder.setMemoryCache(new LruResourceCache(SizeInBytes));
 
     }

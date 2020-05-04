@@ -29,15 +29,18 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
+        <receiver android:name=".BroadcastReceiver.WifiReceiver">
+            <intent-fillter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-fillter>
+        </receiver>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
         <activity android:name=".Activities.FoodServiceActivity" />
         <activity android:name=".Activities.DisplayImageActivity" />
-        <activity android:name=".Activities.UploadImageActivity"
-            android:parentActivityName=".Activities.FoodServiceActivity" />
-        <activity android:name=".Activities.ProfileSetupActivity"
-            android:parentActivityName=".Activities.MainActivity" />
+        <activity android:name=".Activities.UploadImageActivity"/>
+        <activity android:name=".Activities.ProfileSetupActivity" />
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
