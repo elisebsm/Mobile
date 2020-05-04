@@ -4,13 +4,9 @@
     package="com.example.cafeteriaappmuc">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- permision to check if user is on wifi. Used in loading images-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 
     <application
@@ -24,11 +20,6 @@
         tools:replace="andorid:icon">
 
 
-        <receiver android:name=".BroadcastReceiver.WifiReceiver" >
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -38,15 +29,15 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
         <activity android:name=".Activities.FoodServiceActivity" />
         <activity android:name=".Activities.DisplayImageActivity" />
         <activity android:name=".Activities.UploadImageActivity"
-            android:parentActivityName=".Activities.MenuDayActivity" />
-        <activity android:name=".Activities.ProfileSetupActivity"/>
+            android:parentActivityName=".Activities.FoodServiceActivity" />
+        <activity android:name=".Activities.ProfileSetupActivity"
+            android:parentActivityName=".Activities.MainActivity" />
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -55,10 +46,9 @@
         </intent-filter>
     </activity>
 
-    <activity android:name=".Activities.AddDishActivity"
-        android:parentActivityName=".Activities.DishesActivity"/>
-    <activity android:name=".Activities.DishesActivity" />
-    <activity android:name=".Activities.MenuDayActivity"/>
+    <activity android:name=".Activities.AddNewDishActivity"
+        android:parentActivityName=".Activities.DishActivity"/>
+    <activity android:name=".Activities.DishActivity" />
 
 </application>
 </manifest>

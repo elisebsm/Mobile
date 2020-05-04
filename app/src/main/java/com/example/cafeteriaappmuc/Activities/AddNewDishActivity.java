@@ -15,7 +15,7 @@ import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.R;
 import com.example.cafeteriaappmuc.io.DishIO;
 
-public class AddDishActivity extends AppCompatActivity {
+public class AddNewDishActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,8 @@ public class AddDishActivity extends AppCompatActivity {
         String foodService = ((GlobalClass) this.getApplication()).getFoodService(); //henter rikitg foodservice (global class)
         DishIO.saveDish(foodService, newDish);
 
-        Intent goBackToMenuIntent = new Intent (this, MenuDayActivity.class); //tilbake til meny
+        Intent goBackToMenuIntent = new Intent (this, FoodServiceActivity.class); //tilbake til meny
+        goBackToMenuIntent.putExtra("foodService", foodService);
         startActivity(goBackToMenuIntent);
     }
 }

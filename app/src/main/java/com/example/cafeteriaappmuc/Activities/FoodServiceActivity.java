@@ -5,24 +5,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cafeteriaappmuc.DirectionsParser;
+import com.example.cafeteriaappmuc.Dish;
 import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.PermissionUtils;
 import com.example.cafeteriaappmuc.R;
+import com.example.cafeteriaappmuc.io.DishIO;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -51,7 +51,9 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
     private double latitude;
     private double longitude;
     private String foodService;
-
+    static String DISH_NAME = "DISH_NAME";
+    static String DISH_PRICE = "DISH_PRICE";
+    static String DISH_DESCRIPTION = "DISH_DESCRIPTION";
 
     //TODO: add opening hours
     //TODO: show walking time, update every second minute or so??
@@ -62,49 +64,50 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
 
         Intent intent = getIntent();
         foodService = intent.getStringExtra("foodService");
+        ((GlobalClass) this.getApplication()).setFoodService(foodService);
 
         switch (foodService) {
             case "Main Building":
-                 latitude = 38.736574;
+                latitude = 38.736574;
                 longitude = -9.139561;
                 break;
             case "Civil Building":
-                 latitude = 38.7370555;
+                latitude = 38.7370555;
                 longitude = -9.140102;
 
                 break;
             case "North Tower":
-                 latitude = 38.7376027;
+                latitude = 38.7376027;
                 longitude = -9.1386528;
 
                 break;
             case "Mechanics Building II":
-                 latitude = 38.737145;
+                latitude = 38.737145;
                 longitude = -9.137595;
 
                 break;
             case "AEIST Building":
-                 latitude = 38.736386;
+                latitude = 38.736386;
                 longitude = -9.136973;
 
                 break;
             case "Copy Section":
-                 latitude = 38.736346;
+                latitude = 38.736346;
                 longitude = -9.137839;
 
                 break;
             case "South Tower":
-                 latitude = 38.7359943;
+                latitude = 38.7359943;
                 longitude = -9.138551;
 
                 break;
             case "Mathematics Building":
-                 latitude = 38.735502;
+                latitude = 38.735502;
                 longitude = -9.139760;
 
                 break;
             case "Interdisciplinary Building":
-                 latitude = 38.736039;
+                latitude = 38.736039;
                 longitude = -9.140131;
 
                 break;
@@ -128,21 +131,48 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //fra menuoftheday activity
+        //super.onCreate(savedInstanceState);
+        //  setContentView(R.layout.activity_menu_of_the_day);
+
+        //kan fjernes: String foodService = ((GlobalClass) this.getApplication()).getFoodService();
+
+        DishIO.getAllDishes(foodService, new DishIO.FirebaseCallback() { //henter alle disher fra DishIO
+            @Override
+            public void onCallback(List<Dish> list) { //Bruker callback og asynkron kode for å være sikker på å få alle elementene vi trenger før vi kjører koden
+                final Dish[] dishes = list.toArray(new Dish[list.size()]);
+
+                ArrayAdapter adapter = new ArrayAdapter<Dish>(getApplicationContext(),
+                        R.layout.dish_list_element, dishes);
+
+                ListView listView = (ListView) findViewById(R.id.dishList);
+                listView.setAdapter(adapter); //bruker adapter for å fylle en liste
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) { //lager en listner på "On click" for all dishene, som sender deg til riktig dish
+                        Dish selectedDish = dishes[position];
+
+                        Intent intent = new Intent(view.getContext(), DishActivity.class); //bruker intent og extras til å sende info om dishene til dishActivity
+                        intent.putExtra(DISH_NAME, selectedDish.name);
+                        intent.putExtra(DISH_PRICE, Double.toString(selectedDish.price));
+                        intent.putExtra(DISH_DESCRIPTION, selectedDish.description);
+                        startActivity(intent);
+                    }
+                });
+            }
+        });
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        //checking for internet connection
-
-        if(checkNetworkConnection()) {
-
-            mMap = googleMap;
-            ArrayList<LatLng> listPoints = new ArrayList<>();
-            enableMyLocation();
+        mMap = googleMap;
+        ArrayList<LatLng> listPoints = new ArrayList<>();
+        enableMyLocation();
 
 
-            //TODO: Change back to current location when finished testing, google cant calculate route fro norway to portugal
+        //TODO: Change back to current location when finished testing, google cant calculate route fro norway to portugal
        /* // Get current location
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         String locationProvider = LocationManager.NETWORK_PROVIDER;
@@ -151,26 +181,22 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         double userLong = lastKnownLocation.getLongitude();
         Log.i("LOGLOCATION", "" + userLat + " , "+ userLong);*/
 
-            double userLat = 38.737223;
-            double userLong = -9.136487;
-            LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
-            listPoints.add(latLngCurrentLoc);
+        double userLat = 38.737223;
+        double userLong = -9.136487;
+        LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
+        listPoints.add(latLngCurrentLoc);
 
-            //sets zoom level
-            float zoomLevel = 19.0f; //This goes up to 21
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngCurrentLoc, zoomLevel));
+        //sets zoom level
+        float zoomLevel = 19.0f; //This goes up to 21
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngCurrentLoc, zoomLevel));
 
-            LatLng latLngDestination = new LatLng(latitude, longitude);
-            listPoints.add(latLngDestination);
+        LatLng latLngDestination = new LatLng(latitude,longitude);
+        listPoints.add(latLngDestination);
 
-            // create the url to get request from first marker to second marker from google map api
-            String url = getRequestUrl(listPoints.get(0), listPoints.get(1));
-            FoodServiceActivity.TaskRequestDirections taskRequestDirections = new FoodServiceActivity.TaskRequestDirections();
-            taskRequestDirections.execute(url);
-        }
-        else{
-            //do not show map
-        }
+        // create the url to get request from first marker to second marker from google map api
+        String url = getRequestUrl(listPoints.get(0), listPoints.get(1));
+        FoodServiceActivity.TaskRequestDirections taskRequestDirections = new FoodServiceActivity.TaskRequestDirections();
+        taskRequestDirections.execute(url);
     }
 
     @Override
@@ -269,12 +295,8 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         @Override
         protected String doInBackground(String... strings) {
             String responseString = "";
-
             try {
-                if(checkNetworkConnection()){
-                    responseString = requestDirection(strings[0]);
-                }
-
+                responseString = requestDirection(strings[0]);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -337,27 +359,8 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         }
     }
 
-    public void showMenuOfTheDayClick(View view){
-        Intent menuIntent = new Intent(this, MenuDayActivity.class);
-        ((GlobalClass) this.getApplication()).setFoodService(foodService);
-        startActivity(menuIntent);
+    public void goToAddNewDish(View view) {
+        Intent intent = new Intent(this, AddNewDishActivity.class);
+        startActivity(intent);
     }
-
-
-    //checking if decvice is connected to wireless network
-    private boolean checkNetworkConnection() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkCapabilities capabilities = null;
-
-        capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
-
-        if (capabilities == null)
-            return false;
-        else {
-            int downloadBandwidth = capabilities.getLinkDownstreamBandwidthKbps();
-            return downloadBandwidth >= 250;
-        }
-    }
-
-
 }
