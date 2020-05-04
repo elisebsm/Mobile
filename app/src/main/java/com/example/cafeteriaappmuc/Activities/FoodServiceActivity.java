@@ -5,11 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +51,7 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
     private double latitude;
     private double longitude;
     private String foodService;
+
 
     //TODO: add opening hours
     //TODO: show walking time, update every second minute or so??
@@ -127,12 +133,16 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        ArrayList<LatLng> listPoints = new ArrayList<>();
-        enableMyLocation();
+        //checking for internet connection
+
+        if(checkNetworkConnection()) {
+
+            mMap = googleMap;
+            ArrayList<LatLng> listPoints = new ArrayList<>();
+            enableMyLocation();
 
 
-        //TODO: Change back to current location when finished testing, google cant calculate route fro norway to portugal
+            //TODO: Change back to current location when finished testing, google cant calculate route fro norway to portugal
        /* // Get current location
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         String locationProvider = LocationManager.NETWORK_PROVIDER;
@@ -141,22 +151,26 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         double userLong = lastKnownLocation.getLongitude();
         Log.i("LOGLOCATION", "" + userLat + " , "+ userLong);*/
 
-        double userLat = 38.737223;
-        double userLong = -9.136487;
-        LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
-        listPoints.add(latLngCurrentLoc);
+            double userLat = 38.737223;
+            double userLong = -9.136487;
+            LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
+            listPoints.add(latLngCurrentLoc);
 
-        //sets zoom level
-        float zoomLevel = 19.0f; //This goes up to 21
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngCurrentLoc, zoomLevel));
+            //sets zoom level
+            float zoomLevel = 19.0f; //This goes up to 21
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngCurrentLoc, zoomLevel));
 
-        LatLng latLngDestination = new LatLng(latitude,longitude);
-        listPoints.add(latLngDestination);
+            LatLng latLngDestination = new LatLng(latitude, longitude);
+            listPoints.add(latLngDestination);
 
-        // create the url to get request from first marker to second marker from google map api
-        String url = getRequestUrl(listPoints.get(0), listPoints.get(1));
-        FoodServiceActivity.TaskRequestDirections taskRequestDirections = new FoodServiceActivity.TaskRequestDirections();
-        taskRequestDirections.execute(url);
+            // create the url to get request from first marker to second marker from google map api
+            String url = getRequestUrl(listPoints.get(0), listPoints.get(1));
+            FoodServiceActivity.TaskRequestDirections taskRequestDirections = new FoodServiceActivity.TaskRequestDirections();
+            taskRequestDirections.execute(url);
+        }
+        else{
+            //do not show map
+        }
     }
 
     @Override
@@ -255,8 +269,12 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         @Override
         protected String doInBackground(String... strings) {
             String responseString = "";
+
             try {
-                responseString = requestDirection(strings[0]);
+                if(checkNetworkConnection()){
+                    responseString = requestDirection(strings[0]);
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -324,4 +342,22 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         ((GlobalClass) this.getApplication()).setFoodService(foodService);
         startActivity(menuIntent);
     }
+
+
+    //checking if decvice is connected to wireless network
+    private boolean checkNetworkConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkCapabilities capabilities = null;
+
+        capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+
+        if (capabilities == null)
+            return false;
+        else {
+            int downloadBandwidth = capabilities.getLinkDownstreamBandwidthKbps();
+            return downloadBandwidth >= 250;
+        }
+    }
+
+
 }

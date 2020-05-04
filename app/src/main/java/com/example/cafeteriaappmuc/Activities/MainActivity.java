@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -91,8 +92,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     //TODO: set current campus based on profile
     private String currentCampus = "";
     private String status;
-    private Context context;
-    private  Boolean result;
+
+
 
 
 
@@ -145,13 +146,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         status = getUserProfile();
 
 
-        //checking for internet connection
-        MainActivity.hasInternetConn hasInternetConn= new MainActivity.hasInternetConn();
-        hasInternetConn.execute();
-        if(result=true){
-            System.out.println("network on");
-            Toast.makeText(getApplicationContext(),"internet access", Toast.LENGTH_SHORT).show();
-        }
+
 
       //  Toast.makeText(getApplicationContext(), "wifi "+ state, Toast.LENGTH_LONG).show();
 
@@ -379,13 +374,21 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         double userLong = lastKnownLocation.getLongitude();
         LatLng latLngCurrentLoc = new LatLng(userLat, userLong);*/
 
-        double userLat = 38.738300;
-        double userLong = -9.139040;
-        LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
+        //checking for internet connection
 
-        String url = getRequestUrl(latLngCurrentLoc, latLngCampus);
-        MainActivity.TaskRequestDistanceToCampuses taskRequestDistanceToCampuses= new MainActivity.TaskRequestDistanceToCampuses();
-        taskRequestDistanceToCampuses.execute(url);
+        if(checkNetworkConnection()) {
+
+            double userLat = 38.738300;
+            double userLong = -9.139040;
+            LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
+
+            String url = getRequestUrl(latLngCurrentLoc, latLngCampus);
+            MainActivity.TaskRequestDistanceToCampuses taskRequestDistanceToCampuses = new MainActivity.TaskRequestDistanceToCampuses();
+            taskRequestDistanceToCampuses.execute(url);
+        }
+        else{
+            //do nothing
+        }
     }
 
     private void getDistanceValues(List<String> foodServices) {
@@ -610,8 +613,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         @Override
         protected String doInBackground(String... strings) {
             String responseString = "";
+
             try {
-                responseString = requestDirection(strings[0]);
+                if(checkNetworkConnection() ){
+                    responseString = requestDirection(strings[0]);
+                }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -737,59 +744,20 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null;
-    }
+    //checking if decvice is connected to wireless network
+    private boolean checkNetworkConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkCapabilities capabilities = null;
 
-    public class hasInternetConn extends AsyncTask<Void, Void, Boolean> {
+        capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
 
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            if (isNetworkAvailable()) {
-                try {
-                    HttpURLConnection urlc = (HttpURLConnection) (new URL("http://www.google.com").openConnection());
-                    urlc.setRequestProperty("User-Agent", "Test");
-                    urlc.setRequestProperty("Connection", "close");
-                    urlc.setConnectTimeout(1500);
-                    urlc.connect();
-                    if ((urlc.getResponseCode() == 200)){
-                        result = true;
-                        System.out.println("network on ");
-                    }
-
-
-                } catch (IOException e) {
-                    String err="no connection to internet";
-                    Log.d("Error_internet",err);
-                    result= false;
-                }
-
-            } else {
-                String err="No network available!";
-                Log.d("Error_netWork",err);
-                System.out.println("network not on ");
-                result= false;
-
-            }
-            return result;
+        if (capabilities == null)
+            return false;
+        else {
+            int downloadBandwidth = capabilities.getLinkDownstreamBandwidthKbps();
+            return downloadBandwidth >= 250;
         }
-
-
-        protected void onPostExecute(Long result) {
-            String done= "done checking for internet";
-            Log.d("Error_netWork",done);
-        }
-
-
-
     }
-
-
-
 
 
 
