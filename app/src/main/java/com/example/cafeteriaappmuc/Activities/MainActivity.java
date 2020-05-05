@@ -165,6 +165,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         } else {
             checkDistanceToCampuses();
         }
+
+        //For Broadcastreceiver
+        IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+        this.registerReceiver(new WifiReceiver(), intentFilter);
     }
 
     private void checkDistanceToCampuses(){
