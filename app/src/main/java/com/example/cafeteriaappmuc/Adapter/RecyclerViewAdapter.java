@@ -1,7 +1,9 @@
 package com.example.cafeteriaappmuc.Adapter;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.view.LayoutInflater;
@@ -10,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.example.cafeteriaappmuc.Activities.DishesActivity;
 import com.example.cafeteriaappmuc.GlideApp;
 import com.example.cafeteriaappmuc.R;
 
@@ -71,35 +73,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         //getting image from firebase or cache
         StorageReference storageReference =FirebaseStorage.getInstance().getReference();
         imagesRef = storageReference.child("images/"+foodService+"/"+dishName+"/"+imageName);
-        Glide.with(context).load(imagesRef).into(holder.imageView);
 
-       /*
-        if (deviceOnWifi()) {
-            //Loading image from Glide library when device on wifi.
-            GlideApp
-                    .with(context)
-                    .load(imagesRef)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.imageView);
-        }
-        else {
-            //Loading image from Glide library when not on wifi.
-            GlideApp
-                    .with(context)
-                    .load(imagesRef)
-                    .onlyRetrieveFromCache(true)
-                    .thumbnail(
-                            GlideApp
-                                    .with(context)
-                                    .load(imagesRef)
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    )
-                    .into(holder.imageView);
-
-        }*/
+        GlideApp
+                .with(context)
+                .load(imagesRef)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .into(holder.imageView);
 
     }
-
 
     @Override
     public int getItemCount() {
@@ -119,6 +100,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         }
     }
+
+
+
 
 
 
