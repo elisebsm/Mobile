@@ -85,8 +85,6 @@ import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketManager;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 
-import static android.os.Build.VERSION_CODES.M;
-
 public class MainActivity extends AppCompatActivity implements Serializable, SimWifiP2pManager.PeerListListener {
 
     private List<String> campusesAll = new ArrayList<>();
@@ -168,8 +166,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             checkDistanceToCampuses();
         }
 
+        //For Broadcastreceiver
+        IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+        this.registerReceiver(new WifiReceiver(), intentFilter);
     }
-
 
     private void checkDistanceToCampuses(){
         LatLng latLngAlameda = new LatLng(38.736574, -9.139561);
@@ -207,7 +207,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                     removeCurrentCampusFromList(currentCampus);
                     updateSpinner(adapterView.getItemAtPosition(position).toString());
                     if (getUserProfile()==null){
-                        Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "No user group . Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
+
                     } else{
                         displayDiningOptions(status, currentCampus);
                         displayMainFoodServicesList();
@@ -592,7 +593,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             }
         }
     }
-
 
 
     /**

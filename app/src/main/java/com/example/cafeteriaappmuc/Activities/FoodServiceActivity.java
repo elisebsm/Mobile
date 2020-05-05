@@ -176,7 +176,8 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
             ArrayList<LatLng> listPoints = new ArrayList<>();
             enableMyLocation();
 
-        //TODO: Change back to current location when finished testing, google cant calculate route fro norway to portugal
+
+            //TODO: Change back to current location when finished testing, google cant calculate route fro norway to portugal
        /* // Get current location
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         String locationProvider = LocationManager.NETWORK_PROVIDER;
