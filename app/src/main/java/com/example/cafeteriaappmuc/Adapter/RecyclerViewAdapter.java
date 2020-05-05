@@ -2,11 +2,17 @@ package com.example.cafeteriaappmuc.Adapter;
 
 import android.content.Context;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.cafeteriaappmuc.Activities.DishesActivity;
+import com.example.cafeteriaappmuc.GlideApp;
 import com.example.cafeteriaappmuc.R;
 
 
@@ -15,12 +21,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import com.example.cafeteriaappmuc.ImageUploadInfo;
+import com.example.cafeteriaappmuc.RecyclerItemClickListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+
 
    // private String recyclerViewImage;
 
@@ -31,6 +39,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     // Creating RecyclerView.
     private RecyclerView recyclerView;
+
 
     public RecyclerViewAdapter(Context context, List<ImageUploadInfo> TempList,String foodService, String dishName) {
 
@@ -62,11 +71,32 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         //getting image from firebase or cache
         StorageReference storageReference =FirebaseStorage.getInstance().getReference();
         imagesRef = storageReference.child("images/"+foodService+"/"+dishName+"/"+imageName);
-
-         //Loading image from Glide library.
         Glide.with(context).load(imagesRef).into(holder.imageView);
 
+       /*
+        if (deviceOnWifi()) {
+            //Loading image from Glide library when device on wifi.
+            GlideApp
+                    .with(context)
+                    .load(imagesRef)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.imageView);
+        }
+        else {
+            //Loading image from Glide library when not on wifi.
+            GlideApp
+                    .with(context)
+                    .load(imagesRef)
+                    .onlyRetrieveFromCache(true)
+                    .thumbnail(
+                            GlideApp
+                                    .with(context)
+                                    .load(imagesRef)
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    )
+                    .into(holder.imageView);
 
+        }*/
 
     }
 
@@ -89,6 +119,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         }
     }
+
 
 
 

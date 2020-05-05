@@ -33,8 +33,7 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_setup);
 
-        //Adding button to go back to main
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         users_spinner = (Spinner) findViewById(R.id.spinner_users);
         Button button = findViewById(R.id.save_button);
         final String key =getString(R.string.saved_profile_key);

@@ -84,7 +84,7 @@ public class DishActivity extends AppCompatActivity  {
 
         //initializing buttons
         uploadImagebtn = findViewById(R.id.uploadImagebtn);
-      //  showImagesBtn = findViewById(R.id.showImagesBtn);
+        //  showImagesBtn = findViewById(R.id.showImagesBtn);
 
         // on pressing upload button is called
         uploadImagebtn.setOnClickListener(new View.OnClickListener() {
@@ -181,10 +181,4 @@ public class DishActivity extends AppCompatActivity  {
     }
 
 
-    }
-
-
-
-
-
-
+}

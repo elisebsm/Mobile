@@ -2,14 +2,24 @@ package com.example.cafeteriaappmuc.Activities;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -30,19 +40,34 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.FutureTarget;
 import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
+import com.example.cafeteriaappmuc.Adapter.RecyclerViewAdapter;
+import com.example.cafeteriaappmuc.BroadcastReceiver.WifiReceiver;
 import com.example.cafeteriaappmuc.GlobalClass;
+import com.example.cafeteriaappmuc.ImageUploadInfo;
 import com.example.cafeteriaappmuc.MyDataListMain;
 import com.example.cafeteriaappmuc.OpeningHours;
+import com.example.cafeteriaappmuc.PermissionUtils;
 import com.example.cafeteriaappmuc.R;
 
 import com.example.cafeteriaappmuc.SimWifiP2pBroadcastReceiver;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,6 +75,7 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
@@ -96,6 +122,21 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     private int counterDisplayFoodServiceInList = 0;
 
 
+    //for downloading images on wifi
+    // Creating DatabaseReference.
+    DatabaseReference databaseReference;
+    private StorageReference imagesRef;
+
+    // Creating RecyclerView.
+    RecyclerView recyclerView;
+
+    // Creating RecyclerView.Adapter.
+    RecyclerView.Adapter adapter ;
+
+    // Creating List of ImageUploadInfo class.
+    List<ImageUploadInfo> list = new ArrayList<>();
+
+
     private List<String> services =new ArrayList<>();
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -121,7 +162,11 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         registerReceiver(broadcastReceiver, filter);
 
         //manager.requestPeers(channel, MainActivity.this);
-        checkDistanceToCampuses();
+        if (getUserProfile() == null) {
+            Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
+        } else {
+            checkDistanceToCampuses();
+        }
 
     }
 
@@ -274,17 +319,23 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         double userLong = lastKnownLocation.getLongitude();
         LatLng latLngCurrentLoc = new LatLng(userLat, userLong);*/
 
-        double userLatAl = 38.738300;
-        double userLongAl = -9.139040;
-        double userLatTa = 38.735580;
-        double userLongTa = -9.299288;
-        LatLng latLngCurrentLoc = new LatLng(userLatAl, userLongAl);
+        //checking for internet connection
 
+        if(checkNetworkConnection()) {
 
-        String url = getRequestUrl(latLngCurrentLoc, latLngCampus);
-        MainActivity.TaskRequestDistanceToCampuses taskRequestDistanceToCampuses= new MainActivity.TaskRequestDistanceToCampuses();
-        taskRequestDistanceToCampuses.execute(url);
+            double userLatAl = 38.738300;
+            double userLongAl = -9.139040;
+            double userLatTa = 38.735580;
+            double userLongTa = -9.299288;
+            LatLng latLngCurrentLoc = new LatLng(userLatAl, userLongAl);
 
+            String url = getRequestUrl(latLngCurrentLoc, latLngCampus);
+            MainActivity.TaskRequestDistanceToCampuses taskRequestDistanceToCampuses = new MainActivity.TaskRequestDistanceToCampuses();
+            taskRequestDistanceToCampuses.execute(url);
+        }
+        else{
+            //do nothing
+        }
     }
 
 
@@ -487,7 +538,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
     /**
      * TaskRequestDirection and TarskParser are used for the AsyncTask to get time to walk
-     * TODO: put them in their own class??
+     * TODO: put them in their own class?? What if userdoes not allow user to use gps? fault handeling
      */
     // creates AsyncTask to call request Direction
     public class TaskRequestDirections extends AsyncTask<String, Void, String> {
@@ -496,7 +547,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         protected String doInBackground(String... strings) {
             String responseString = "";
             try {
-                responseString = requestDirection(strings[0]);
+                if(checkNetworkConnection() ){
+                    responseString = requestDirection(strings[0]);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -539,6 +592,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             }
         }
     }
+
 
 
     /**
@@ -604,4 +658,104 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             }
         }
     }
+
+
+    //check for wifi status of broadcast receiver
+    private BroadcastReceiver wifiStateReceiver= new WifiReceiver();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter intentFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        registerReceiver(wifiStateReceiver, intentFilter);
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(wifiStateReceiver);
+
+    }
+
+    //checking if decvice is connected to internet
+    private boolean checkNetworkConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkCapabilities capabilities = null;
+
+        capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+
+        if (capabilities == null)
+            return false;
+        else {
+            int downloadBandwidth = capabilities.getLinkDownstreamBandwidthKbps();
+            return downloadBandwidth >= 250;
+        }
+    }
+
+
+
+
+
+
+
+/*
+    private void wfifiDownloadImages(){
+        // Assign id to RecyclerView.
+        recyclerView = findViewById(R.id.recyclerViewImage);
+
+        // Setting RecyclerView size true.
+        recyclerView.setHasFixedSize(true);
+
+        // Setting RecyclerView layout as LinearLayout.
+        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
+
+        // Setting up Firebase image upload folder path in databaseReference.
+        final String foodService= "Main Building";
+        final String dishName="Pasta Carbonara";
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("Dishes/"+foodService+"/"+dishName + "/images");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+
+                    ImageUploadInfo imageUploadInfo = postSnapshot.getValue(ImageUploadInfo.class);
+
+                    list.add(imageUploadInfo);
+                }
+
+                adapter = new RecyclerViewAdapter(getApplicationContext(), list, foodService, dishName);
+
+                recyclerView.setAdapter(adapter);
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+
+
+            }
+        });
+    }
+    */
+
+/*
+    private void cacheImages(){
+        // Setting up Firebase image upload folder path in databaseReference.
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        imagesRef = storageReference.child("/images/Main Building/Pasta Carbonara"+"/"+"5063426b-be36-4f2d-8624-b8e141c21341");
+
+        FutureTarget<File> future = Glide.with(this)
+               .load(imagesRef)
+                .downloadOnly(500, 500);
+    }
+*/
+
+
 }

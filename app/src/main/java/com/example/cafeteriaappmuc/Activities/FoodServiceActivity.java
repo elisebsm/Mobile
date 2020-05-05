@@ -5,9 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -167,9 +170,11 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        ArrayList<LatLng> listPoints = new ArrayList<>();
-        enableMyLocation();
+
+        if(checkNetworkConnection()) {
+            mMap = googleMap;
+            ArrayList<LatLng> listPoints = new ArrayList<>();
+            enableMyLocation();
 
         //TODO: Change back to current location when finished testing, google cant calculate route fro norway to portugal
        /* // Get current location
@@ -180,22 +185,23 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         double userLong = lastKnownLocation.getLongitude();
         Log.i("LOGLOCATION", "" + userLat + " , "+ userLong);*/
 
-        double userLat = 38.737223;
-        double userLong = -9.136487;
-        LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
-        listPoints.add(latLngCurrentLoc);
+            double userLat = 38.737223;
+            double userLong = -9.136487;
+            LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
+            listPoints.add(latLngCurrentLoc);
 
-        //sets zoom level
-        float zoomLevel = 19.0f; //This goes up to 21
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngCurrentLoc, zoomLevel));
+            //sets zoom level
+            float zoomLevel = 19.0f; //This goes up to 21
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngCurrentLoc, zoomLevel));
 
-        LatLng latLngDestination = new LatLng(latitude,longitude);
-        listPoints.add(latLngDestination);
+            LatLng latLngDestination = new LatLng(latitude, longitude);
+            listPoints.add(latLngDestination);
 
-        // create the url to get request from first marker to second marker from google map api
-        String url = getRequestUrl(listPoints.get(0), listPoints.get(1));
-        FoodServiceActivity.TaskRequestDirections taskRequestDirections = new FoodServiceActivity.TaskRequestDirections();
-        taskRequestDirections.execute(url);
+            // create the url to get request from first marker to second marker from google map api
+            String url = getRequestUrl(listPoints.get(0), listPoints.get(1));
+            FoodServiceActivity.TaskRequestDirections taskRequestDirections = new FoodServiceActivity.TaskRequestDirections();
+            taskRequestDirections.execute(url);
+        }
     }
 
     @Override
@@ -251,6 +257,7 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
     // method to get direction using httpurlconnection
     private String requestDirection(String reqUrl) throws IOException {
         String responseString = "";
+        if(checkNetworkConnection()){
         InputStream inputStream = null;
         HttpURLConnection httpURLConnection = null;
         try {
@@ -277,11 +284,12 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         }catch (IOException e ){
             e.printStackTrace();
         } finally {
-            if(inputStream != null){
+            if (inputStream != null) {
                 inputStream.close();
             }
             if (httpURLConnection != null) {
                 httpURLConnection.disconnect();
+            }
             }
         }
         return responseString;
@@ -361,5 +369,21 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
     public void goToAddNewDish(View view) {
         Intent intent = new Intent(this, AddNewDishActivity.class);
         startActivity(intent);
+    }
+
+
+    //checking if decvice is connected to internet
+    private boolean checkNetworkConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkCapabilities capabilities = null;
+
+        capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
+
+        if (capabilities == null)
+            return false;
+        else {
+            int downloadBandwidth = capabilities.getLinkDownstreamBandwidthKbps();
+            return downloadBandwidth >= 250;
+        }
     }
 }
