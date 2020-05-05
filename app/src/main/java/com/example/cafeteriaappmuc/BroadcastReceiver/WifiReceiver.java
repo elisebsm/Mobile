@@ -20,7 +20,7 @@ public class WifiReceiver extends BroadcastReceiver {
             case WifiManager.WIFI_STATE_ENABLED:
 
                 System.out.println("Wifi is on");
-                Toast.makeText(context, "Wifi on", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "Wifi on", Toast.LENGTH_SHORT).show();
                 break;
             case WifiManager.WIFI_STATE_DISABLED:
                 System.out.println("wifi off");

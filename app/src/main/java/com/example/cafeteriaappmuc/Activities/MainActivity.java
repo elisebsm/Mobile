@@ -91,10 +91,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
     //TODO: set current campus based on profile
     private String currentCampus = "";
-    private String status;
-    private static String hoursOpen;
-    private Boolean isOpen;
-    //final Button button = findViewById(R.id.profile_button);
+    //private String status;
 
     /**
      * copied from lab 4
@@ -145,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         //displayChosenCampus(currentCampus);
 
         //use getUserProfile() to get selected user. Returns user or null if user not selected
-        status = getUserProfile();
+        //status = getUserProfile();
 
         // initialize the WDSim API
         SimWifiP2pSocketManager.Init(getApplicationContext());
@@ -163,7 +160,14 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         if (getUserProfile() == null) {
             Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
         } else {
-            checkDistanceToCampuses();
+            //checking for internet connection
+            if(checkNetworkConnection()) {
+                checkDistanceToCampuses();
+                //displayListForChoosingCampus();
+            }
+            else{
+                displayListForChoosingCampus();
+            }
         }
 
         //For Broadcastreceiver
@@ -171,18 +175,36 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         this.registerReceiver(new WifiReceiver(), intentFilter);
     }
 
+    @Override
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    protected void onResume() {
+        super.onResume();
+        displayListForChoosingCampus();
+        //displayDiningOptions(getUserProfile(), currentCampus);
+        //displayMainFoodServicesList();
+        if(getUserProfile()!= null){
+            checkDistanceToCampuses();
+        }
+    }
+
+
     private void checkDistanceToCampuses(){
         LatLng latLngAlameda = new LatLng(38.736574, -9.139561);
         LatLng latLngTaguspark = new LatLng(38.737505, -9.302475);
         getDistance(latLngAlameda);
         getDistance(latLngTaguspark);
+
     }
 
 
     private void displayListForChoosingCampus(){
         Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
-        campusesAll.add("Alameda");
-        campusesAll.add("Taguspark");
+        if(!campusesAll.contains("Alameda")){
+            campusesAll.add("Alameda");
+        }
+        if(!campusesAll.contains("Taguspark")){
+            campusesAll.add("Taguspark");
+        }
         List<String> campuses = removeCurrentCampusFromList(currentCampus);
 
         // Style and populate the spinner
@@ -203,14 +225,15 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                 } else {
                     counterDisplayFoodServiceInList = 0;
 
-                    displayCampusName(adapterView.getItemAtPosition(position).toString());
-                    removeCurrentCampusFromList(currentCampus);
-                    updateSpinner(adapterView.getItemAtPosition(position).toString());
                     if (getUserProfile()==null){
                         Toast.makeText(getApplicationContext(), "No user group . Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
 
                     } else{
-                        displayDiningOptions(status, currentCampus);
+                        Log.d("STATUS", getUserProfile());
+                        displayCampusName(adapterView.getItemAtPosition(position).toString());
+                        removeCurrentCampusFromList(currentCampus);
+                        updateSpinner(adapterView.getItemAtPosition(position).toString());
+                        displayDiningOptions(getUserProfile(), currentCampus);
                         displayMainFoodServicesList();
                     }
                 }
@@ -261,7 +284,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         currentCampus = campusName;
         TextView textViewMainCurrentCampusSet = findViewById(R.id.textViewMainCurrentCampus);
         textViewMainCurrentCampusSet.setText(campusName);
-        displayDiningOptions(status, currentCampus);
+
+        displayDiningOptions(getUserProfile(), currentCampus);
 //       TODO: show campus from what the user chose for the main campus
     }
 
@@ -290,7 +314,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             OpeningHours openHours = new OpeningHours();
             List<String> foodServicesOpen ;
             foodServicesOpen= openHours.CafeteriasOpen(status,campus);
-            //foodServicesOpen= openHours.CafeteriasOpen(status,campus);
             List<String> foodServices= foodServicesOpen;
             services = foodServicesOpen;
             getDistanceValues(foodServices);
@@ -320,8 +343,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         double userLong = lastKnownLocation.getLongitude();
         LatLng latLngCurrentLoc = new LatLng(userLat, userLong);*/
 
-        //checking for internet connection
-
+       //checking for internet connection
         if(checkNetworkConnection()) {
 
             double userLatAl = 38.738300;
@@ -335,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             taskRequestDistanceToCampuses.execute(url);
         }
         else{
-            //do nothing
+            displayListForChoosingCampus();
         }
     }
 
@@ -423,16 +445,28 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                 double latitude = 38.7359943;
                 double longitude = -9.138551;
                 LatLng latLngDest = new LatLng(latitude, longitude);
+
+                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                taskRequestDirections.execute(url);
             }
             if (foodService.equals("Mathematics Building")) {
                 double latitude = 38.735502;
                 double longitude = -9.139760;
                 LatLng latLngDest = new LatLng(latitude, longitude);
+
+                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                taskRequestDirections.execute(url);
             }
             if (foodService.equals("Interdisciplinary Building")) {
                 double latitude = 38.736039;
                 double longitude = -9.140131;
                 LatLng latLngDest = new LatLng(latitude, longitude);
+
+                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                taskRequestDirections.execute(url);
             }
             if (foodService.equals("Ground floor")) {
                 //TODO: find lat/lng
