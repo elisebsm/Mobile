@@ -4,67 +4,46 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
 import android.net.wifi.WifiManager;
 
 import android.widget.Toast;
 
+import com.example.cafeteriaappmuc.Activities.MainActivity;
+import com.example.cafeteriaappmuc.NetworkStatus;
+
+import java.util.concurrent.TimeUnit;
+
 public class WifiReceiver extends BroadcastReceiver {
 
-    //checks if device is connected to wifi
+    //checks if device is connected to internet
     @Override
     public void onReceive(Context context, Intent intent) {
-        int wifiStateExtra = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,
-                WifiManager.WIFI_STATE_UNKNOWN);
-
-        switch (wifiStateExtra) {
-            case WifiManager.WIFI_STATE_ENABLED:
-
-                System.out.println("Wifi is on");
-                //Toast.makeText(context, "Wifi on", Toast.LENGTH_SHORT).show();
-                break;
-            case WifiManager.WIFI_STATE_DISABLED:
-                System.out.println("wifi off");
-                Toast.makeText(context, "Wifi off", Toast.LENGTH_SHORT).show();
-                break;
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-    }
-};
+        if (NetworkStatus.checkNetworkConnection(context)) {
+            if (NetworkStatus.checkWifiConnectivity(context)) {
+                //Toast.makeText(context, "Wifi connected", Toast.LENGTH_SHORT).show();
+                context.sendBroadcast(new Intent("WIFI_CONNECTED"));
 
+            } else {
+               // Toast.makeText(context, "Cellular network", Toast.LENGTH_SHORT).show();
+            }
+        } else {
 
-
-
-/*
-    private static class Task extends AsyncTask<String, Integer, String> {
-
-        private static final String TAG = "MybroadcastReceiver";
-        private final PendingResult pendingResult;
-        private final Intent intent;
-
-        private Task(PendingResult pendingResult, Intent intent) {
-            this.pendingResult = pendingResult;
-            this.intent = intent;
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Action: " + intent.getAction() + "\n");
-            sb.append("URI: " + intent.toUri(Intent.URI_INTENT_SCHEME).toString() + "\n");
-            String log = sb.toString();
-            Log.d(TAG, log);
-            return log;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            // Must call finish() so the BroadcastReceiver can be recycled.
-            pendingResult.finish();
+            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show();
         }
     }
 
 
-*/
+
+}
+
+
 
 
 

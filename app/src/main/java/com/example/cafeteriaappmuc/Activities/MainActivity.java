@@ -42,34 +42,23 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.request.FutureTarget;
+
 import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
-import com.example.cafeteriaappmuc.Adapter.RecyclerViewAdapter;
+
 import com.example.cafeteriaappmuc.BroadcastReceiver.WifiReceiver;
 import com.example.cafeteriaappmuc.GlobalClass;
-import com.example.cafeteriaappmuc.ImageUploadInfo;
 import com.example.cafeteriaappmuc.MyDataListMain;
 import com.example.cafeteriaappmuc.OpeningHours;
 import com.example.cafeteriaappmuc.PermissionUtils;
 import com.example.cafeteriaappmuc.R;
-
 import com.example.cafeteriaappmuc.SimWifiP2pBroadcastReceiver;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -77,8 +66,8 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
@@ -93,7 +82,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
     //TODO: set current campus based on profile
     private String currentCampus = "";
-    //private String status;
+    private String status;
+    private static String hoursOpen;
+    private Boolean isOpen;
+    //final Button button = findViewById(R.id.profile_button);
 
     /**
      * copied from lab 4
@@ -108,32 +100,16 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     private TextView mTextOutput;
     private SimWifiP2pBroadcastReceiver broadcastReceiver;
 
-
     private ListView listViewFoodServices;
     private ArrayList<MyDataListMain> arrayList = new ArrayList<>();
     private AdapterListViewMainFoodServices adapterFoodServices;
-
 
     public int checkedDistanceToCampusCounter = 0;
     private int counterDisplayFoodServiceInList = 0;
     private int LOCATION_PERMISSION_REQUEST_CODE = 101;
 
     private boolean locationEnabled = false;
-
-
-    //for downloading images on wifi
-    // Creating DatabaseReference.
-    DatabaseReference databaseReference;
-    private StorageReference imagesRef;
-
-    // Creating RecyclerView.
-    RecyclerView recyclerView;
-
-    // Creating RecyclerView.Adapter.
-    RecyclerView.Adapter adapter ;
-
-    // Creating List of ImageUploadInfo class.
-    List<ImageUploadInfo> list = new ArrayList<>();
+    //network
 
 
     private List<String> services =new ArrayList<>();
@@ -147,6 +123,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
         //use getUserProfile() to get selected user. Returns user or null if user not selected
         //status = getUserProfile();
+
+        //register broadcast receiver for wifi state change instead of in manifest
+        IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+        this.registerReceiver(new WifiReceiver(), intentFilter);
+        registerReceiver(wifiReceiver, new IntentFilter("WIFI_CONNECTED"));
+
 
         // initialize the WDSim API
         SimWifiP2pSocketManager.Init(getApplicationContext());
@@ -173,12 +155,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                 displayListForChoosingCampus();
             }
         }
-
         enableMyLocation();
-
-        //For Broadcastreceiver
-        IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
-        this.registerReceiver(new WifiReceiver(), intentFilter);
     }
 
     @Override
@@ -279,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         Spinner spinnerUpdatetList = findViewById(R.id.spinnerListOfCampus);
         List<String> campusesUpdated = removeCurrentCampusFromList(chosenCampus);
 
-        //Style and populate the spinner
+        // Style and populate the spinner
         ArrayAdapter campusAdapterUpdater;
         campusAdapterUpdater = new ArrayAdapter(this, android.R.layout.simple_spinner_item, campusesUpdated);
 
@@ -296,8 +273,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         currentCampus = campusName;
         TextView textViewMainCurrentCampusSet = findViewById(R.id.textViewMainCurrentCampus);
         textViewMainCurrentCampusSet.setText(campusName);
-
-        displayDiningOptions(getUserProfile(), currentCampus);
+        displayDiningOptions(status, currentCampus);
 //       TODO: show campus from what the user chose for the main campus
     }
 
@@ -323,8 +299,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     private void displayDiningOptions(String status, String campus) {
         //get openinghours list (only displays for alameda at the moment)
         if (campus.equals("Alameda")){
-            //services.clear();
-            //arrayList.clear();
             OpeningHours openHours = new OpeningHours();
             List<String> foodServicesOpen ;
             foodServicesOpen= openHours.CafeteriasOpen(status,campus);
@@ -357,8 +331,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         double userLong = lastKnownLocation.getLongitude();
         LatLng latLngCurrentLoc = new LatLng(userLat, userLong);*/
 
-       //checking for internet connection
-
+        //checking for internet connection
         if(checkNetworkConnection() && locationEnabled) {
 
             double userLatAl = 38.738300;
@@ -422,7 +395,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
 
         List<LatLng> latLngs = new ArrayList<>();
-
         for (String foodService : foodServices) {
             if(locationEnabled){
                 if (foodService.equals("Main Building")) {
@@ -694,7 +666,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         protected String doInBackground(String... strings) {
             String responseString = "";
             try {
-                if(checkNetworkConnection() ){
+                if(checkNetworkConnection()){
                     responseString = requestDirection(strings[0]);
                 }
             } catch (IOException e) {
@@ -805,23 +777,21 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         }
     }
 
+    //listen for internet conn on wifi
+    BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context, "Wifi connected", Toast.LENGTH_SHORT).show();
 
-    //check for wifi status of broadcast receiver
-    private BroadcastReceiver wifiStateReceiver= new WifiReceiver();
-    @Override
-    protected void onStart() {
-        super.onStart();
-        IntentFilter intentFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        registerReceiver(wifiStateReceiver, intentFilter);
-
-    }
+        }
+    };
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterReceiver(wifiStateReceiver);
-
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(wifiReceiver);
     }
+
 
     //checking if decvice is connected to internet
     private boolean checkNetworkConnection() {
@@ -837,71 +807,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             return downloadBandwidth >= 250;
         }
     }
-
-
-
-
-
-
-
-/*
-    private void wfifiDownloadImages(){
-        // Assign id to RecyclerView.
-        recyclerView = findViewById(R.id.recyclerViewImage);
-
-        // Setting RecyclerView size true.
-        recyclerView.setHasFixedSize(true);
-
-        // Setting RecyclerView layout as LinearLayout.
-        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-
-
-        // Setting up Firebase image upload folder path in databaseReference.
-        final String foodService= "Main Building";
-        final String dishName="Pasta Carbonara";
-
-        databaseReference = FirebaseDatabase.getInstance().getReference("Dishes/"+foodService+"/"+dishName + "/images");
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-
-                    ImageUploadInfo imageUploadInfo = postSnapshot.getValue(ImageUploadInfo.class);
-
-                    list.add(imageUploadInfo);
-                }
-
-                adapter = new RecyclerViewAdapter(getApplicationContext(), list, foodService, dishName);
-
-                recyclerView.setAdapter(adapter);
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-
-
-            }
-        });
-    }
-    */
-
-/*
-    private void cacheImages(){
-        // Setting up Firebase image upload folder path in databaseReference.
-
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        imagesRef = storageReference.child("/images/Main Building/Pasta Carbonara"+"/"+"5063426b-be36-4f2d-8624-b8e141c21341");
-
-        FutureTarget<File> future = Glide.with(this)
-               .load(imagesRef)
-                .downloadOnly(500, 500);
-    }
-*/
 
 
 }
