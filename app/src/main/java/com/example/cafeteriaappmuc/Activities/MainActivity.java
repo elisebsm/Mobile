@@ -396,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
         List<LatLng> latLngs = new ArrayList<>();
         for (String foodService : foodServices) {
-            if(locationEnabled){
+            if(locationEnabled && checkNetworkConnection()){
                 if (foodService.equals("Main Building")) {
                     double latitude = 38.736574;
                     double longitude = -9.139561;
