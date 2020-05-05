@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +58,8 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
     static String DISH_NAME = "DISH_NAME";
     static String DISH_PRICE = "DISH_PRICE";
     static String DISH_DESCRIPTION = "DISH_DESCRIPTION";
+    private Button shareBtn;
+    private List<String> dishNames = new ArrayList<>();
 
     //TODO: add opening hours
     //TODO: show walking time, update every second minute or so??
@@ -129,6 +132,16 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         TextView textViewFoodServiceName = findViewById(R.id.tvFoodServiceName);
         textViewFoodServiceName.setText(foodService);
 
+        //listen for share button click
+        shareBtn = findViewById(R.id.shareFoodServiceBtn);
+        shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                shareSocialMedia();
+
+            }
+        });
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -144,7 +157,14 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         DishIO.getAllDishes(foodService, new DishIO.FirebaseCallback() { //henter alle disher fra DishIO
             @Override
             public void onCallback(List<Dish> list) { //Bruker callback og asynkron kode for å være sikker på å få alle elementene vi trenger før vi kjører koden
+                //get list of dishnames (that is not final) in order to use in socialmedia
                 final Dish[] dishes = list.toArray(new Dish[list.size()]);
+
+                for (int i=0; i< list.size() ; i++){
+                    Dish selectedDish = dishes[i];
+                    String dishName =selectedDish.name;
+                    dishNames.add(dishName);
+                }
 
                 ArrayAdapter adapter = new ArrayAdapter<Dish>(getApplicationContext(),
                         R.layout.dish_list_element, dishes);
@@ -386,5 +406,43 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
             int downloadBandwidth = capabilities.getLinkDownstreamBandwidthKbps();
             return downloadBandwidth >= 250;
         }
+    }
+
+    private void shareSocialMedia(){
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TITLE, "Hi!");
+        StringBuilder builder = new StringBuilder();
+
+        if (dishNames.size()==0){
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Come and sit with me at the " +foodService+". "+"They do not have food so bring your own!");
+
+        }
+        else if(dishNames.size()<=1){
+            for (String value : dishNames) {
+                builder.append(value+" ");
+            }
+            String dishesToShare = builder.toString();
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Come and eat with me at the " +foodService+". "+"They have "+dishesToShare+"on the menu." );
+        }
+        else{
+            //parse string and remove last element of list
+            int len = dishNames.size()-1;
+            String lastElement= dishNames.get(len);
+
+            dishNames.remove(len);
+            for (String value : dishNames) {
+                builder.append(value+", ");
+            }
+            String dishesToShare = builder.toString();
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Come and eat with me at the " +foodService+". "+"They have "+dishesToShare+" and "+
+                    lastElement+" on the menu." );
+
+        }
+
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
     }
 }

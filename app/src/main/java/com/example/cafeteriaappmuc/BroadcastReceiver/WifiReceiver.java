@@ -20,11 +20,11 @@ public class WifiReceiver extends BroadcastReceiver {
     //checks if device is connected to internet
     @Override
     public void onReceive(Context context, Intent intent) {
-        try {
-            TimeUnit.SECONDS.sleep(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+       // try {
+         //   TimeUnit.SECONDS.sleep(1);
+       // } catch (InterruptedException e) {
+         //   e.printStackTrace();
+      //  }
         if (NetworkStatus.checkNetworkConnection(context)) {
             if (NetworkStatus.checkWifiConnectivity(context)) {
                 //Toast.makeText(context, "Wifi connected", Toast.LENGTH_SHORT).show();
