@@ -273,7 +273,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         currentCampus = campusName;
         TextView textViewMainCurrentCampusSet = findViewById(R.id.textViewMainCurrentCampus);
         textViewMainCurrentCampusSet.setText(campusName);
-        displayDiningOptions(status, currentCampus);
+
+        displayDiningOptions(getUserProfile(), currentCampus);
 //       TODO: show campus from what the user chose for the main campus
     }
 
