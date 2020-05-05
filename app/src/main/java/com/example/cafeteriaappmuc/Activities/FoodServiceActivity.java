@@ -230,7 +230,7 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
             }
         } else {
             // Permission to access the location is missing. Show rationale and request permission
-            PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+            PermissionUtils.requestPermissionFood(this, LOCATION_PERMISSION_REQUEST_CODE,
                     Manifest.permission.ACCESS_FINE_LOCATION, true);
         }
     }

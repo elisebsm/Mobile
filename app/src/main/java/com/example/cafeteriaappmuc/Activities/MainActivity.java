@@ -1,7 +1,9 @@
 package com.example.cafeteriaappmuc.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -113,8 +115,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
 
 
     public int checkedDistanceToCampusCounter = 0;
-
     private int counterDisplayFoodServiceInList = 0;
+    private int LOCATION_PERMISSION_REQUEST_CODE = 101;
+
+    private boolean locationEnabled = false;
 
 
     //for downloading images on wifi
@@ -170,6 +174,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             }
         }
 
+        enableMyLocation();
+
         //For Broadcastreceiver
         IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
         this.registerReceiver(new WifiReceiver(), intentFilter);
@@ -184,16 +190,20 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         //displayMainFoodServicesList();
         if(getUserProfile()!= null){
             checkDistanceToCampuses();
+
+            displayDiningOptions(getUserProfile(), currentCampus);
+            displayMainFoodServicesList();
         }
     }
 
 
     private void checkDistanceToCampuses(){
-        LatLng latLngAlameda = new LatLng(38.736574, -9.139561);
-        LatLng latLngTaguspark = new LatLng(38.737505, -9.302475);
-        getDistance(latLngAlameda);
-        getDistance(latLngTaguspark);
-
+        if(locationEnabled){
+            LatLng latLngAlameda = new LatLng(38.736574, -9.139561);
+            LatLng latLngTaguspark = new LatLng(38.737505, -9.302475);
+            getDistance(latLngAlameda);
+            getDistance(latLngTaguspark);
+        }
     }
 
 
@@ -229,6 +239,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                         Toast.makeText(getApplicationContext(), "No user group . Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
 
                     } else{
+                        services.clear();
+                        arrayList.clear();
                         Log.d("STATUS", getUserProfile());
                         displayCampusName(adapterView.getItemAtPosition(position).toString());
                         removeCurrentCampusFromList(currentCampus);
@@ -267,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         Spinner spinnerUpdatetList = findViewById(R.id.spinnerListOfCampus);
         List<String> campusesUpdated = removeCurrentCampusFromList(chosenCampus);
 
-        // Style and populate the spinner
+        //Style and populate the spinner
         ArrayAdapter campusAdapterUpdater;
         campusAdapterUpdater = new ArrayAdapter(this, android.R.layout.simple_spinner_item, campusesUpdated);
 
@@ -311,6 +323,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     private void displayDiningOptions(String status, String campus) {
         //get openinghours list (only displays for alameda at the moment)
         if (campus.equals("Alameda")){
+            //services.clear();
+            //arrayList.clear();
             OpeningHours openHours = new OpeningHours();
             List<String> foodServicesOpen ;
             foodServicesOpen= openHours.CafeteriasOpen(status,campus);
@@ -344,7 +358,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         LatLng latLngCurrentLoc = new LatLng(userLat, userLong);*/
 
        //checking for internet connection
-        if(checkNetworkConnection()) {
+
+        if(checkNetworkConnection() && locationEnabled) {
 
             double userLatAl = 38.738300;
             double userLongAl = -9.139040;
@@ -362,9 +377,39 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
 
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
+            return;
+        }
+        if (PermissionUtils.isPermissionGranted(permissions, grantResults, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            // Enable the my location layer if the permission has been granted.
+            enableMyLocation();
+        } else {
+            Toast.makeText(this, "Location permission denied.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+    /**
+     * Enables the My Location layer if the fine location permission has been granted.
+     */
+    private void enableMyLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            locationEnabled = true;
+
+        } else {
+            // Permission to access the location is missing. Show rationale and request permission
+            PermissionUtils.requestPermissionMain(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        }
+    }
+
 
     private void getDistanceValues(List<String> foodServices) {
 
+        counterDisplayFoodServiceInList = 0;
+        arrayList.clear();
         //TODO: change back to current after testing
         /* // Get current location
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -377,103 +422,170 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
 
         List<LatLng> latLngs = new ArrayList<>();
+
         for (String foodService : foodServices) {
-            if (foodService.equals("Main Building")) {
-                double latitude = 38.736574;
-                double longitude = -9.139561;
-                LatLng latLngDest = new LatLng(latitude, longitude);
-                latLngs.add(latLngDest);
+            if(locationEnabled){
+                if (foodService.equals("Main Building")) {
+                    double latitude = 38.736574;
+                    double longitude = -9.139561;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
+                    latLngs.add(latLngDest);
 
-                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
-                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
-                taskRequestDirections.execute(url);
-                // servicesToBeDisplayed.add("Main Building");
-            }
-            if (foodService.equals("Civil Building")) {
-                double latitude = 38.7370555;
-                double longitude = -9.140102;
-                LatLng latLngDest = new LatLng(latitude, longitude);
-                latLngs.add(latLngDest);
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("Civil Building")) {
+                    double latitude = 38.7370555;
+                    double longitude = -9.140102;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
+                    latLngs.add(latLngDest);
 
-                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
-                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
-                taskRequestDirections.execute(url);
-                //servicesToBeDisplayed.add("Civil Building");
-            }
-            if (foodService.equals("North Tower")) {
-                double latitude = 38.7376027;
-                double longitude = -9.1386528;
-                LatLng latLngDest = new LatLng(latitude, longitude);
-                latLngs.add(latLngDest);
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("North Tower")) {
+                    double latitude = 38.7376027;
+                    double longitude = -9.1386528;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
+                    latLngs.add(latLngDest);
 
-                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
-                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
-                taskRequestDirections.execute(url);
-                //servicesToBeDisplayed.add("North Tower");
-            }
-            if (foodService.equals("Mechanics Building II")) {
-                double latitude = 38.737145;
-                double longitude = -9.137595;
-                LatLng latLngDest = new LatLng(latitude, longitude);
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("Mechanics Building II")) {
+                    double latitude = 38.737145;
+                    double longitude = -9.137595;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
 
-                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
-                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
-                taskRequestDirections.execute(url);
-                //servicesToBeDisplayed.add("Mechanics Building II");
-            }
-            if (foodService.equals("AEIST Building")) {
-                double latitude = 38.736386;
-                double longitude = -9.136973;
-                LatLng latLngDest = new LatLng(latitude, longitude);
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("AEIST Building")) {
+                    double latitude = 38.736386;
+                    double longitude = -9.136973;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
 
-                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
-                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
-                taskRequestDirections.execute(url);
-                //servicesToBeDisplayed.add("AEIST Building");
-            }
-            if (foodService.equals("Copy Section")) {
-                double latitude = 38.736346;
-                double longitude = -9.137839;
-                LatLng latLngDest = new LatLng(latitude, longitude);
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("Copy Section")) {
+                    double latitude = 38.736346;
+                    double longitude = -9.137839;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
 
-                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
-                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
-                taskRequestDirections.execute(url);
-                //servicesToBeDisplayed.add("Copy Section");
-            }
-            if (foodService.equals("South Tower")) {
-                double latitude = 38.7359943;
-                double longitude = -9.138551;
-                LatLng latLngDest = new LatLng(latitude, longitude);
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("South Tower")) {
+                    double latitude = 38.7359943;
+                    double longitude = -9.138551;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
 
-                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
-                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
-                taskRequestDirections.execute(url);
-            }
-            if (foodService.equals("Mathematics Building")) {
-                double latitude = 38.735502;
-                double longitude = -9.139760;
-                LatLng latLngDest = new LatLng(latitude, longitude);
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("Mathematics Building")) {
+                    double latitude = 38.735502;
+                    double longitude = -9.139760;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
 
-                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
-                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
-                taskRequestDirections.execute(url);
-            }
-            if (foodService.equals("Interdisciplinary Building")) {
-                double latitude = 38.736039;
-                double longitude = -9.140131;
-                LatLng latLngDest = new LatLng(latitude, longitude);
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("Interdisciplinary Building")) {
+                    double latitude = 38.736039;
+                    double longitude = -9.140131;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
 
-                String url = getRequestUrl(latLngCurrentLoc, latLngDest);
-                MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
-                taskRequestDirections.execute(url);
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("Ground floor")) {
+                    //TODO: find lat/lng
+                }
+                if (foodService.equals("Taguspark Campus Restaurant")) {
+                    //TODO: find lat/lng
+                }
             }
-            if (foodService.equals("Ground floor")) {
-                //TODO: find lat/lng
+            else{
+                if (foodService.equals("Main Building")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("Civil Building")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                    arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                    counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("North Tower")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                    arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                    counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("Mechanics Building II")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("AEIST Building")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("Copy Section")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("South Tower")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("Mathematics Building")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("Interdisciplinary Building")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("Ground floor")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("Taguspark Campus Restaurant")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+
             }
-            if (foodService.equals("Taguspark Campus Restaurant")) {
-                //TODO: find lat/lng
-            }
+
         }
     }
 
@@ -514,7 +626,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                 Context.MODE_PRIVATE);
         String selectedUserProfile = sharedPref.getString(key, defValue);
         //check if profile is saved as something else than default
-        if (selectedUserProfile==getString(R.string.saved_profile_default_key)){
+        if (selectedUserProfile.equals(getString(R.string.saved_profile_default_key))){
             Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile ", Toast.LENGTH_LONG).show();
             return null;
         }
