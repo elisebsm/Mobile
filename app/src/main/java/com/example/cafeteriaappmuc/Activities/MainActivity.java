@@ -111,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     private boolean locationEnabled = false;
     //network
 
-
     private List<String> services =new ArrayList<>();
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -125,9 +124,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         //status = getUserProfile();
 
         //register broadcast receiver for wifi state change instead of in manifest
-        IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
-        this.registerReceiver(new WifiReceiver(), intentFilter);
-        registerReceiver(wifiReceiver, new IntentFilter("WIFI_CONNECTED"));
+        //IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+        //this.registerReceiver(new WifiReceiver(), intentFilter);
+        //registerReceiver(wifiReceiver, new IntentFilter("WIFI_CONNECTED"));
 
 
         // initialize the WDSim API
@@ -299,19 +298,29 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void displayDiningOptions(String status, String campus) {
         //get openinghours list (only displays for alameda at the moment)
-        if (campus.equals("Alameda")){
-            OpeningHours openHours = new OpeningHours();
-            List<String> foodServicesOpen ;
-            foodServicesOpen= openHours.CafeteriasOpen(status,campus);
-            List<String> foodServices= foodServicesOpen;
-            services = foodServicesOpen;
-            getDistanceValues(foodServices);
+        if (getUserProfile()!= null){
+
+            if (campus.equals("Alameda")){
+
+                OpeningHours openHours = new OpeningHours();
+                List<String> foodServicesOpen ;
+                foodServicesOpen= openHours.CafeteriasOpen(status,campus);
+                List<String> foodServices= foodServicesOpen;
+                services = foodServicesOpen;
+                getDistanceValues(foodServices);
+            }
+            else if (campus.equals("Taguspark")){
+                services.clear();
+                arrayList.clear();
+                displayMainFoodServicesList();
+            }
+            else{
+                services.clear();
+                arrayList.clear();
+                displayMainFoodServicesList();
+            }
         }
-        else if (campus.equals("Taguspark")){
-            services.clear();
-            arrayList.clear();
-            displayMainFoodServicesList();
-        }
+
     }
 
 
@@ -600,7 +609,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         String selectedUserProfile = sharedPref.getString(key, defValue);
         //check if profile is saved as something else than default
         if (selectedUserProfile.equals(getString(R.string.saved_profile_default_key))){
-            Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile ", Toast.LENGTH_LONG).show();
             return null;
         }
         else {
@@ -777,7 +785,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             }
         }
     }
-
+/*
     //listen for internet conn on wifi
     BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
         @Override
@@ -792,7 +800,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         super.onDestroy();
         unregisterReceiver(wifiReceiver);
     }
-
+*/
 
     //checking if decvice is connected to internet
     private boolean checkNetworkConnection() {
