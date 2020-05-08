@@ -57,6 +57,7 @@ public class FoodServiceActivity extends AppCompatActivity  {
     private GoogleMap mMapDirection;
     int LOCATION_PERMISSION_REQUEST_CODE = 101;
     private LatLng latLngDestination;
+    private String foodService;
     static String DISH_NAME = "DISH_NAME";
     static String DISH_PRICE = "DISH_PRICE";
     static String DISH_DESCRIPTION = "DISH_DESCRIPTION";
@@ -84,7 +85,7 @@ public class FoodServiceActivity extends AppCompatActivity  {
 
         if (foodService != null) {
             switch (foodService) {
-                case "Main Building":
+                case "Central Bar":
                     latitudeDest = 38.736606;
                     longitudeDest = -9.139532;
                     latLngDestination = new LatLng(latitudeDest, longitudeDest);
