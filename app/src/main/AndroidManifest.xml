@@ -34,7 +34,11 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-        <activity android:name=".Activities.FoodServiceActivity" />
+        <activity android:name=".Activities.FoodServiceActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".Activities.DisplayMapActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            tools:ignore="InnerclassSeparator" />
         <activity android:name=".Activities.DisplayImageActivity" />
         <activity android:name=".Activities.UploadImageActivity"/>
         <activity android:name=".Activities.ProfileSetupActivity" />
