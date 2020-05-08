@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -13,12 +15,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cafeteriaappmuc.DirectionsParser;
 import com.example.cafeteriaappmuc.Dish;
+import com.example.cafeteriaappmuc.DishType;
 import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.PermissionUtils;
 import com.example.cafeteriaappmuc.R;
@@ -42,6 +48,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class FoodServiceActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -141,17 +148,48 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         DishIO.getAllDishes(foodService, new DishIO.FirebaseCallback() { //henter alle disher fra DishIO
             @Override
             public void onCallback(List<Dish> list) { //Bruker callback og asynkron kode for å være sikker på å få alle elementene vi trenger før vi kjører koden
-                final Dish[] dishes = list.toArray(new Dish[list.size()]);
+                final Dish[] allDishes = list.toArray(new Dish[list.size()]);
 
-                ArrayAdapter adapter = new ArrayAdapter<Dish>(getApplicationContext(),
-                        R.layout.dish_list_element, dishes);
+                Map<DishType, Boolean> preferences = retrieveDietPreferences();
+                List<Dish> filteredDishes = new ArrayList<>();
+                for (Dish dish : list) {
+                    if (preferences.get(dish.type)) {
+                        filteredDishes.add(dish);
+                    }
 
-                ListView listView = (ListView) findViewById(R.id.dishList);
-                listView.setAdapter(adapter); //bruker adapter for å fylle en liste
+                }
+
+                final ArrayAdapter filterAdapter = new ArrayAdapter<Dish>(getApplicationContext(),
+                        R.layout.dish_list_element, filteredDishes);
+
+                final ArrayAdapter allAdapter = new ArrayAdapter<Dish>(getApplicationContext(),
+                        R.layout.dish_list_element, allDishes);
+
+                final ListView listView = (ListView) findViewById(R.id.dishList);
+
+                CheckBox showHiddenBox = findViewById(R.id.showHiddenDishes);
+                if(list.size() == filteredDishes.size()){
+                    showHiddenBox.setVisibility(View.GONE);
+                }
+
+                showHiddenBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            listView.setAdapter(allAdapter);
+                        } else {
+                            listView.setAdapter(filterAdapter);
+                        }
+
+                    }
+                });
+
+
+                listView.setAdapter(filterAdapter); //bruker adapter for å fylle en liste
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) { //lager en listner på "On click" for all dishene, som sender deg til riktig dish
-                        Dish selectedDish = dishes[position];
+                        Dish selectedDish = allDishes[position];
 
                         Intent intent = new Intent(view.getContext(), DishActivity.class); //bruker intent og extras til å sende info om dishene til dishActivity
                         intent.putExtra(DISH_NAME, selectedDish.name);
@@ -190,7 +228,7 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         float zoomLevel = 19.0f; //This goes up to 21
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngCurrentLoc, zoomLevel));
 
-        LatLng latLngDestination = new LatLng(latitude,longitude);
+        LatLng latLngDestination = new LatLng(latitude, longitude);
         listPoints.add(latLngDestination);
 
         // create the url to get request from first marker to second marker from google map api
@@ -266,7 +304,7 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
 
             StringBuffer stringBuffer = new StringBuffer();
             String line = "";
-            while((line= bufferedReader.readLine())!= null){
+            while ((line = bufferedReader.readLine()) != null) {
                 stringBuffer.append(line);
             }
 
@@ -275,10 +313,10 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
             inputStreamReader.close();
 
 
-        }catch (IOException e ){
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(inputStream != null){
+            if (inputStream != null) {
                 inputStream.close();
             }
             if (httpURLConnection != null) {
@@ -330,20 +368,20 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
         }
 
 
-        protected void onPostExecute(List<List<HashMap<String,String>>> lists) {
+        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
             // Get list route and display it into the map
 
             ArrayList points = null;
 
             PolylineOptions polylineOptions = null;
-            for (List<HashMap<String, String>> path : lists){
+            for (List<HashMap<String, String>> path : lists) {
                 points = new ArrayList();
                 polylineOptions = new PolylineOptions();
 
                 for (HashMap<String, String> point : path) {
                     double lat = Double.parseDouble(Objects.requireNonNull(point.get("lat")));
                     double lon = Double.parseDouble(Objects.requireNonNull(point.get("lon")));
-                    points.add(new LatLng(lat,lon));
+                    points.add(new LatLng(lat, lon));
                 }
                 polylineOptions.addAll(points);
                 polylineOptions.width(8);
@@ -351,10 +389,10 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
                 polylineOptions.geodesic(true);
             }
 
-            if(polylineOptions != null){
+            if (polylineOptions != null) {
                 mMap.addPolyline(polylineOptions);
             } else {
-                Toast.makeText(getApplicationContext(), "Direction not found.", Toast.LENGTH_LONG). show();
+                Toast.makeText(getApplicationContext(), "Direction not found.", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -362,5 +400,20 @@ public class FoodServiceActivity extends AppCompatActivity implements OnMapReady
     public void goToAddNewDish(View view) {
         Intent intent = new Intent(this, AddNewDishActivity.class);
         startActivity(intent);
+    }
+
+    public Map<DishType, Boolean> retrieveDietPreferences() {
+        SharedPreferences sharedPref = getSharedPreferences("Diets", Context.MODE_PRIVATE);
+        boolean meatValue = sharedPref.getBoolean("Meat", true);
+        boolean fishValue = sharedPref.getBoolean("Fish", true);
+        boolean vegetarianValue = sharedPref.getBoolean("Vegetarian", true);
+        boolean veganValue = sharedPref.getBoolean("Vegan", true);
+
+        Map<DishType, Boolean> dietMap = new HashMap<>();
+        dietMap.put(DishType.Meat, meatValue);
+        dietMap.put(DishType.Fish, fishValue);
+        dietMap.put(DishType.Vegetarian, vegetarianValue);
+        dietMap.put(DishType.Vegan, veganValue);
+        return dietMap;
     }
 }

@@ -97,19 +97,37 @@
         android:layout_marginBottom="120dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/buttonAddNewDish"
-        android:layout_width="143dp"
-        android:layout_height="60dp"
+        android:layout_width="117dp"
+        android:layout_height="42dp"
         android:layout_marginStart="233dp"
         android:layout_marginTop="636dp"
         android:layout_marginEnd="35dp"
         android:layout_marginBottom="35dp"
         android:onClick="goToAddNewDish"
         android:text="Add new dish"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.653"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <CheckBox
+        android:id="@+id/showHiddenDishes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="664dp"
+        android:layout_marginEnd="237dp"
+        android:layout_marginBottom="35dp"
+        android:text="Show hidden dishes"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
