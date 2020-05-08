@@ -177,8 +177,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         if(locationEnabled){
             LatLng latLngAlameda = new LatLng(38.736574, -9.139561);
             LatLng latLngTaguspark = new LatLng(38.737505, -9.302475);
+            LatLng latLngCTN = new LatLng(	38.812522, -9.093773);
             getDistance(latLngAlameda);
             getDistance(latLngTaguspark);
+            getDistance(latLngCTN);
         }
     }
 
@@ -190,6 +192,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         }
         if(!campusesAll.contains("Taguspark")){
             campusesAll.add("Taguspark");
+        }
+        if(!campusesAll.contains("CTN")){
+            campusesAll.add("CTN");
         }
         List<String> campuses = removeCurrentCampusFromList(currentCampus);
 
@@ -298,29 +303,30 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void displayDiningOptions(String status, String campus) {
         //get openinghours list (only displays for alameda at the moment)
-        if (getUserProfile()!= null){
-
-            if (campus.equals("Alameda")){
-
-                OpeningHours openHours = new OpeningHours();
-                List<String> foodServicesOpen ;
-                foodServicesOpen= openHours.CafeteriasOpen(status,campus);
-                List<String> foodServices= foodServicesOpen;
-                services = foodServicesOpen;
-                getDistanceValues(foodServices);
-            }
-            else if (campus.equals("Taguspark")){
-                services.clear();
-                arrayList.clear();
-                displayMainFoodServicesList();
-            }
-            else{
-                services.clear();
-                arrayList.clear();
-                displayMainFoodServicesList();
-            }
+        if (campus.equals("Alameda")){
+            OpeningHours openHours = new OpeningHours();
+            List<String> foodServicesOpen ;
+            foodServicesOpen= openHours.CafeteriasOpen(status,campus);
+            List<String> foodServices= foodServicesOpen;
+            services = foodServicesOpen;
+            getDistanceValues(foodServices);
         }
-
+        else if (campus.equals("Taguspark")){
+            OpeningHours openHours = new OpeningHours();
+            List<String> foodServicesOpen ;
+            foodServicesOpen= openHours.CafeteriasOpen(status,campus);
+            List<String> foodServices= foodServicesOpen;
+            services = foodServicesOpen;
+            getDistanceValues(foodServices);
+        }
+        else if (campus.equals("CTN")){
+            OpeningHours openHours = new OpeningHours();
+            List<String> foodServicesOpen ;
+            foodServicesOpen= openHours.CafeteriasOpen(status,campus);
+            List<String> foodServices= foodServicesOpen;
+            services = foodServicesOpen;
+            getDistanceValues(foodServices);
+        }
     }
 
 
@@ -407,9 +413,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         List<LatLng> latLngs = new ArrayList<>();
         for (String foodService : foodServices) {
             if(locationEnabled && checkNetworkConnection()){
-                if (foodService.equals("Main Building")) {
-                    double latitude = 38.736574;
-                    double longitude = -9.139561;
+                if (foodService.equals("Central Bar")) {
+                    double latitude = 	38.736606;
+                    double longitude = -9.139532;
                     LatLng latLngDest = new LatLng(latitude, longitude);
                     latLngs.add(latLngDest);
 
@@ -417,9 +423,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                     MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                     taskRequestDirections.execute(url);
                 }
-                if (foodService.equals("Civil Building")) {
-                    double latitude = 38.7370555;
-                    double longitude = -9.140102;
+                if (foodService.equals("Civil Bar")) {
+                    double latitude = 38.736988;
+                    double longitude = -9.139955;
                     LatLng latLngDest = new LatLng(latitude, longitude);
                     latLngs.add(latLngDest);
 
@@ -427,9 +433,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                     MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                     taskRequestDirections.execute(url);
                 }
-                if (foodService.equals("North Tower")) {
-                    double latitude = 38.7376027;
-                    double longitude = -9.1386528;
+                if (foodService.equals("Civil Cafeteria")) {
+                    double latitude = 38.737650;
+                    double longitude = -9.140384;
                     LatLng latLngDest = new LatLng(latitude, longitude);
                     latLngs.add(latLngDest);
 
@@ -437,129 +443,216 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
                     MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                     taskRequestDirections.execute(url);
                 }
-                if (foodService.equals("Mechanics Building II")) {
-                    double latitude = 38.737145;
-                    double longitude = -9.137595;
+                if (foodService.equals("Sena Pastry Shop")) {
+                    double latitude = 38.737677;
+                    double longitude = -9.138672;
                     LatLng latLngDest = new LatLng(latitude, longitude);
 
                     String url = getRequestUrl(latLngCurrentLoc, latLngDest);
                     MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                     taskRequestDirections.execute(url);
                 }
-                if (foodService.equals("AEIST Building")) {
-                    double latitude = 38.736386;
-                    double longitude = -9.136973;
+                if (foodService.equals("Mechy Bar")) {
+                    double latitude = 38.737247;
+                    double longitude = -9.137434;
                     LatLng latLngDest = new LatLng(latitude, longitude);
 
                     String url = getRequestUrl(latLngCurrentLoc, latLngDest);
                     MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                     taskRequestDirections.execute(url);
                 }
-                if (foodService.equals("Copy Section")) {
-                    double latitude = 38.736346;
-                    double longitude = -9.137839;
+                if (foodService.equals("AEIST Bar")) {
+                    double latitude = 38.736542;
+                    double longitude = -9.137226;
                     LatLng latLngDest = new LatLng(latitude, longitude);
 
                     String url = getRequestUrl(latLngCurrentLoc, latLngDest);
                     MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                     taskRequestDirections.execute(url);
                 }
-                if (foodService.equals("South Tower")) {
-                    double latitude = 38.7359943;
-                    double longitude = -9.138551;
+                if (foodService.equals("AEIST Esplanade")) {
+                    double latitude = 38.736318;
+                    double longitude = -9.137820;
                     LatLng latLngDest = new LatLng(latitude, longitude);
 
                     String url = getRequestUrl(latLngCurrentLoc, latLngDest);
                     MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                     taskRequestDirections.execute(url);
                 }
-                if (foodService.equals("Mathematics Building")) {
-                    double latitude = 38.735502;
-                    double longitude = -9.139760;
+                if (foodService.equals("Chemy Bar")) {
+                    double latitude = 38.736240;
+                    double longitude = -9.138302;
                     LatLng latLngDest = new LatLng(latitude, longitude);
 
                     String url = getRequestUrl(latLngCurrentLoc, latLngDest);
                     MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                     taskRequestDirections.execute(url);
                 }
-                if (foodService.equals("Interdisciplinary Building")) {
-                    double latitude = 38.736039;
-                    double longitude = -9.140131;
+                if (foodService.equals("SAS Cafeteria")) {
+                    double latitude = 38.736571;
+                    double longitude = -9.137036;
                     LatLng latLngDest = new LatLng(latitude, longitude);
 
                     String url = getRequestUrl(latLngCurrentLoc, latLngDest);
                     MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
                     taskRequestDirections.execute(url);
                 }
-                if (foodService.equals("Ground floor")) {
-                    //TODO: find lat/lng
+                if (foodService.equals("Math Cafeteria")) {
+                    double latitude = 38.735508;
+                    double longitude = -9.139645;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
+
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
                 }
-                if (foodService.equals("Taguspark Campus Restaurant")) {
-                    //TODO: find lat/lng
+                if (foodService.equals("Complex Bar")) {
+                    double latitude = 38.736050;
+                    double longitude = -9.140156;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
+
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("Tagus Cafeteria")) {
+                    double latitude = 38.737802;
+                    double longitude = -9.303223;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
+
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("Red Bar")) {
+                    double latitude = 38.736546;
+                    double longitude = -9.302207;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
+
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("Green Bar")) {
+                    double latitude = 38.738004;
+                    double longitude = -9.303058;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
+
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("CTN Cafeteria")) {
+                    double latitude = 38.812522;
+                    double longitude = -9.093773;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
+
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
+                }
+                if (foodService.equals("CTN Bar")) {
+                    double latitude = 38.812522;
+                    double longitude = -9.093773;
+                    LatLng latLngDest = new LatLng(latitude, longitude);
+
+                    String url = getRequestUrl(latLngCurrentLoc, latLngDest);
+                    MainActivity.TaskRequestDirections taskRequestDirections = new MainActivity.TaskRequestDirections();
+                    taskRequestDirections.execute(url);
                 }
             }
             else{
-                if (foodService.equals("Main Building")) {
+                if (foodService.equals("Central Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
                         arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
                         counterDisplayFoodServiceInList++;
                     }
                 }
-                if (foodService.equals("Civil Building")) {
+                if (foodService.equals("Civil Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
                     arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
                     counterDisplayFoodServiceInList++;
                     }
                 }
-                if (foodService.equals("North Tower")) {
+                if (foodService.equals("Civil Cafeteria")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
                     arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
                     counterDisplayFoodServiceInList++;
                     }
                 }
-                if (foodService.equals("Mechanics Building II")) {
+                if (foodService.equals("Sena Pastry Shop")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
                         arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
                         counterDisplayFoodServiceInList++;
                     }
                 }
-                if (foodService.equals("AEIST Building")) {
+                if (foodService.equals("Mechy Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
                         arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
                         counterDisplayFoodServiceInList++;
                     }
                 }
-                if (foodService.equals("Copy Section")) {
+                if (foodService.equals("AEIST Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
                         arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
                         counterDisplayFoodServiceInList++;
                     }
                 }
-                if (foodService.equals("South Tower")) {
+                if (foodService.equals("AEIST Esplanade")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
                         arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
                         counterDisplayFoodServiceInList++;
                     }
                 }
-                if (foodService.equals("Mathematics Building")) {
+                if (foodService.equals("Chemy Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
                         arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
                         counterDisplayFoodServiceInList++;
                     }
                 }
-                if (foodService.equals("Interdisciplinary Building")) {
+                if (foodService.equals("SAS Cafeteria")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
                         arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
                         counterDisplayFoodServiceInList++;
                     }
                 }
-                if (foodService.equals("Ground floor")) {
+                if (foodService.equals("Math Cafeteria")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
                         arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
                         counterDisplayFoodServiceInList++;
                     }
                 }
-                if (foodService.equals("Taguspark Campus Restaurant")) {
+                if (foodService.equals("Complex Bar")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("Tagus Cafeteria")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("Red Bar")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("Green Bar")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("CTN Cafeteria")) {
+                    if(counterDisplayFoodServiceInList<services.size()-1){
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
+                        counterDisplayFoodServiceInList++;
+                    }
+                }
+                if (foodService.equals("CTN Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
                         arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 5));
                         counterDisplayFoodServiceInList++;
@@ -778,8 +871,11 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             } else if(Integer.parseInt(distance) <= 1000 && checkedDistanceToCampusCounter==2){
                 //displayChosenCampus("Taguspark");
                 currentCampus = "Taguspark";
+            } else if(Integer.parseInt(distance) <= 1000 && checkedDistanceToCampusCounter==3){
+                //displayChosenCampus("Taguspark");
+                currentCampus = "CTN";
             }
-            if (checkedDistanceToCampusCounter == 2){
+            if (checkedDistanceToCampusCounter == 3){
                 displayCampusName(currentCampus);
                 displayListForChoosingCampus();
             }
