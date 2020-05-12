@@ -25,11 +25,11 @@ import java.util.List;
 public class OpeningHours extends AppCompatActivity {
 
     //dublicate in list because CTN bar is open two diff times a day
-    List<String> foodServicesTaguspark = Arrays.asList("CTN Cafeteria", "CTN Bar","CTN Bar2");
-    List<String> foodServicesCTN = Arrays.asList("Tagus Cafeteria", "Red Bar","Green Bar");
+    List<String> foodServicesTaguspark = Arrays.asList("Tagus Cafeteria", "Red Bar","Green Bar");
+    List<String> foodServicesCTN = Arrays.asList("CTN Cafeteria", "CTN Bar","CTN Bar");
     //dublicate in list because complex bar is open two diff times a day
     List<String> foodServicesAlameda = Arrays.asList("Central Bar", "Civil Bar", "Civil Cafeteria","Sena Pastry Shop","Merchy Bar", "AEIST bar",
-            "AEIST Esplanade", "Chemy Bar", "SAS Cafeteria", "Math Cafeteria","Complex Bar","Complex Bar2");
+            "AEIST Esplanade", "Chemy Bar", "SAS Cafeteria", "Math Cafeteria","Complex Bar","Complex Bar");
 
     //private List<String> foodServices = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "Copy Section","AEIST Building");
     private List<String> openingHours = new ArrayList<>();
@@ -117,7 +117,9 @@ public class OpeningHours extends AppCompatActivity {
 
 
         }
+        System.out.println(foodServicesOpen.toString());
         return foodServicesOpen;
+
     }
 
 }
