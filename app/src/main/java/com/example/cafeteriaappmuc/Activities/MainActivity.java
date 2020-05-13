@@ -4,33 +4,22 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
+
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 
 
 import android.os.AsyncTask;
 
-import android.os.Messenger;
 import android.util.Log;
 
 import android.view.Menu;
@@ -47,13 +36,12 @@ import android.widget.Toast;
 
 import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
 
-import com.example.cafeteriaappmuc.BroadcastReceiver.WifiReceiver;
+import com.example.cafeteriaappmuc.BroadcastReceiver.SimWifiP2pBroadcastReceiver;
 import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.MyDataListMain;
 import com.example.cafeteriaappmuc.OpeningHours;
 import com.example.cafeteriaappmuc.PermissionUtils;
 import com.example.cafeteriaappmuc.R;
-import com.example.cafeteriaappmuc.SimWifiP2pBroadcastReceiver;
 import com.google.android.gms.maps.model.LatLng;
 
 
@@ -73,35 +61,28 @@ import java.util.List;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
-import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
 import pt.inesc.termite.wifidirect.SimWifiP2pManager;
-import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
-import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketManager;
-import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
+import pt.inesc.termite.wifidirect.SimWifiP2pManager.Channel;
+import pt.inesc.termite.wifidirect.service.SimWifiP2pService;
+import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
+import pt.inesc.termite.wifidirect.SimWifiP2pManager.PeerListListener;
 
-public class MainActivity extends AppCompatActivity implements Serializable, SimWifiP2pManager.PeerListListener {
+import android.content.ComponentName;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+
+import android.os.IBinder;
+import android.os.Messenger;
+
+
+public class MainActivity extends AppCompatActivity implements Serializable, PeerListListener {
 
     private List<String> campusesAll = new ArrayList<>();
 
     //TODO: set current campus based on profile
     private String currentCampus = "";
-    private String status;
     private static String hoursOpen;
     private Boolean isOpen;
-    //final Button button = findViewById(R.id.profile_button);
-
-    /**
-     * copied from lab 4
-     */
-    private SimWifiP2pManager manager = null;
-    private SimWifiP2pManager.Channel channel = null;
-    private Messenger service = null;
-    private boolean bound = false;
-    private SimWifiP2pSocketServer socketServer = null;
-    private SimWifiP2pSocket socket = null;
-    private TextView mTextInput;
-    private TextView mTextOutput;
-    private SimWifiP2pBroadcastReceiver broadcastReceiver;
 
     private ListView listViewFoodServices;
     private ArrayList<MyDataListMain> arrayList = new ArrayList<>();
@@ -112,39 +93,26 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     private int LOCATION_PERMISSION_REQUEST_CODE = 101;
 
     private boolean locationEnabled = false;
-    //network
 
     private List<String> services =new ArrayList<>();
+
+    private SimWifiP2pManager mManager = null;
+    private Channel mChannel = null;
+    private boolean mBound = false;
+    private SimWifiP2pBroadcastReceiver mReceiver;
+    private String beaconInRange;
+    private long timeArrivingQueueMillis;
+    private long timeLeavingQueueMillis;
+    private long timeInQueue;
+    private int beaconDetectedCounter = 0;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //displayChosenCampus(currentCampus);
 
-        //use getUserProfile() to get selected user. Returns user or null if user not selected
-        //status = getUserProfile();
-
-        //register broadcast receiver for wifi state change instead of in manifest
-        //IntentFilter intentFilter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
-        //this.registerReceiver(new WifiReceiver(), intentFilter);
-        //registerReceiver(wifiReceiver, new IntentFilter("WIFI_CONNECTED"));
-
-
-        // initialize the WDSim API
-        SimWifiP2pSocketManager.Init(getApplicationContext());
-
-        // register broadcast receiver
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
-        broadcastReceiver = new SimWifiP2pBroadcastReceiver(this);
-        registerReceiver(broadcastReceiver, filter);
-
-        //manager.requestPeers(channel, MainActivity.this);
         if (getUserProfile() == null) {
             Toast.makeText(getApplicationContext(), "No user group selected. Please select user group under profile to display food services ", Toast.LENGTH_LONG).show();
         } else {
@@ -158,7 +126,67 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
             }
         }
         enableMyLocation();
+
+        // register broadcast receiver
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
+        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
+        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
+        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
+        mReceiver = new SimWifiP2pBroadcastReceiver(this);
+        registerReceiver(mReceiver, filter);
+
+        Intent intent = new Intent(this, SimWifiP2pService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        mBound = true;
     }
+
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        // callbacks for service binding, passed to bindService()
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            mManager = new SimWifiP2pManager(new Messenger(service));
+            mChannel = mManager.initialize(getApplication(), getMainLooper(), null);
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mManager = null;
+            mChannel = null;
+            mBound = false;
+        }
+    };
+
+    public void getNewBeacon(){
+        mManager.requestPeers(mChannel, MainActivity.this);
+    }
+
+    @Override
+    public void onPeersAvailable(SimWifiP2pDeviceList peers) {
+        if(beaconDetectedCounter == 1){
+            timeLeavingQueueMillis = System.currentTimeMillis();
+            beaconDetectedCounter = 0;
+            Log.i("BEACONNAME  Arriving", String.valueOf(timeArrivingQueueMillis));
+            Log.i("BEACONNAME  Leaving", String.valueOf(timeLeavingQueueMillis));
+
+            timeInQueue = timeLeavingQueueMillis - timeArrivingQueueMillis;
+
+            Log.i("BEACONNAME  InQueue", String.valueOf(timeInQueue));
+        }
+        // compile list of devices in range
+        for (SimWifiP2pDevice device : peers.getDeviceList()) {
+            Log.i("BEACONNAME", device.deviceName);
+            beaconInRange = device.deviceName;
+            beaconDetectedCounter++;
+            timeArrivingQueueMillis = System.currentTimeMillis();
+        }
+
+    }
+
+
 
     @Override
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -762,26 +790,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
     }
 
 */
-    @Override
-    public void onPeersAvailable(SimWifiP2pDeviceList simWifiP2pDeviceList) {
-        StringBuilder peersStr = new StringBuilder();
-
-        // compile list of devices in range
-        for (SimWifiP2pDevice device : simWifiP2pDeviceList.getDeviceList()) {
-            String devstr = "" + device.deviceName + " (" + device.getVirtIp() + ")\n";
-            peersStr.append(devstr);
-        }
-
-        // display list of devices in range
-        new AlertDialog.Builder(this)
-                .setTitle("Devices in WiFi Range")
-                .setMessage(peersStr.toString())
-                .setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .show();
-    }
 
 
 

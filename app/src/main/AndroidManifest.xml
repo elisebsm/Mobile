@@ -36,9 +36,6 @@
             android:value="@string/google_maps_key" />
         <activity android:name=".Activities.FoodServiceActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".Activities.DisplayMapActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            tools:ignore="InnerclassSeparator" />
         <activity android:name=".Activities.DisplayImageActivity" />
         <activity android:name=".Activities.UploadImageActivity"/>
         <activity android:name=".Activities.ProfileSetupActivity" />
@@ -48,11 +45,12 @@
 
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
-    </activity>
+        </activity>
 
-    <activity android:name=".Activities.AddNewDishActivity"
+        <activity android:name=".Activities.AddNewDishActivity"
         android:parentActivityName=".Activities.DishActivity"/>
-    <activity android:name=".Activities.DishActivity" />
+        <activity android:name=".Activities.DishActivity" />
 
+        <service android:name="pt.inesc.termite.wifidirect.service.SimWifiP2pService" />
 </application>
 </manifest>
