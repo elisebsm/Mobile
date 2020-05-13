@@ -70,6 +70,7 @@ public class FoodServiceActivity extends AppCompatActivity  {
     private Button shareBtn;
     private List<String> dishNames = new ArrayList<>();
 
+    private String foodservice;
     private SupportMapFragment mapFragment2;
     //TODO: add opening hours
     //TODO: show walking time, update every second minute or so??
@@ -80,7 +81,7 @@ public class FoodServiceActivity extends AppCompatActivity  {
         context = this;
 
         Intent intent = getIntent();
-        String foodService = intent.getStringExtra("foodService");
+        foodService = intent.getStringExtra("foodService");
         ((GlobalClass) this.getApplication()).setFoodService(foodService);
 
         if (foodService != null) {
