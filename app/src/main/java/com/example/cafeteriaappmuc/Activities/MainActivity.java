@@ -753,7 +753,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         }
         return responseString;
     }
-
+/*
     //Beacon
     @Override
     public void onPause() {
@@ -761,7 +761,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Sim
         unregisterReceiver(broadcastReceiver);
     }
 
-
+*/
     @Override
     public void onPeersAvailable(SimWifiP2pDeviceList simWifiP2pDeviceList) {
         StringBuilder peersStr = new StringBuilder();
