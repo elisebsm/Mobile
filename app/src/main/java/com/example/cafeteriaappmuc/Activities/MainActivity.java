@@ -41,6 +41,7 @@ import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.MyDataListMain;
 import com.example.cafeteriaappmuc.OpeningHours;
 import com.example.cafeteriaappmuc.PermissionUtils;
+import com.example.cafeteriaappmuc.QueueAlgorithm;
 import com.example.cafeteriaappmuc.R;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -56,6 +57,7 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -139,6 +141,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
         Intent intent = new Intent(this, SimWifiP2pService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         mBound = true;
+        //get waiting time based on least square algorithm  --- testdata here
+        List<Double> Yi = Arrays.asList(0.5,1.7,3.9); // real data of time per pers in the line
+        List<Integer> Xi = Arrays.asList(1,3,5); //number of people in line measured when you arrived
+
+        Double y= QueueAlgorithm.leastSquareAlg(Xi,Yi);
+        System.out.println("Mean:"+y);
     }
 
 
