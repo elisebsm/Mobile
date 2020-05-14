@@ -1,5 +1,6 @@
 package com.example.cafeteriaappmuc;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -17,59 +18,57 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
 //TODO: fix so this code does not crash, runs openinghours twise for some reason
 
+@SuppressLint("Registered")
 public class OpeningHours extends AppCompatActivity {
 
     //dublicate in list because CTN bar is open two diff times a day
     List<String> foodServicesTaguspark = Arrays.asList("Tagus Cafeteria", "Red Bar","Green Bar");
     List<String> foodServicesCTN = Arrays.asList("CTN Cafeteria", "CTN Bar","CTN Bar");
     //dublicate in list because complex bar is open two diff times a day
-    List<String> foodServicesAlameda = Arrays.asList("Central Bar", "Civil Bar", "Civil Cafeteria","Sena Pastry Shop","Merchy Bar", "AEIST bar",
+    List<String> foodServicesAlameda = Arrays.asList("Central Bar", "Civil Bar", "Civil Cafeteria","Sena Pastry Shop","Mechy Bar", "AEIST Bar",
             "AEIST Esplanade", "Chemy Bar", "SAS Cafeteria", "Math Cafeteria","Complex Bar","Complex Bar");
 
-    //private List<String> foodServices = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "Copy Section","AEIST Building");
     private List<String> openingHours = new ArrayList<>();
     private List<String> closingHours = new ArrayList<>();
     private List<String> foodServicesOpen = new ArrayList<>();
-    //List<String> foodServicesClosed = new ArrayList<>();
     private  int counter=0;
     private Boolean campusSel = true;
     @RequiresApi(api = Build.VERSION_CODES.O)
     public  List<String> CafeteriasOpen(String selectedUserVal, String campus) {
 
-            if (campus.equals("Alameda")) {
+        switch (campus) {
+            case "Alameda":
 
-                if (selectedUserVal.equals("Student")|| selectedUserVal.equals("General Public")) {
-                    openingHours = Arrays.asList("09:00:00", "09:0:00", "12:00:00", "08:00:00", "09:00:00","09:00:00","09:00:00","09:00:00", "09:00:00", "13:30:00", "09:00:00", "14:00:00");
-                    closingHours = Arrays.asList("17:00:00", "17:00:00", "15:00:00", "19:00:00","17:00:00","17:00:00","17:00:00","17:00:00", "21:00:00", "15:00:00","12:00:00", "17:00:00");
+                if (selectedUserVal.equals("Student") || selectedUserVal.equals("General Public")) {
+                    openingHours = Arrays.asList("09:00:00", "09:0:00", "12:00:00", "08:00:00", "09:00:00", "09:00:00", "09:00:00", "09:00:00", "09:00:00", "13:30:00", "09:00:00", "14:00:00");
+                    closingHours = Arrays.asList("17:00:00", "17:00:00", "15:00:00", "19:00:00", "17:00:00", "17:00:00", "17:00:00", "17:00:00", "21:00:00", "15:00:00", "12:00:00", "17:00:00");
 
                     //staff, researcher, prof etc
                 } else {     //second last element always false, in order not to get dublicate in cafetira
-                    openingHours = Arrays.asList("09:00:00", "09:0:00", "12:00:00", "08:00:00", "09:00:00","09:00:00","09:00:00","09:00:00", "09:00:00", "12:00:00", "08:00:00","09:00:00");
-                    closingHours = Arrays.asList("17:00:00", "17:00:00", "15:00:00", "19:00:00","17:00:00","17:00:00","17:00:00","17:00:00",  "21:00:00", "15:00:00","07:00:00", "17:00:00");
-
+                    openingHours = Arrays.asList("09:00:00", "09:0:00", "12:00:00", "08:00:00", "09:00:00", "09:00:00", "09:00:00", "09:00:00", "09:00:00", "12:00:00", "08:00:00", "09:00:00");
+                    closingHours = Arrays.asList("17:00:00", "17:00:00", "15:00:00", "19:00:00", "17:00:00", "17:00:00", "17:00:00", "17:00:00", "21:00:00", "15:00:00", "07:00:00", "17:00:00");
                 }
-
-
-            } else if (campus.equals("Taguspark")) {
+                break;
+            case "Taguspark":
                 openingHours = Arrays.asList("12:00:00", "08:00:00", "07:00:00");
                 closingHours = Arrays.asList("15:00:00", "22:00:00", "19:00:00");
-            }
-            else if (campus.equals("CTN")){
-            //capmus equals CTN
+                break;
+            case "CTN":
+                //capmus equals CTN
                 openingHours = Arrays.asList("12:00:00", "08:30:00", "15:30:00");
                 closingHours = Arrays.asList("14:00:00", "12:00:00", "16:30:00");
-            }
-            else{
-                campusSel=false;
-            }
-
-
-        if (campusSel==true) {
+                break;
+            default:
+                campusSel = false;
+                break;
+        }
+        if (campusSel) {
             for (int i = 0; i < openingHours.size(); i++) {
                 try {
 
@@ -119,8 +118,8 @@ public class OpeningHours extends AppCompatActivity {
         }
         System.out.println(foodServicesOpen.toString());
         return foodServicesOpen;
-
     }
+
 
 }
 

@@ -76,12 +76,12 @@ public class AdapterListViewMainFoodServices extends BaseAdapter {
         holder.textViewFoodService.setText(textFoodService);
         String textWaitingTime;
         if(arrayList.isEmpty()){
-            textWaitingTime = context.getResources().getString(R.string.expected_queue_waiting_time) + " Location disabeled";
+            textWaitingTime = context.getResources().getString(R.string.tv_expected_queue_waiting_time) + " Location disabeled";
         } else {
-            textWaitingTime = context.getResources().getString(R.string.expected_queue_waiting_time) + (arrayList.get(position).getQueueTime());
+            textWaitingTime = context.getResources().getString(R.string.tv_expected_queue_waiting_time) + (arrayList.get(position).getQueueTime());
         }
         holder.textViewExpectedQueueWaitingTime.setText(textWaitingTime);
-        String textTimeToWalk =  context.getResources().getString(R.string.estimated_time_to_walk) + (arrayList.get(position).getTimeToWalk());
+        String textTimeToWalk =  context.getResources().getString(R.string.tv_estimated_time_to_walk) + (arrayList.get(position).getTimeToWalk());
         holder.textViewEstimatedTimeToWalk.setText(textTimeToWalk);
 
         return convertView;

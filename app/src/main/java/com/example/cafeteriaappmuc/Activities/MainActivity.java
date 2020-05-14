@@ -851,7 +851,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
         protected void onPostExecute(String duration) {
             Log.d("DURATION", duration);
             if(counterDisplayFoodServiceInList<=services.size()-1){
-                arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), duration, 5));
+                String nameOfFoodservice = services.get(counterDisplayFoodServiceInList);
+                //TODO get queuetime for service
+                arrayList.add(new MyDataListMain(nameOfFoodservice, duration, 5));
                 displayMainFoodServicesList();
                 counterDisplayFoodServiceInList++;
             }
@@ -925,22 +927,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             }
         }
     }
-/*
-    //listen for internet conn on wifi
-    BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, "Wifi connected", Toast.LENGTH_SHORT).show();
 
-        }
-    };
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(wifiReceiver);
-    }
-*/
 
     //checking if decvice is connected to internet
     private boolean checkNetworkConnection() {

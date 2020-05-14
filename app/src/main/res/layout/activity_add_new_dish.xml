@@ -14,7 +14,7 @@
         android:layout_marginTop="113dp"
         android:layout_marginEnd="61dp"
         android:layout_marginBottom="577dp"
-        android:text="@string/new_dish"
+        android:text="@string/tv_new_dish"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,12 +30,13 @@
         android:layout_marginEnd="157dp"
         android:layout_marginBottom="451dp"
         android:ems="10"
-        android:hint="@string/name"
+        android:hint="@string/tv_name"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="Autofill" />
 
     <EditText
         android:id="@+id/newDishPrice"
@@ -46,12 +47,13 @@
         android:layout_marginEnd="157dp"
         android:layout_marginBottom="363dp"
         android:ems="10"
-        android:hint="@string/price"
+        android:hint="@string/tv_price"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="Autofill"/>
 
     <EditText
         android:id="@+id/newDishDescription"
@@ -62,34 +64,18 @@
         android:layout_marginEnd="157dp"
         android:layout_marginBottom="276dp"
         android:ems="10"
-        android:hint="@string/description"
+        android:hint="@string/tv_description"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="278dp"
-        android:layout_marginTop="550dp"
-        android:layout_marginEnd="45dp"
-        android:layout_marginBottom="74dp"
-        android:onClick="addNewDish"
-        android:text="@string/add_dish"
-        android:imeOptions="actionDone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        tools:ignore="Autofill"/>
+
 
     <Spinner
         android:id="@+id/newDishType"
-        android:layout_width="387dp"
+        android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="483dp"
@@ -100,5 +86,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="250dp"
+        android:imeOptions="actionDone"
+        android:onClick="addNewDish"
+        android:text="@string/btn_add_dish"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newDishType"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="TextViewEdits" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
