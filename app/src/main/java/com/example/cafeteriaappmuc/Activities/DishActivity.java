@@ -20,6 +20,7 @@ import com.example.cafeteriaappmuc.R;
 import com.example.cafeteriaappmuc.RecyclerItemClickListener;
 import com.google.firebase.database.DatabaseReference;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class DishActivity extends AppCompatActivity  {
 
     //for displayImages
 
-    private Button uploadImagebtn;
+    private Button uploadImagebtn,sharebtn;
 
     // Creating DatabaseReference.
     DatabaseReference databaseReference;
@@ -57,6 +58,8 @@ public class DishActivity extends AppCompatActivity  {
 
     private String foodService;
     private Context context;
+    private String dishPrice;
+
 
 
     @Override
@@ -65,7 +68,7 @@ public class DishActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_dish);
         final Intent intent = getIntent();
         final String dishName = intent.getStringExtra(FoodServiceActivity.DISH_NAME); //get exas that are sent with intent, get dish name
-        String dishPrice = intent.getStringExtra(FoodServiceActivity.DISH_PRICE);
+        dishPrice = intent.getStringExtra(FoodServiceActivity.DISH_PRICE);
         String dishDescription = intent.getStringExtra(FoodServiceActivity.DISH_DESCRIPTION);
         foodService=((GlobalClass) this.getApplication()).getFoodService();
         TextView nameTextView = findViewById(R.id.dishName);
@@ -79,12 +82,22 @@ public class DishActivity extends AppCompatActivity  {
         TextView descriptionTextView = findViewById(R.id.dishDescription); //same here
         descriptionTextView.setText(dishDescription);
 
-        //adding back home button
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         //initializing buttons
         uploadImagebtn = findViewById(R.id.uploadImagebtn);
-      //  showImagesBtn = findViewById(R.id.showImagesBtn);
+        //  showImagesBtn = findViewById(R.id.showImagesBtn);
+
+        //initializing buttons
+        sharebtn = findViewById(R.id.shareDishBtn);
+
+        sharebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                shareSocialMedia();
+
+            }
+        });
+
 
         // on pressing upload button is called
         uploadImagebtn.setOnClickListener(new View.OnClickListener() {
@@ -180,11 +193,19 @@ public class DishActivity extends AppCompatActivity  {
 
     }
 
+    private void shareSocialMedia(){
+        String dish= ((GlobalClass) this.getApplication()).getDishName();
 
+        //ArrayList<String> info = new ArrayList<String>();
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TITLE, "Hi!");
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Come and eat "+dish+" with me at the " +foodService+" it only cost "+dishPrice+" euros");
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
     }
 
 
-
-
-
-
+}

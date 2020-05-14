@@ -28,6 +28,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.cafeteriaappmuc.Activities.FoodServiceActivity;
+import com.example.cafeteriaappmuc.Activities.MainActivity;
 
 /**
  * Utility class for access to runtime permissions.
@@ -41,8 +42,20 @@ public abstract class PermissionUtils {
      * Requests the fine location permission. If a rationale with an additional explanation should
      * be shown to the user, displays a dialog that triggers the request.
      */
-    public static void requestPermission(FoodServiceActivity activity, int requestId,
-                                         String permission, boolean finishActivity) {
+    public static void requestPermissionFood(FoodServiceActivity activity, int requestId,
+                                          String permission, boolean finishActivity) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+            // Display a dialog with rationale.
+            PermissionUtils.RationaleDialog.newInstance(requestId, finishActivity)
+                    .show(activity.getSupportFragmentManager(), "dialog");
+        } else {
+            // Location permission has not been granted yet, request it.
+            ActivityCompat.requestPermissions(activity, new String[]{permission}, requestId);
+        }
+    }
+
+    public static void requestPermissionMain(MainActivity activity, int requestId,
+                                             String permission, boolean finishActivity) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
             // Display a dialog with rationale.
             PermissionUtils.RationaleDialog.newInstance(requestId, finishActivity)

@@ -31,8 +31,10 @@
 
     <!--  Food service  -->
     <string name="show_menu_of_the_day">Show menu of the day</string>
-    <string name="estimated_time_to_walk">Estimated time to walk:</string>
+    <string name="estimated_time_to_walk">Estimated time to walk: </string>
     <string name="expected_queue_waiting_time">Expected Queue Waiting Time:</string>
+    <string name="btn_close">Close map</string>
+    <string name="tv_est_time_to_walk_not_available">Estimated time to walk: Not available.</string>
 
 
 
@@ -67,9 +69,8 @@
     <string name="userSelectedTextView">User previously selected as:</string>
     <string name="randomDesc">describing full size image</string>
     <string name="FullImageView">Full image view</string>
-
-
-
+    <string name="Share_dish_button">Share</string>
+    <string name="Share_foodservice_button">Share</string>
 
 </resources>
 

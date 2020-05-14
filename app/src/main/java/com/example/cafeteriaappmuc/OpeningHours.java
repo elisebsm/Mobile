@@ -24,8 +24,12 @@ import java.util.List;
 
 public class OpeningHours extends AppCompatActivity {
 
-    List<String> foodServicesTaguspark = Arrays.asList("Ground floor", "Taguspark Campus Restaurant", "Floor -1");
-    List<String> foodServicesAlameda = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "AEIST Building", "Copy Section", "South Tower", "Mathematics Building", "Interdisciplinary Building");
+    //dublicate in list because CTN bar is open two diff times a day
+    List<String> foodServicesTaguspark = Arrays.asList("Tagus Cafeteria", "Red Bar","Green Bar");
+    List<String> foodServicesCTN = Arrays.asList("CTN Cafeteria", "CTN Bar","CTN Bar");
+    //dublicate in list because complex bar is open two diff times a day
+    List<String> foodServicesAlameda = Arrays.asList("Central Bar", "Civil Bar", "Civil Cafeteria","Sena Pastry Shop","Merchy Bar", "AEIST bar",
+            "AEIST Esplanade", "Chemy Bar", "SAS Cafeteria", "Math Cafeteria","Complex Bar","Complex Bar");
 
     //private List<String> foodServices = Arrays.asList("Main Building", "Civil Building", "North Tower", "Mechanics Building II", "Copy Section","AEIST Building");
     private List<String> openingHours = new ArrayList<>();
@@ -33,94 +37,90 @@ public class OpeningHours extends AppCompatActivity {
     private List<String> foodServicesOpen = new ArrayList<>();
     //List<String> foodServicesClosed = new ArrayList<>();
     private  int counter=0;
+    private Boolean campusSel = true;
     @RequiresApi(api = Build.VERSION_CODES.O)
     public  List<String> CafeteriasOpen(String selectedUserVal, String campus) {
 
-        if (campus.equals("Alameda")) {
+            if (campus.equals("Alameda")) {
 
-            if (selectedUserVal.equals("Student")) {
-                openingHours = Arrays.asList("09:00:00", "07:30:00", "08:00:00", "08:00:00", "08:30:00", "08:00:00", "08:00:00","08:00:00","08:00:00");
-                closingHours = Arrays.asList("23:00:00", "21:00:00", "22:00:00", "16:00:00", "16:30:00", "20:00:00", "17:00:00", "14:30:00", "16:00:00");
+                if (selectedUserVal.equals("Student")|| selectedUserVal.equals("General Public")) {
+                    openingHours = Arrays.asList("09:00:00", "09:0:00", "12:00:00", "08:00:00", "09:00:00","09:00:00","09:00:00","09:00:00", "09:00:00", "13:30:00", "09:00:00", "14:00:00");
+                    closingHours = Arrays.asList("17:00:00", "17:00:00", "15:00:00", "19:00:00","17:00:00","17:00:00","17:00:00","17:00:00", "21:00:00", "15:00:00","12:00:00", "17:00:00");
 
-            } else if (selectedUserVal.equals("General Public")) {
-                openingHours = Arrays.asList("09:00:00", "09:30:00", "10:00:00", "08:00:00", "08:30:00", "09:00:00" ,"08:00:00","08:00:00","08:00:00");
-                closingHours = Arrays.asList("20:00:00", "23:00:00", "14:00:00", "16:00:00", "15:30:00", "15:00:00", "17:00:00", "14:30:00", "16:00:00");
-            }
-            //staff, researcher, prof etc
-            else {
-                openingHours = Arrays.asList("07:00:00", "07:30:00", "08:00:00", "07:00:00", "07:30:00", "08:00:00",  "08:00:00","08:00:00","08:00:00");
-                closingHours = Arrays.asList("20:00:00", "15:00:00", "20:00:00", "23:00:00", "14:30:00", "16:00:00", "17:00:00", "14:30:00", "16:00:00");
-
-            }
-        }
-        else{
-
-            if (selectedUserVal.equals("Student")) {
-                openingHours = Arrays.asList("09:00:00", "07:30:00", "08:00:00");
-                closingHours = Arrays.asList("17:00:00", "23:00:00", "21:00:00");
-
-            } else if (selectedUserVal.equals("General Public")) {
-                openingHours = Arrays.asList("09:00:00", "09:30:00", "10:00:00");
-                closingHours = Arrays.asList("17:00:00", "23:00:00", "14:00:00");
-            }
-            //staff, researcher, prof etc
-            else {
-                openingHours = Arrays.asList("07:00:00", "07:30:00", "08:00:00");
-                closingHours = Arrays.asList("20:00:00", "15:00:00", "23:00:00");
-
-            }
-            }
-
-
-
-        for (int i=0 ; i <openingHours.size(); i++){
-            try {
-
-                Date openTime = new SimpleDateFormat("HH:mm:ss").parse(openingHours.get(i));
-                Calendar calendar1 = Calendar.getInstance();
-                calendar1.setTime(openTime);
-                calendar1.add(Calendar.DATE, 1);
-
-                Date closingTime = new SimpleDateFormat("HH:mm:ss").parse(closingHours.get(i));
-                Calendar calendar2 = Calendar.getInstance();
-                calendar2.setTime(closingTime);
-                calendar2.add(Calendar.DATE, 1);
-
-                LocalTime currentTime = LocalTime.now(); // Gets the current time
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-                String timeCurrent = currentTime.format(formatter);
-
-                Date d = new SimpleDateFormat("HH:mm:ss").parse(timeCurrent);
-                Calendar calendar3 = Calendar.getInstance();
-                calendar3.setTime(d);
-                calendar3.add(Calendar.DATE, 1);
-                Date timeOfNow = calendar3.getTime();
-
-                if (timeOfNow.after(calendar1.getTime()) && timeOfNow.before(calendar2.getTime())) {
-                    //checkes whether the current time is between
-
-                    if (campus.equals("Alameda")){
-                          foodServicesOpen.add(counter,foodServicesAlameda.get(i));
-                          counter++;
-                    }
-                    else{
-                         foodServicesOpen.add(counter,foodServicesTaguspark.get(i));
-                         counter++;
-                         System.out.println(i);
-                    }
+                    //staff, researcher, prof etc
+                } else {     //second last element always false, in order not to get dublicate in cafetira
+                    openingHours = Arrays.asList("09:00:00", "09:0:00", "12:00:00", "08:00:00", "09:00:00","09:00:00","09:00:00","09:00:00", "09:00:00", "12:00:00", "08:00:00","09:00:00");
+                    closingHours = Arrays.asList("17:00:00", "17:00:00", "15:00:00", "19:00:00","17:00:00","17:00:00","17:00:00","17:00:00",  "21:00:00", "15:00:00","07:00:00", "17:00:00");
 
                 }
 
-            } catch (ParseException e) {
-                e.printStackTrace();
+
+            } else if (campus.equals("Taguspark")) {
+                openingHours = Arrays.asList("12:00:00", "08:00:00", "07:00:00");
+                closingHours = Arrays.asList("15:00:00", "22:00:00", "19:00:00");
             }
+            else if (campus.equals("CTN")){
+            //capmus equals CTN
+                openingHours = Arrays.asList("12:00:00", "08:30:00", "15:30:00");
+                closingHours = Arrays.asList("14:00:00", "12:00:00", "16:30:00");
+            }
+            else{
+                campusSel=false;
+            }
+
+
+        if (campusSel==true) {
+            for (int i = 0; i < openingHours.size(); i++) {
+                try {
+
+                    Date openTime = new SimpleDateFormat("HH:mm:ss").parse(openingHours.get(i));
+                    Calendar calendar1 = Calendar.getInstance();
+                    calendar1.setTime(openTime);
+                    calendar1.add(Calendar.DATE, 1);
+
+                    Date closingTime = new SimpleDateFormat("HH:mm:ss").parse(closingHours.get(i));
+                    Calendar calendar2 = Calendar.getInstance();
+                    calendar2.setTime(closingTime);
+                    calendar2.add(Calendar.DATE, 1);
+
+                    LocalTime currentTime = LocalTime.now(); // Gets the current time
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+                    String timeCurrent = currentTime.format(formatter);
+
+                    Date d = new SimpleDateFormat("HH:mm:ss").parse(timeCurrent);
+                    Calendar calendar3 = Calendar.getInstance();
+                    calendar3.setTime(d);
+                    calendar3.add(Calendar.DATE, 1);
+                    Date timeOfNow = calendar3.getTime();
+
+                    if (timeOfNow.after(calendar1.getTime()) && timeOfNow.before(calendar2.getTime())) {
+                        //checkes whether the current time is between
+
+                        if (campus.equals("Alameda")) {
+                            foodServicesOpen.add(counter, foodServicesAlameda.get(i));
+                            counter++;
+                        } else if(campus.equals("Taguspark")){
+                            foodServicesOpen.add(counter, foodServicesTaguspark.get(i));
+                            counter++;
+                        }
+                        else{
+                            foodServicesOpen.add(counter, foodServicesCTN.get(i));
+                            counter++;
+                        }
+
+                    }
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
         }
-        System.out.println(foodServicesOpen);
+        System.out.println(foodServicesOpen.toString());
         return foodServicesOpen;
 
-
     }
-
 
 }
 

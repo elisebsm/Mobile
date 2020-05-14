@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
@@ -29,26 +30,27 @@
              sign the APK for publishing.
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-        <activity android:name=".Activities.FoodServiceActivity" />
+        <activity android:name=".Activities.FoodServiceActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".Activities.DisplayImageActivity" />
-        <activity android:name=".Activities.UploadImageActivity"
-            android:parentActivityName=".Activities.FoodServiceActivity" />
-        <activity android:name=".Activities.ProfileSetupActivity"
-            android:parentActivityName=".Activities.MainActivity" />
+        <activity android:name=".Activities.UploadImageActivity"/>
+        <activity android:name=".Activities.ProfileSetupActivity" />
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
-    </activity>
+        </activity>
 
-    <activity android:name=".Activities.AddNewDishActivity"
+        <activity android:name=".Activities.AddNewDishActivity"
         android:parentActivityName=".Activities.DishActivity"/>
-    <activity android:name=".Activities.DishActivity" />
+        <activity android:name=".Activities.DishActivity" />
 
+        <service android:name="pt.inesc.termite.wifidirect.service.SimWifiP2pService" />
 </application>
 </manifest>
