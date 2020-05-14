@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                if (adapterView.getItemAtPosition(position).equals("Choose Campus")) {
+                if (adapterView.getItemAtPosition(position).equals(getString(R.string.choose))) {
                     // do nothing
                 } else {
                     counterDisplayFoodServiceInList = 0;
@@ -325,7 +325,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
     private List<String> removeCurrentCampusFromList(String currentCampus) {
         int numberOfCampuses = campusesAll.size();
         List<String> campuses = new ArrayList<>();
-        campuses.add(0, "Choose Campus");
+        campuses.add(0, getString(R.string.choose));
         for (int i = 0; i < numberOfCampuses; i++) {
             if (!campusesAll.get(i).equals(currentCampus)) {
                 campuses.add(campusesAll.get(i));

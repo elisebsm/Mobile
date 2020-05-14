@@ -71,6 +71,18 @@
     <string name="FullImageView">Full image view</string>
     <string name="Share_dish_button">Share</string>
     <string name="Share_foodservice_button">Share</string>
+    <string name="dietary_preferences">Dietary preferences:</string>
+    <string name="meat">Meat</string>
+    <string name="fish">Fish</string>
+    <string name="vegitarian">Vegitarian</string>
+    <string name="vegan">Vegan</string>
+    <string name="save_diet_preferences">Save diet preferences</string>
+    <string name="opening_hours">Opening hours:</string>
+    <string name="menu_of_the_day">Menu of the day</string>
+    <string name="add_new_dish">Add new dish</string>
+    <string name="show_hidden_dishes">Show hidden dishes</string>
+    <string name="dish">Dish</string>
+    <string name="choose">Choose Campus</string>
 
 </resources>
 
