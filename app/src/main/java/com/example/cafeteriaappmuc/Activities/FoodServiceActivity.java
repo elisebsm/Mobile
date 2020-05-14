@@ -246,14 +246,14 @@ public class FoodServiceActivity extends AppCompatActivity  {
                             listView.setAdapter(filterAdapter);
                         }
 
-                for (int i=0; i< list.size() ; i++){
-                    Dish selectedDish = dishes[i];
-                    String dishName =selectedDish.name;
-                    dishNames.add(dishName);
-                }
+                //for (int i=0; i< list.size() ; i++){
+                   // Dish selectedDish = dishes[i];
+                  //  String dishName =selectedDish.name;
+                //    dishNames.add(dishName);
+                //}
 
-                ArrayAdapter adapter = new ArrayAdapter<Dish>(getApplicationContext(),
-                        R.layout.dish_list_element, dishes);
+               // ArrayAdapter adapter = new ArrayAdapter<Dish>(getApplicationContext(),
+                       // R.layout.dish_list_element, dishes);
                     }
                 });
 
