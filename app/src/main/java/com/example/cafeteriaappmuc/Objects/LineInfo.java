@@ -8,7 +8,7 @@ public class LineInfo {
 
     }
 
-    public void LineInfo(Integer numberInLine){
+    public LineInfo(Integer numberInLine){
         this.numberInLine=numberInLine;
     }
     public Integer getNumberInLine(){

@@ -117,7 +117,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
     private Double estimateY;
     private Integer numberInLineX;
     private List<Integer> XiList= new ArrayList<>();
-    private List<Long> YiList= new ArrayList<>();
+    private List<Double> YiList= new ArrayList<>();
+    private String Database_Path = ("Beacons/Alameda/Central Bar/");
+    private Double timeTest;
+    private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path);
 
 
 
@@ -155,7 +158,65 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
         Intent intent = new Intent(this.getApplicationContext(), SimWifiP2pService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         mBound = true;
-        getWaitingTime();
+
+        // Creating DatabaseReference. Get broadcast receiver name(campus and cafeteria spesific)
+        // in order to find right info in database
+        //TODO: change so it is cafeteria spesific. aka get name of beacon and add to databasepath
+
+
+        //get info from database, number in line atm and training data Xi and Yi
+        //cont checking
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                LineInfo lineInfo = snapshot.child("line").getValue(LineInfo.class);  //current number of people in line
+                numberInLineX = lineInfo.getNumberInLine();
+                //System.out.println(("this is line length:"+numberInLineX));
+                for (DataSnapshot postSnapshot : snapshot.child("trainingData").getChildren()) {
+                    QueueInfo queueInfo = postSnapshot.getValue(QueueInfo.class);
+
+                    XiList.add(queueInfo.getXi());   //add number of people in line to list
+                    YiList.add(queueInfo.getYi());  //add corresponding number of how long people stay in line to list
+                    //System.out.println(("this is X mean:"+Xi));
+
+                }
+
+                if (XiList.size()>=2){
+                    //estimate waiting time for this person by calculating b1 and b2 and using number of people (X) in line
+                    estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
+                    System.out.println(("this is waiting time bitch" + estimateY));
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                //Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+
+
+        //add info on new person in line into to database to improve training data
+        //calculate values
+        Integer newPersonInLine= 3;//numberInLineX+1;
+
+        //fictional time
+        Double diffTime= 2.4;
+        QueueInfo newQueueInfo = new QueueInfo(newPersonInLine,diffTime);
+
+        // Getting upload ID.
+        String UploadId = databaseReference.push().getKey();
+
+        databaseReference.child("trainingData").child(UploadId).setValue(newQueueInfo);
+
+
+        // System.out.println(("this is "+estimateY));
+
+
 
 
     }
@@ -163,118 +224,15 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
     //this should take in open cafeterias, and show waiting time based on those who are open
     private Double getWaitingTime() {
 
-        // Creating DatabaseReference. Get broadcast receiver name(campus and cafeteria spesific)
-        // in order to find right info in database
-        //TODO: change so it is cafeteria spesific. aka get name of beacon and add to databasepath
-        String Database_Path = ("Beacons/Alameda/Central Bar/");
-
-        DatabaseReference databaseReference;
-        databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path);
-
-        //get info from database, number in line atm and training data Xi and Yi
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                LineInfo lineInfo = snapshot.child("line").getValue(LineInfo.class);  //current number of people in line
-                numberInLineX = lineInfo.getNumberInLine();
-                //System.out.println(("this is line length:"+numberInLineX));
-                for (DataSnapshot postSnapshot : snapshot.child("testData").getChildren()) {
-                    QueueInfo queueInfo = postSnapshot.getValue(QueueInfo.class);
-
-                    XiList.add(queueInfo.getXi());   //add number of people in line to list
-                    YiList.add(queueInfo.getYi());  //add corresponding number of how long people stay in line to list
-                    //System.out.println(("this is X mean:"+Xi));
-
-                }
-
-
-                //estimate waiting time for this person by calculating b1 and b2 and using number of people (X) in line
-                estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
-                System.out.println(("this is waiting time" + estimateY));
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                //Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        });
+        //System.out.println(("this is waiting timmmmee" + estimateY));
 
 
         return estimateY;
 
     }
 
-    public void updateWaitingTime(){
-
-        // Creating DatabaseReference. Get broadcast receiver name(campus and cafeteria spesific)
-        // in order to find right info in database
-        //TODO: change so it is cafeteria spesific. aka get name of beacon and add to databasepath
-        String Database_Path = ("Beacons/Alameda/Central Bar/");
-
-        DatabaseReference databaseReference;
-        databaseReference=   FirebaseDatabase.getInstance().getReference(Database_Path);
-
-        //get info from database, number in line atm and training data Xi and Yi
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                LineInfo lineInfo= snapshot.child("line").getValue(LineInfo.class);  //current number of people in line
-                numberInLineX=lineInfo.getNumberInLine();
-                //System.out.println(("this is line length:"+numberInLineX));
-                for (DataSnapshot postSnapshot : snapshot.child("testData").getChildren()) {
-                    QueueInfo queueInfo = postSnapshot.getValue(QueueInfo.class);
-
-                    XiList.add(queueInfo.getXi());   //add number of people in line to list
-                    YiList.add(queueInfo.getYi());  //add corresponding number of how long people stay in line to list
-                    //System.out.println(("this is X mean:"+Xi));
-
-                }
 
 
-                //estimate waiting time for this person by calculating b1 and b2 and using number of people (X) in line
-                estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
-                 System.out.println(("this is waiting time"+estimateY));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                //Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-                // ...
-            }
-        });
-     //   System.out.println(("this is waiting time"+estimateY));
-
-
-   /*         //add info on new person in line into to database to improve training data
-
-            //calculate values
-            Integer newPersonInLine= numberInLineX+1;
-            List<Integer> newXiList;
-            List<Long> newYiList;
-            newXiList= Xi;
-            newXiList.add(newPersonInLine);
-            newYiList =Yi;
-            newYiList.add(timeInQueue);
-            if (Xi.size()<12){//where 12 is the cap on number of training data that is stored
-                newXiList.remove(0);
-                newYiList.remove(0);
-            }
-
-            //random tag name
-            String tagName= UUID.randomUUID().toString();
-
-             //set new values in database
-
-            databaseReference.child("NumberInLine").setValue(newPersonInLine);
-            databaseReference.child("Xi").setValue(newXiList);
-            databaseReference.child("Yi").setValue(newXiList);
-
-*/
-    }
 
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -876,6 +834,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
 
     //get user profile selected in profile
     private String getUserProfile() {
+
         final String key =getString(R.string.saved_profile_key);
         final String defValue = getString(R.string.saved_profile_default_key);
         SharedPreferences sharedPref = getSharedPreferences("settings",

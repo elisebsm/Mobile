@@ -6,33 +6,33 @@ public class QueueInfo {
 
 
     //getting info from database Yi and Xi, must have same name as in database
-    private Integer Xi;
-    private Long Yi;
+    private Integer xi;
+    private Double yi;
 
     public QueueInfo(){
 
     }
 
 
-    public void QueueInfoY(Integer Xi, Long Yi){
-        this.Xi= Xi;
-        this.Yi= Yi;
+    public QueueInfo(Integer xi, Double yi){
+        this.xi= xi;
+        this.yi= yi;
 
     }
 
 
     public Integer getXi() {
-        return Xi;
+        return xi;
     }
-    public void setXi(){
-        this.Xi=Xi;
+    public void setXi(Integer xi){
+        this.xi=xi;
     }
-    public void setYi(){
-        this.Yi=Yi;
+    public void setYi(Double yi){
+        this.yi=yi;
     }
 
-    public Long getYi() {
-        return Yi;
+    public Double getYi() {
+        return yi;
     }
 
 

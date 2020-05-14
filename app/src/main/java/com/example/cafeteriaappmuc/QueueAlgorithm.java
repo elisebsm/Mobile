@@ -25,7 +25,7 @@ public class QueueAlgorithm extends AppCompatActivity {
 
     //training alborithm (should take in Xi and Yi)
     //estimate b1 and b0 aka a and b
-    public static Double getB1(List<Integer> Xi, List<Long> Yi ){
+    public static Double getB1(List<Integer> Xi, List<Double> Yi ){
         Double sumX=0.0;
         Double sumY=0.0;
         Double Sxy=0.0;
@@ -51,7 +51,7 @@ public class QueueAlgorithm extends AppCompatActivity {
 
         return b1;  //estimate of waiting time based on prev data
     }
-    public static Double getb0(List<Integer> Xi, List<Long> Yi){
+    public static Double getb0(List<Integer> Xi, List<Double> Yi){
         n= Xi.size();
         Double sumX=0.0;
         Double sumY=0.0;
