@@ -15,12 +15,11 @@ import android.widget.TextView;
 
 
 import com.example.cafeteriaappmuc.GlobalClass;
-import com.example.cafeteriaappmuc.ImageUploadInfo;
+import com.example.cafeteriaappmuc.Objects.ImageUploadInfo;
 import com.example.cafeteriaappmuc.R;
 import com.example.cafeteriaappmuc.RecyclerItemClickListener;
 import com.google.firebase.database.DatabaseReference;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 

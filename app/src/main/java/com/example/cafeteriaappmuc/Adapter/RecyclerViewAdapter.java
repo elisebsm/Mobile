@@ -1,21 +1,14 @@
 package com.example.cafeteriaappmuc.Adapter;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 
-import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
-import com.example.cafeteriaappmuc.Activities.DishActivity;
 
 import com.example.cafeteriaappmuc.GlideApp;
 import com.example.cafeteriaappmuc.R;
@@ -23,10 +16,7 @@ import com.example.cafeteriaappmuc.R;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-
-import com.example.cafeteriaappmuc.ImageUploadInfo;
-import com.example.cafeteriaappmuc.RecyclerItemClickListener;
+import com.example.cafeteriaappmuc.Objects.ImageUploadInfo;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 

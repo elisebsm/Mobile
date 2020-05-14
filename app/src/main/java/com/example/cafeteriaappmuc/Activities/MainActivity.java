@@ -38,12 +38,19 @@ import com.example.cafeteriaappmuc.Adapter.AdapterListViewMainFoodServices;
 
 import com.example.cafeteriaappmuc.BroadcastReceiver.SimWifiP2pBroadcastReceiver;
 import com.example.cafeteriaappmuc.GlobalClass;
+import com.example.cafeteriaappmuc.Objects.LineInfo;
 import com.example.cafeteriaappmuc.MyDataListMain;
 import com.example.cafeteriaappmuc.OpeningHours;
 import com.example.cafeteriaappmuc.PermissionUtils;
 import com.example.cafeteriaappmuc.QueueAlgorithm;
+import com.example.cafeteriaappmuc.Objects.QueueInfo;
 import com.example.cafeteriaappmuc.R;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 import org.json.JSONException;
@@ -57,8 +64,8 @@ import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
@@ -107,6 +114,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
     private long timeLeavingQueueMillis;
     private long timeInQueue;
     private int beaconDetectedCounter = 0;
+    private Double estimateY;
+    private Integer numberInLineX;
+    private List<Integer> XiList= new ArrayList<>();
+    private List<Long> YiList= new ArrayList<>();
+
+
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -131,22 +144,136 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
 
         // register broadcast receiver
         IntentFilter filter = new IntentFilter();
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
+       // filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
+       // filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
 
-        Intent intent = new Intent(this, SimWifiP2pService.class);
+        //will listen even though activity destroyd
+        Intent intent = new Intent(this.getApplicationContext(), SimWifiP2pService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         mBound = true;
-        //get waiting time based on least square algorithm  --- testdata here
-        List<Double> Yi = Arrays.asList(0.5,1.7,3.9); // real data of time per pers in the line
-        List<Integer> Xi = Arrays.asList(1,3,5); //number of people in line measured when you arrived
+        getWaitingTime();
 
-        Double y= QueueAlgorithm.leastSquareAlg(Xi,Yi);
-        System.out.println("Mean:"+y);
+
+    }
+
+    //this should take in open cafeterias, and show waiting time based on those who are open
+    private Double getWaitingTime() {
+
+        // Creating DatabaseReference. Get broadcast receiver name(campus and cafeteria spesific)
+        // in order to find right info in database
+        //TODO: change so it is cafeteria spesific. aka get name of beacon and add to databasepath
+        String Database_Path = ("Beacons/Alameda/Central Bar/");
+
+        DatabaseReference databaseReference;
+        databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path);
+
+        //get info from database, number in line atm and training data Xi and Yi
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                LineInfo lineInfo = snapshot.child("line").getValue(LineInfo.class);  //current number of people in line
+                numberInLineX = lineInfo.getNumberInLine();
+                //System.out.println(("this is line length:"+numberInLineX));
+                for (DataSnapshot postSnapshot : snapshot.child("testData").getChildren()) {
+                    QueueInfo queueInfo = postSnapshot.getValue(QueueInfo.class);
+
+                    XiList.add(queueInfo.getXi());   //add number of people in line to list
+                    YiList.add(queueInfo.getYi());  //add corresponding number of how long people stay in line to list
+                    //System.out.println(("this is X mean:"+Xi));
+
+                }
+
+
+                //estimate waiting time for this person by calculating b1 and b2 and using number of people (X) in line
+                estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
+                System.out.println(("this is waiting time" + estimateY));
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                //Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+
+
+        return estimateY;
+
+    }
+
+    public void updateWaitingTime(){
+
+        // Creating DatabaseReference. Get broadcast receiver name(campus and cafeteria spesific)
+        // in order to find right info in database
+        //TODO: change so it is cafeteria spesific. aka get name of beacon and add to databasepath
+        String Database_Path = ("Beacons/Alameda/Central Bar/");
+
+        DatabaseReference databaseReference;
+        databaseReference=   FirebaseDatabase.getInstance().getReference(Database_Path);
+
+        //get info from database, number in line atm and training data Xi and Yi
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                LineInfo lineInfo= snapshot.child("line").getValue(LineInfo.class);  //current number of people in line
+                numberInLineX=lineInfo.getNumberInLine();
+                //System.out.println(("this is line length:"+numberInLineX));
+                for (DataSnapshot postSnapshot : snapshot.child("testData").getChildren()) {
+                    QueueInfo queueInfo = postSnapshot.getValue(QueueInfo.class);
+
+                    XiList.add(queueInfo.getXi());   //add number of people in line to list
+                    YiList.add(queueInfo.getYi());  //add corresponding number of how long people stay in line to list
+                    //System.out.println(("this is X mean:"+Xi));
+
+                }
+
+
+                //estimate waiting time for this person by calculating b1 and b2 and using number of people (X) in line
+                estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
+                 System.out.println(("this is waiting time"+estimateY));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                //Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        });
+     //   System.out.println(("this is waiting time"+estimateY));
+
+
+   /*         //add info on new person in line into to database to improve training data
+
+            //calculate values
+            Integer newPersonInLine= numberInLineX+1;
+            List<Integer> newXiList;
+            List<Long> newYiList;
+            newXiList= Xi;
+            newXiList.add(newPersonInLine);
+            newYiList =Yi;
+            newYiList.add(timeInQueue);
+            if (Xi.size()<12){//where 12 is the cap on number of training data that is stored
+                newXiList.remove(0);
+                newYiList.remove(0);
+            }
+
+            //random tag name
+            String tagName= UUID.randomUUID().toString();
+
+             //set new values in database
+
+            databaseReference.child("NumberInLine").setValue(newPersonInLine);
+            databaseReference.child("Xi").setValue(newXiList);
+            databaseReference.child("Yi").setValue(newXiList);
+
+*/
     }
 
 
@@ -177,12 +304,18 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
         if(beaconDetectedCounter == 1){
             timeLeavingQueueMillis = System.currentTimeMillis();
             beaconDetectedCounter = 0;
+
+            //time measured in miliseconds, find the time differene to get value of Y to add to list.
+            //get the corresonding X value by getting the number of peers in queue in database
             Log.i("BEACONNAME  Arriving", String.valueOf(timeArrivingQueueMillis));
             Log.i("BEACONNAME  Leaving", String.valueOf(timeLeavingQueueMillis));
+
 
             timeInQueue = timeLeavingQueueMillis - timeArrivingQueueMillis;
 
             Log.i("BEACONNAME  InQueue", String.valueOf(timeInQueue));
+
+
         }
         // compile list of devices in range
         for (SimWifiP2pDevice device : peers.getDeviceList()) {
@@ -193,6 +326,15 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
         }
 
     }
+
+/*
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
+    }
+
+*/
 
 
 
@@ -789,15 +931,15 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
         }
         return responseString;
     }
-/*
+
     //Beacon
     @Override
     public void onPause() {
         super.onPause();
-        unregisterReceiver(broadcastReceiver);
+        unregisterReceiver(mReceiver);
     }
 
-*/
+
 
 
 
@@ -925,22 +1067,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             }
         }
     }
-/*
-    //listen for internet conn on wifi
-    BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Toast.makeText(context, "Wifi connected", Toast.LENGTH_SHORT).show();
-
-        }
-    };
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(wifiReceiver);
-    }
-*/
 
     //checking if decvice is connected to internet
     private boolean checkNetworkConnection() {
