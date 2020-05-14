@@ -2,9 +2,13 @@ package com.example.cafeteriaappmuc.Activities;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -24,6 +28,7 @@ import com.example.cafeteriaappmuc.OpeningHours;
 import com.example.cafeteriaappmuc.R;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -39,6 +44,25 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_setup);
 
+        Spinner languageSpinner = findViewById(R.id.languageSpinner);
+        final String[] languages = {"Overwrite system language", "English", "Norsk"};
+        languageSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, languages));
+        languageSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 1) {
+                    setLocale("en");
+                } else if (position == 2) {
+                    setLocale("nb");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         users_spinner = (Spinner) findViewById(R.id.spinner_users);
         Button button = findViewById(R.id.save_button);
@@ -92,7 +116,7 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
 
         //finne alle checkboxene
 
-        Map<DishType,Boolean> dietPreferences = retrieveDietPreferences();
+        Map<DishType, Boolean> dietPreferences = retrieveDietPreferences();
         CheckBox meatCheckBox = findViewById(R.id.meatCheckBox);
         meatCheckBox.setChecked(dietPreferences.get(DishType.Meat));
         CheckBox fishCheckBox = findViewById(R.id.fishCheckBox);
@@ -167,12 +191,12 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
 
     }
 
-    public Map<DishType, Boolean> retrieveDietPreferences(){
+    public Map<DishType, Boolean> retrieveDietPreferences() {
         SharedPreferences sharedPref = getSharedPreferences("Diets", Context.MODE_PRIVATE);
-        boolean meatValue = sharedPref.getBoolean("Meat",true);
-        boolean fishValue = sharedPref.getBoolean("Fish",true);
-        boolean vegetarianValue = sharedPref.getBoolean("Vegetarian",true);
-        boolean veganValue = sharedPref.getBoolean("Vegan",true);
+        boolean meatValue = sharedPref.getBoolean("Meat", true);
+        boolean fishValue = sharedPref.getBoolean("Fish", true);
+        boolean vegetarianValue = sharedPref.getBoolean("Vegetarian", true);
+        boolean veganValue = sharedPref.getBoolean("Vegan", true);
 
         Map<DishType, Boolean> dietMap = new HashMap<>();
         dietMap.put(DishType.Meat, meatValue);
@@ -180,6 +204,18 @@ public class ProfileSetupActivity extends AppCompatActivity implements AdapterVi
         dietMap.put(DishType.Vegetarian, vegetarianValue);
         dietMap.put(DishType.Vegan, veganValue);
         return dietMap;
+    }
+
+    public void setLocale(String lang) {
+        Locale myLocale = new Locale(lang);
+        Resources res = getResources();
+        DisplayMetrics dm = res.getDisplayMetrics();
+        Configuration conf = res.getConfiguration();
+        conf.setLocale(myLocale);
+        res.updateConfiguration(conf, dm);
+        Intent refresh = new Intent(this, ProfileSetupActivity.class);
+        finish();
+        startActivity(refresh);
     }
 
 }
