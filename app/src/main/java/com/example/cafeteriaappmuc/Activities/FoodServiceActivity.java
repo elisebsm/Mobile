@@ -215,6 +215,12 @@ public class FoodServiceActivity extends AppCompatActivity  {
                 //get list of dishnames (that is not final) in order to use in socialmedia
                 final Dish[] allDishes = list.toArray(new Dish[list.size()]);
 
+                for (int i=0; i< list.size() ; i++){
+                 Dish selectedDish = allDishes[i];
+                  String dishName =selectedDish.name;
+                    dishNames.add(dishName);
+                }
+
                 Map<DishType, Boolean> preferences = retrieveDietPreferences();
                 List<Dish> filteredDishes = new ArrayList<>();
                 for (Dish dish : list) {
@@ -245,15 +251,6 @@ public class FoodServiceActivity extends AppCompatActivity  {
                         } else {
                             listView.setAdapter(filterAdapter);
                         }
-
-                //for (int i=0; i< list.size() ; i++){
-                   // Dish selectedDish = dishes[i];
-                  //  String dishName =selectedDish.name;
-                //    dishNames.add(dishName);
-                //}
-
-               // ArrayAdapter adapter = new ArrayAdapter<Dish>(getApplicationContext(),
-                       // R.layout.dish_list_element, dishes);
                     }
                 });
 
