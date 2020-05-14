@@ -60,8 +60,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="9dp"
-            android:layout_marginEnd="9dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="9dp"
             android:layout_marginBottom="4dp"
             android:text="Opening hours:"
             android:textSize="15sp"
@@ -84,8 +84,7 @@
             app:layout_constraintHorizontal_bias="0.496"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvOpeningHours"
-            tools:context=".Activities.FoodServiceActivity"
-            />
+            tools:context=".Activities.FoodServiceActivity" />
 
         <TextView
             android:id="@+id/tvEstimatedWalkingTime"
@@ -106,8 +105,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="9dp"
-            android:layout_marginEnd="9dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="9dp"
             android:layout_marginBottom="4dp"
             android:text="@string/expected_queue_waiting_time"
             android:textSize="15sp"
@@ -121,19 +120,18 @@
             android:id="@+id/menuOftheDay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="109dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="109dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginStart="119dp"
+            android:layout_marginTop="445dp"
+            android:layout_marginEnd="120dp"
+            android:layout_marginBottom="254dp"
             android:text="Menu of the day"
             android:textColor="#9C27B0"
             android:textColorLink="#111B1E"
             android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@+id/dishList"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.476"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvWaitingTime" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ListView
             android:id="@+id/dishList"
@@ -156,10 +154,10 @@
             android:onClick="goToAddNewDish"
             android:text="Add new dish"
             android:textSize="15sp"
-            app:layout_constraintTop_toBottomOf="@+id/dishList"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dishList" />
 
         <Button
             android:id="@+id/shareFoodServiceBtn"
@@ -172,6 +170,20 @@
             app:layout_constraintEnd_toStartOf="@+id/buttonAddNewDish"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dishList" />
+
+        <CheckBox
+            android:id="@+id/showHiddenDishes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="244dp"
+            android:layout_marginTop="477dp"
+            android:layout_marginEnd="9dp"
+            android:layout_marginBottom="222dp"
+            android:text="Show hidden dishes"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
