@@ -1,4 +1,4 @@
-package com.example.cafeteriaappmuc;
+package com.example.cafeteriaappmuc.Objects;
 
 public class ImageUploadInfo {
 

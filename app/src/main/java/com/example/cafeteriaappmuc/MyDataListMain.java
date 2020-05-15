@@ -8,9 +8,9 @@ public class MyDataListMain {
 
     private String textViewFoodService;
     private String textViewEstimatedTimeToWalk;
-    private int textViewExpectedQueueWaitingTime;
+    private long textViewExpectedQueueWaitingTime;
 
-    public MyDataListMain(String foodService, String timeToWalk, int queueTime) {
+    public MyDataListMain(String foodService, String timeToWalk, long queueTime) {
         this.textViewFoodService = foodService;
         this.textViewEstimatedTimeToWalk = timeToWalk;
         this.textViewExpectedQueueWaitingTime = queueTime;
@@ -27,10 +27,10 @@ public class MyDataListMain {
     public void setTimeToWalk(String timeToWalk) {
         this.textViewEstimatedTimeToWalk = timeToWalk;
     }
-    public int getQueueTime() {
+    public long getQueueTime() {
         return textViewExpectedQueueWaitingTime;
     }
-    public void setQueueTime(int queueTime) {
+    public void setQueueTime(long queueTime) {
         this.textViewExpectedQueueWaitingTime = queueTime;
     }
 }

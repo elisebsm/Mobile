@@ -10,12 +10,12 @@ import java.util.List;
 //least square algorithm
 public class QueueAlgorithm extends AppCompatActivity {
 
-    private static Double b1;  //estimate of slope coefficient betta1. Estimate of people in line
-    private static Double b0;      //this is time in front of line, estimate
-    private static Double meanX;           // average number of people in line
-    private static Double meanY;   //average of total waiting time,
-    private static Integer n; /// number of people in line
-    private static Double estimateY;
+    private static double b1;  //estimate of slope coefficient betta1. Estimate of people in line
+    private static double b0;      //this is time in front of line, estimate
+    private static double meanX;           // average number of people in line
+    private static double meanY;   //average of total waiting time,
+    private static int n; /// number of people in line
+   // private static Double estimateY;
 
 
     //This is the real data (X and Y) of people in line
@@ -23,10 +23,9 @@ public class QueueAlgorithm extends AppCompatActivity {
      //private static List<Integer> Xi = Arrays.asList(1,3,5); //number of people in line measured when you arrived
 
 
-
     //training alborithm (should take in Xi and Yi)
     //estimate b1 and b0 aka a and b
-    public static Double leastSquareAlg(List<Integer> Xi, List<Double> Yi ){
+    public static Double getB1(List<Integer> Xi, List<Double> Yi ){
         Double sumX=0.0;
         Double sumY=0.0;
         Double Sxy=0.0;
@@ -38,6 +37,7 @@ public class QueueAlgorithm extends AppCompatActivity {
             sumX= sumX+Xi.get(i);
 
         }
+
         meanX=sumX/n;
         meanY=sumY/n;
 
@@ -49,16 +49,30 @@ public class QueueAlgorithm extends AppCompatActivity {
         //b1 is amount of time per user in line
         b1=Sxy/Sxx;
 
+        return b1;  //estimate of waiting time based on prev data
+    }
+    public static Double getb0(List<Integer> Xi, List<Double> Yi){
+        n= Xi.size();
+        Double sumX=0.0;
+        Double sumY=0.0;
+        for(int i=0; i <Xi.size() ; i++){
+            sumY= sumY+Yi.get(i);
+            sumX= sumX+Xi.get(i);
+
+        }
+        meanX=sumX/n;
+        meanY=sumY/n;
+
+
         //calc b0, amount of time used in front of line (in the casheer)
         b0=(sumY-b1*sumX)/n;
-
-
-        estimateY=(b1*meanX)+b0;
-        // System.out.println("mean is :"+ estimateY);
-        // System.out.println("B1 is :"+ b1);
-        //System.out.println("b0 is :"+ b0);
-        return estimateY;  //estimate of waiting time based on prev data
+        return b0;
     }
+
+    //returnerer b1 og b0, dette er av interesse.
+    //starte med 2 kunder
+    //liste med feks 50 verdier av Xi og Yi, fjerne elste data.
+    //b1 og b0 kalkulere hver gang.
 
 
 

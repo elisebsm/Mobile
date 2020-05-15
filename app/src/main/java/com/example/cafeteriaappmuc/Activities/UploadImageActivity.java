@@ -26,7 +26,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.cafeteriaappmuc.GlobalClass;
-import com.example.cafeteriaappmuc.ImageUploadInfo;
+import com.example.cafeteriaappmuc.Objects.ImageUploadInfo;
 import com.example.cafeteriaappmuc.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
