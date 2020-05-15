@@ -466,18 +466,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
     private void getDistance(LatLng latLngCampus){
         //checking for internet connection
         if(checkNetworkConnection() && locationEnabled) {
-            /*LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
             String locationProvider = LocationManager.NETWORK_PROVIDER;
             @SuppressLint("MissingPermission") android.location.Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
             double userLat = lastKnownLocation.getLatitude();
             double userLong = lastKnownLocation.getLongitude();
             LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
-*/
-            double userLatAl = 38.738300;
-            double userLongAl = -9.139040;
-            double userLatTa = 38.735580;
-            double userLongTa = -9.299288;
-            LatLng latLngCurrentLoc = new LatLng(userLatAl, userLongAl);
 
             String url = getRequestUrl(latLngCurrentLoc, latLngCampus);
             MainActivity.TaskRequestDistanceToCampuses taskRequestDistanceToCampuses = new MainActivity.TaskRequestDistanceToCampuses();
@@ -522,15 +516,13 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
 
         counterDisplayFoodServiceInList = 0;
         arrayList.clear();
-       /* //TODO: change back to current after testing
+
         // Get current location
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         String locationProvider = LocationManager.NETWORK_PROVIDER;
         @SuppressLint("MissingPermission") android.location.Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
         double userLat = lastKnownLocation.getLatitude();
-        double userLong = lastKnownLocation.getLongitude();*/
-        double userLat = 38.738300;
-        double userLong = -9.139040;
+        double userLong = lastKnownLocation.getLongitude();
         LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
 
         List<LatLng> latLngs = new ArrayList<>();

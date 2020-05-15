@@ -33,7 +33,7 @@ import java.util.Map;
 
 
 //use get in other activityes to find restauratn and opening hours for the profile that is chosen
-//TODO: create openinghours object?
+
 public class ProfileSetupActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     private Spinner users_spinner;
     private String selectedSpinnerVal = null;

@@ -74,8 +74,6 @@ public class FoodServiceActivity extends AppCompatActivity {
     private List<String> dishNames = new ArrayList<>();
 
 
-    //TODO: show walking time, update every second minute or so??
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -398,8 +396,6 @@ public class FoodServiceActivity extends AppCompatActivity {
         }
     }
 
-
-    //TODO: make the key work without hard coding it.
     private String getRequestUrl(LatLng origin, LatLng dest) {
         String str_org = "origin=" + origin.latitude + "," + origin.longitude;
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;

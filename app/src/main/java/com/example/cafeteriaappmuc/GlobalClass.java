@@ -35,8 +35,4 @@ public class GlobalClass extends Application {
         return dishName;
     }
 
-
-
-
-    //TODO: legge til åpningstider for hver gruppe/bruker. Finen metode å bruke dette
 }

@@ -21,7 +21,6 @@ public class QueueTime {
 
     // Creating DatabaseReference. Get broadcast receiver name(campus and cafeteria spesific)
     // in order to find right info in database
-    //TODO: change so it is cafeteria spesific. aka get name of beacon and add to databasepath
 
     public static void getWaitTime(String campus, String foodservice, final FirebaseCallback callback){
         //get info from database, number in line atm and training data Xi and Yi
@@ -44,9 +43,7 @@ public class QueueTime {
                         XiList.add(queueInfo.getXi());   //add number of people in line to list
                         YiList.add(queueInfo.getYi());  //add corresponding number of how long people stay in line to list
 
-
                     }
-
 
                 }
 

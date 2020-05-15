@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 
 
-//TODO: fix so this code does not crash, runs openinghours twise for some reason
-
 @SuppressLint("Registered")
 public class OpeningHours extends AppCompatActivity {
 
@@ -47,7 +45,7 @@ public class OpeningHours extends AppCompatActivity {
 
                 if (selectedUserVal.equals("Student") || selectedUserVal.equals("General Public")) {
                     openingHours = Arrays.asList("09:00:00", "09:0:00", "12:00:00", "08:00:00", "09:00:00", "09:00:00", "09:00:00", "09:00:00", "09:00:00", "13:30:00", "09:00:00", "14:00:00");
-                    closingHours = Arrays.asList("23:59:00", "17:00:00", "15:00:00", "19:00:00", "17:00:00", "17:00:00", "17:00:00", "23:00:00", "21:00:00", "15:00:00", "12:00:00", "17:00:00");
+                    closingHours = Arrays.asList("17:00:00", "17:00:00", "15:00:00", "19:00:00", "17:00:00", "17:00:00", "17:00:00", "17:00:00", "21:00:00", "15:00:00", "12:00:00", "17:00:00");
 
                     //staff, researcher, prof etc
                 } else {     //second last element always false, in order not to get dublicate in cafetira
