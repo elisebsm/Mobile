@@ -19,9 +19,6 @@
         <item>General Public</item>
     </string-array>
 
-
-
-
     <string name="title_activity_maps">Map</string>
 
     <!--    Permissions    -->
@@ -30,17 +27,27 @@
     <string name="permission_required_toast">Location permission is required for this demo.</string>
 
     <!--  Food service  -->
-    <string name="show_menu_of_the_day">Show menu of the day</string>
-    <string name="estimated_time_to_walk">Estimated time to walk: </string>
-    <string name="expected_queue_waiting_time">Expected Queue Waiting Time:</string>
+    <string name="tv_show_menu_of_the_day">Show menu of the day</string>
+    <string name="tv_estimated_time_to_walk">Estimated time to walk: </string>
+    <string name="tv_expected_queue_waiting_time">Expected queue waiting time: 3 minuttes</string>
     <string name="btn_close">Close map</string>
     <string name="tv_est_time_to_walk_not_available">Estimated time to walk: Not available.</string>
+    <string name="tv_menu_of_the_day">Menu of the day</string>
+    <string name="cb_show_hidden_dishes">Show hidden dishes</string>
+    <string name="tv_add_new_dish">Add new dish</string>
+    <string name="tv_no_registered_dishes">There are no registered dishes.</string>
+    <string name="tv_opening_hours">Opening hours: </string>
 
+    <!-- add new dish-->
+    <string name="tv_new_dish">New dish</string>
+    <string name="tv_name">Name:</string>
+    <string name="tv_price">Price:</string>
+    <string name="tv_description">Description:</string>
+    <string name="btn_add_dish">Add dish</string>
 
 
     <!-- -->
     <string name="change_campus">Change campus:</string>
-    <string name="profile" />
 
     <!-- menu items -->
     <string name="profileItem">Profile</string>
@@ -54,11 +61,6 @@
     <string name="profile_selected">Profile selected:</string>
     <string name="save_button">Save</string>
     <string name="photoItem">Photo</string>
-    <string name="new_dish">New dish</string>
-    <string name="name">Name:</string>
-    <string name="description">Description:</string>
-    <string name="add_dish">Add dish</string>
-    <string name="price">Price:</string>
     <string name="Upload_new_dish_image">Upload image</string>
     <string name="json_image_name">JSon Image Name</string>
     <string name="imageRandom">something random</string>
@@ -71,6 +73,19 @@
     <string name="FullImageView">Full image view</string>
     <string name="Share_dish_button">Share</string>
     <string name="Share_foodservice_button">Share</string>
+    <string name="dietary_preferences">Dietary preferences:</string>
+    <string name="meat">Meat</string>
+    <string name="fish">Fish</string>
+    <string name="vegitarian">Vegitarian</string>
+    <string name="vegan">Vegan</string>
+    <string name="save_diet_preferences">Save diet preferences</string>
+    <string name="opening_hours">Opening hours:</string>
+    <string name="menu_of_the_day">Menu of the day</string>
+    <string name="add_new_dish">Add new dish</string>
+    <string name="show_hidden_dishes">Show hidden dishes</string>
+    <string name="dish">Dish</string>
+    <string name="choose">Choose Campus</string>
+    <string name="tv_chooselanguage">Choose language:"</string>
 
 </resources>
 

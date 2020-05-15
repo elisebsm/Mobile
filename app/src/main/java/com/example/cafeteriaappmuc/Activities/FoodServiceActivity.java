@@ -8,6 +8,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
@@ -18,12 +19,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.cafeteriaappmuc.DirectionsParser;
 import com.example.cafeteriaappmuc.Dish;
+import com.example.cafeteriaappmuc.DishType;
 import com.example.cafeteriaappmuc.GlobalClass;
 import com.example.cafeteriaappmuc.PermissionUtils;
 import com.example.cafeteriaappmuc.R;
@@ -46,12 +50,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class FoodServiceActivity extends AppCompatActivity  {
-    //public class FoodServiceActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private GoogleMap mMapDirection;
@@ -61,17 +66,12 @@ public class FoodServiceActivity extends AppCompatActivity  {
     static String DISH_NAME = "DISH_NAME";
     static String DISH_PRICE = "DISH_PRICE";
     static String DISH_DESCRIPTION = "DISH_DESCRIPTION";
-    private Context context;
-    private double latitudeDest;
-    private double longitudeDest;
-    private double latitudeOrig;
-    private double longitudeOrig;
     private LatLng latLngOrig;
-    private Button shareBtn;
     private List<String> dishNames = new ArrayList<>();
+    private Context context;
 
-    private String foodservice;
-    private SupportMapFragment mapFragment2;
+    //private String foodservice;
+    //private SupportMapFragment mapFragment2;
     //TODO: add opening hours
     //TODO: show walking time, update every second minute or so??
 
@@ -85,6 +85,8 @@ public class FoodServiceActivity extends AppCompatActivity  {
         ((GlobalClass) this.getApplication()).setFoodService(foodService);
 
         if (foodService != null) {
+            double latitudeDest;
+            double longitudeDest;
             switch (foodService) {
                 case "Central Bar":
                     latitudeDest = 38.736606;
@@ -176,14 +178,16 @@ public class FoodServiceActivity extends AppCompatActivity  {
         TextView textViewFoodServiceName = findViewById(R.id.tvFoodServiceName);
         textViewFoodServiceName.setText(foodService);
 
+        TextView textViewOpeningHours = findViewById(R.id.tvOpeningHours);
+        String openingHours = getResources().getString(R.string.tv_opening_hours) + getOpeningHourForFoodService(foodService);
+        textViewOpeningHours.setText(openingHours);
+
         //listen for share button click
-        shareBtn = findViewById(R.id.shareFoodServiceBtn);
+        Button shareBtn = findViewById(R.id.shareFoodServiceBtn);
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 shareSocialMedia();
-
             }
         });
         setWalkingTime();
@@ -208,24 +212,57 @@ public class FoodServiceActivity extends AppCompatActivity  {
             @Override
             public void onCallback(List<Dish> list) { //Bruker callback og asynkron kode for å være sikker på å få alle elementene vi trenger før vi kjører koden
                 //get list of dishnames (that is not final) in order to use in socialmedia
-                final Dish[] dishes = list.toArray(new Dish[list.size()]);
+                final Dish[] allDishes = list.toArray(new Dish[list.size()]);
 
                 for (int i=0; i< list.size() ; i++){
-                    Dish selectedDish = dishes[i];
-                    String dishName =selectedDish.name;
+                 Dish selectedDish = allDishes[i];
+                  String dishName =selectedDish.name;
                     dishNames.add(dishName);
                 }
+                if (allDishes.length==0){
+                    findViewById(R.id.tvNoRegisteredDishes).setVisibility(View.VISIBLE);
+                }else {
+                    findViewById(R.id.tvNoRegisteredDishes).setVisibility(View.GONE);
+                }
 
-                ArrayAdapter adapter = new ArrayAdapter<Dish>(getApplicationContext(),
-                        R.layout.dish_list_element, dishes);
+                Map<DishType, Boolean> preferences = retrieveDietPreferences();
+                List<Dish> filteredDishes = new ArrayList<>();
+                for (Dish dish : list) {
+                    if (preferences.get(dish.type)) {
+                        filteredDishes.add(dish);
+                    }
+                }
 
-                ListView listView = (ListView) findViewById(R.id.dishList);
-                listView.setAdapter(adapter); //bruker adapter for å fylle en liste
+                final ArrayAdapter filterAdapter = new ArrayAdapter<Dish>(getApplicationContext(),
+                        R.layout.dish_list_element, filteredDishes);
+
+                final ArrayAdapter allAdapter = new ArrayAdapter<Dish>(getApplicationContext(),
+                        R.layout.dish_list_element, allDishes);
+
+                final ListView listView = findViewById(R.id.dishList);
+
+                CheckBox showHiddenBox = findViewById(R.id.showHiddenDishes);
+                if(list.size() != filteredDishes.size()){
+                    showHiddenBox.setVisibility(View.VISIBLE);
+                }
+
+                showHiddenBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            listView.setAdapter(allAdapter);
+                        } else {
+                            listView.setAdapter(filterAdapter);
+                        }
+                    }
+                });
+
+
+                listView.setAdapter(filterAdapter); //bruker adapter for å fylle en liste
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) { //lager en listner på "On click" for all dishene, som sender deg til riktig dish
-                        Dish selectedDish = dishes[position];
-
+                        Dish selectedDish = allDishes[position];
                         Intent intent = new Intent(view.getContext(), DishActivity.class); //bruker intent og extras til å sende info om dishene til dishActivity
                         intent.putExtra(DISH_NAME, selectedDish.name);
                         intent.putExtra(DISH_PRICE, Double.toString(selectedDish.price));
@@ -346,12 +383,6 @@ public class FoodServiceActivity extends AppCompatActivity  {
         return "https://maps.googleapis.com/maps/api/directions/json?" + str_org + "&" + str_dest + "&sensor=false&mode=walking&key=AIzaSyB72zLudOuMncMtCOCIpwgMVvTBLFAfPI8";
     }
 
-
-
-
-
-
-
     private void setWalkingTime(){
         //TODO make actual currentlocation latLngCurrentLoc when delivering project
         /*LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
@@ -363,8 +394,8 @@ public class FoodServiceActivity extends AppCompatActivity  {
 
         //checking for internet connection
         if(checkNetworkConnection()) {
-            latitudeOrig = 38.738300;
-            longitudeOrig = -9.139040;
+            double latitudeOrig = 38.738300;
+            double longitudeOrig = -9.139040;
             LatLng latLngCurrentLoc = new LatLng(latitudeOrig, longitudeOrig);
 
             String url = getRequestUrl(latLngCurrentLoc, latLngDestination);
@@ -460,11 +491,8 @@ public class FoodServiceActivity extends AppCompatActivity  {
         //@RequiresApi(api = Build.VERSION_CODES.O)
         protected void onPostExecute(String duration) {
             TextView textViewWalkingTime = findViewById(R.id.tvEstimatedWalkingTime);
-            textViewWalkingTime.setText(getString(R.string.estimated_time_to_walk) + duration);
-
-           // checkedDistanceToCampusCounter += 1;
-
-
+            String timeToWalk = getString(R.string.tv_estimated_time_to_walk) + duration;
+            textViewWalkingTime.setText(timeToWalk);
         }
     }
 
@@ -511,20 +539,20 @@ public class FoodServiceActivity extends AppCompatActivity  {
         }
 
 
-        protected void onPostExecute(List<List<HashMap<String,String>>> lists) {
+        protected void onPostExecute(List<List<HashMap<String, String>>> lists) {
             // Get list route and display it into the map
 
             ArrayList points = null;
 
             PolylineOptions polylineOptions = null;
-            for (List<HashMap<String, String>> path : lists){
+            for (List<HashMap<String, String>> path : lists) {
                 points = new ArrayList();
                 polylineOptions = new PolylineOptions();
 
                 for (HashMap<String, String> point : path) {
                     double lat = Double.parseDouble(Objects.requireNonNull(point.get("lat")));
                     double lon = Double.parseDouble(Objects.requireNonNull(point.get("lon")));
-                    points.add(new LatLng(lat,lon));
+                    points.add(new LatLng(lat, lon));
                 }
                 polylineOptions.addAll(points);
                 polylineOptions.width(8);
@@ -535,7 +563,7 @@ public class FoodServiceActivity extends AppCompatActivity  {
             if(polylineOptions != null){
                 mMapDirection.addPolyline(polylineOptions);
             } else {
-                Toast.makeText(getApplicationContext(), "Direction not found.", Toast.LENGTH_LONG). show();
+                Toast.makeText(getApplicationContext(), "Direction not found.", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -597,5 +625,69 @@ public class FoodServiceActivity extends AppCompatActivity  {
 
         Intent shareIntent = Intent.createChooser(sendIntent, null);
         startActivity(shareIntent);
+    }
+
+    public Map<DishType, Boolean> retrieveDietPreferences() {
+        SharedPreferences sharedPref = getSharedPreferences("Diets", Context.MODE_PRIVATE);
+        boolean meatValue = sharedPref.getBoolean("Meat", true);
+        boolean fishValue = sharedPref.getBoolean("Fish", true);
+        boolean vegetarianValue = sharedPref.getBoolean("Vegetarian", true);
+        boolean veganValue = sharedPref.getBoolean("Vegan", true);
+
+        Map<DishType, Boolean> dietMap = new HashMap<>();
+        dietMap.put(DishType.Meat, meatValue);
+        dietMap.put(DishType.Fish, fishValue);
+        dietMap.put(DishType.Vegetarian, vegetarianValue);
+        dietMap.put(DishType.Vegan, veganValue);
+        return dietMap;
+    }
+
+    protected String getOpeningHourForFoodService(String foodservice){
+        List<String> openingHoursList = Arrays.asList("9:00-17:00", "9:00-17:00", "12:00-15:00", "8:00-19:00", "9:00-17:00", "9:00-17:00", "9:00-17:00", "9:00-17:00",
+                "9:00-21:00", "12:00-15:00", "8:00-22:00", "7:00-19:00", "12:00-14:00", "8:30-12:00, 15:30-16:30");
+        List<String> foodservices = Arrays.asList("Central Bar", "Civil Bar", "Civil Cafeteria", "Sena Pastry Shop", "Mechy Bar", "AEIST Bar", "AEIST Esplanade", "Chemy Bar",
+                "SAS Cafeteria", "Tagus Cafeteria", "Red Bar", "Green Bar", "CTN Cafeteria", "CTN Bar");
+        if (foodservice.equals("Math Cafeteria")){
+            if(getUserProfile().equals("Professors")||getUserProfile().equals("Researchers")||getUserProfile().equals("Staff")){
+                return("12:00-15:00");
+            } else {
+                return "13:30-15:00";
+            }
+        } else if ( foodservice.equals("Complex Bar")){
+            if(getUserProfile().equals("Professors")||getUserProfile().equals("Researchers")||getUserProfile().equals("Staff")){
+                return"12:00-15:00";
+            } else {
+                return "9:00-12:00, 14:00-17:00 ";
+            }
+        }
+
+        for (String cafeteria: foodservices){
+            if (cafeteria.equals(foodservice)){
+                int index = foodservices.indexOf(cafeteria);
+                return openingHoursList.get(index);
+            }
+        }
+        return "Not found.";
+    }
+
+    //get user profile selected in profile
+    private String getUserProfile() {
+        final String key =getString(R.string.saved_profile_key);
+        final String defValue = getString(R.string.saved_profile_default_key);
+        SharedPreferences sharedPref = getSharedPreferences("settings",
+                Context.MODE_PRIVATE);
+        String selectedUserProfile = sharedPref.getString(key, defValue);
+        //check if profile is saved as something else than default
+        if (selectedUserProfile.equals(getString(R.string.saved_profile_default_key))){
+            return null;
+        }
+        else {
+            //set global variable
+            GlobalClass globalAssetsVariable = (GlobalClass) getApplicationContext();
+            globalAssetsVariable.setProfile(selectedUserProfile);
+            //  String val =globalAssetsVariable.getProfile();
+            // Toast.makeText(getApplicationContext(), "Selected user"+val, Toast.LENGTH_LONG).show();
+            return selectedUserProfile;
+        }
     }
 }

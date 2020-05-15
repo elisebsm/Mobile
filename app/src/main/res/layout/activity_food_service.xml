@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout"
@@ -19,8 +18,7 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".Activities.FoodServiceActivity"
-            />
+            tools:context=".Activities.FoodServiceActivity" />
 
         <Button
             android:id="@+id/btnCloseMap"
@@ -30,7 +28,8 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
-            android:text="@string/btn_close" />
+            android:text="@string/btn_close"
+            tools:ignore="RelativeOverlap" />
 
     </RelativeLayout>
 
@@ -60,10 +59,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="9dp"
-            android:layout_marginEnd="9dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="9dp"
             android:layout_marginBottom="4dp"
-            android:text="Opening hours:"
+            android:text=""
             android:textSize="15sp"
             app:layout_constraintBottom_toTopOf="@+id/fragmentMap"
             app:layout_constraintEnd_toEndOf="parent"
@@ -84,8 +83,7 @@
             app:layout_constraintHorizontal_bias="0.496"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvOpeningHours"
-            tools:context=".Activities.FoodServiceActivity"
-            />
+            tools:context=".Activities.FoodServiceActivity" />
 
         <TextView
             android:id="@+id/tvEstimatedWalkingTime"
@@ -93,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="9dp"
             android:layout_marginEnd="9dp"
-            android:text="@string/estimated_time_to_walk"
+            android:text="@string/tv_estimated_time_to_walk"
             android:textSize="15sp"
             app:layout_constraintBottom_toTopOf="@+id/tvWaitingTime"
             app:layout_constraintEnd_toEndOf="parent"
@@ -106,46 +104,75 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="9dp"
-            android:layout_marginEnd="9dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="9dp"
             android:layout_marginBottom="4dp"
-            android:text="@string/expected_queue_waiting_time"
+            android:text="@string/tv_expected_queue_waiting_time"
             android:textSize="15sp"
-            app:layout_constraintBottom_toTopOf="@+id/menuOftheDay"
+            app:layout_constraintBottom_toTopOf="@+id/lfMenyOfTheDayAndCheckBox"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvEstimatedWalkingTime" />
 
-        <TextView
-            android:id="@+id/menuOftheDay"
+        <LinearLayout
+            android:id="@+id/lfMenyOfTheDayAndCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/rlDishList"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvWaitingTime"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/menuOftheDay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_menu_of_the_day"
+                android:textColor="@color/colorAccent"
+                android:textColorLink="#111B1E"
+                android:textSize="20sp"
+                android:layout_marginStart="5dp"/>
+
+            <CheckBox
+                android:id="@+id/showHiddenDishes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cb_show_hidden_dishes"
+                tools:ignore="MissingConstraints"
+                android:textSize="15sp"
+                android:visibility="invisible"/>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlDishList"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="109dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="109dp"
-            android:layout_marginBottom="4dp"
-            android:text="Menu of the day"
-            android:textColor="#9C27B0"
-            android:textColorLink="#111B1E"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@+id/dishList"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.476"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvWaitingTime" />
-
-        <ListView
-            android:id="@+id/dishList"
-            android:layout_width="wrap_content"
-            android:layout_height="100dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
             app:layout_constraintBottom_toTopOf="@+id/buttonAddNewDish"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/menuOftheDay" />
+            app:layout_constraintTop_toBottomOf="@+id/lfMenyOfTheDayAndCheckBox"
+            android:background="@drawable/border_black">
+
+            <ListView
+                android:id="@+id/dishList"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp" />
+            <TextView
+                android:id="@+id/tvNoRegisteredDishes"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:text="@string/tv_no_registered_dishes"
+                android:textSize="20sp"
+                android:visibility="invisible"/>
+
+
+        </RelativeLayout>
+
 
         <Button
             android:id="@+id/buttonAddNewDish"
@@ -154,12 +181,12 @@
             android:layout_marginStart="233dp"
             android:layout_marginEnd="35dp"
             android:onClick="goToAddNewDish"
-            android:text="Add new dish"
+            android:text="@string/tv_add_new_dish"
             android:textSize="15sp"
-            app:layout_constraintTop_toBottomOf="@+id/dishList"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rlDishList" />
 
         <Button
             android:id="@+id/shareFoodServiceBtn"
@@ -171,7 +198,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/buttonAddNewDish"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dishList" />
+            app:layout_constraintTop_toBottomOf="@+id/rlDishList" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
