@@ -116,7 +116,7 @@ public class OpeningHours extends AppCompatActivity {
 
 
         }
-        System.out.println(foodServicesOpen.toString());
+        //System.out.println(foodServicesOpen.toString());
         return foodServicesOpen;
     }
 

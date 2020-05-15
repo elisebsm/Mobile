@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
     private int beaconDetectedCounter = 0;
     // creating a My HashTable Dictionary
     private Hashtable<String, Long> waitingTimeFoodservices = new Hashtable<String,Long>();
-
+    private long testTime;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -158,22 +158,24 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
        // }
 
 
+
     }
 
     private void setWaitingTimeFoodservices(String campus){
         if(services.size()!=0){
             //where services are the open cafeterias
-            for (int i=0; i<services.size();i++){
-                final String foodserviceName = services.get(i);
+            //for (int i=0; i<services.size();i++){
+                final String foodserviceName = "Central Bar" ;//services.get(i);
                 QueueTime.getWaitTime(campus, foodserviceName, new QueueTime.FirebaseCallback() {
                     @Override
                     public void onCallback(double waitTimeEstimate) {
                         long roundedTime= Math.round(waitTimeEstimate*10)/10;
                         waitingTimeFoodservices.put(foodserviceName, roundedTime);
+                        System.out.println("tieme to wait"+ roundedTime);
                     }
                 });
 
-            }
+           // }
         }
 
 
@@ -260,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
 
             displayDiningOptions(getUserProfile(), currentCampus);
             displayMainFoodServicesList();
+
         }
     }
 
@@ -401,7 +404,11 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             List<String> foodServices= foodServicesOpen;
             services = foodServicesOpen;
             getDistanceValues(foodServices);
-           // setWaitingTimeFoodservices(campus);
+            setWaitingTimeFoodservices("Alameda");
+
+            //System.out.println("correct time :"+testTime);
+
+
         }
         else if (campus.equals("Taguspark")){
             OpeningHours openHours = new OpeningHours();
@@ -419,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             List<String> foodServices= foodServicesOpen;
             services = foodServicesOpen;
             getDistanceValues(foodServices);
-           // setWaitingTimeFoodservices(campus);
+          //  setWaitingTimeFoodservices(campus);
         }
     }
 
@@ -658,113 +665,113 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             else{
                 if (foodService.equals("Central Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("Central Bar");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                       // long queue= getWaitingTimeFoodservices().get("Central Bar");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("Civil Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("Civil Bar");
-                    arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                     //   long queue= getWaitingTimeFoodservices().get("Civil Bar");
+                    arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                     counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("Civil Cafeteria")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("Civil Cafeteria");
-                    arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                      //  long queue= getWaitingTimeFoodservices().get("Civil Cafeteria");
+                    arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                     counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("Sena Pastry Shop")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("Sena Pastry Shop");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                        //long queue= getWaitingTimeFoodservices().get("Sena Pastry Shop");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("Mechy Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("Mechy Bar");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                      //  long queue= getWaitingTimeFoodservices().get("Mechy Bar");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("AEIST Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("AEIST Bar");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                       // long queue= getWaitingTimeFoodservices().get("AEIST Bar");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("AEIST Esplanade")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("AEIST Esplanade");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                       // long queue= getWaitingTimeFoodservices().get("AEIST Esplanade");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("Chemy Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("Chemy Bar");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                        //long queue= getWaitingTimeFoodservices().get("Chemy Bar");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("SAS Cafeteria")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("SAS Cafeteria");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                      //  long queue= getWaitingTimeFoodservices().get("SAS Cafeteria");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("Math Cafeteria")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("Math Cafeteria");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                       // long queue= getWaitingTimeFoodservices().get("Math Cafeteria");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("Complex Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("Complex Bar");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                       // long queue= getWaitingTimeFoodservices().get("Complex Bar");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("Tagus Cafeteria")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("Tagus Cafeteria");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                       // long queue= getWaitingTimeFoodservices().get("Tagus Cafeteria");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("Red Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("Red Bar");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                      //  long queue= getWaitingTimeFoodservices().get("Red Bar");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("Green Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("Green Bar");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                      //  long queue= getWaitingTimeFoodservices().get("Green Bar");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("CTN Cafeteria")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("CTN Cafeteria");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                       // long queue= getWaitingTimeFoodservices().get("CTN Cafeteria");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
                 if (foodService.equals("CTN Bar")) {
                     if(counterDisplayFoodServiceInList<services.size()-1){
-                        long queue= getWaitingTimeFoodservices().get("CTN Bar");
-                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", queue));
+                        //long queue= getWaitingTimeFoodservices().get("CTN Bar");
+                        arrayList.add(new MyDataListMain(services.get(counterDisplayFoodServiceInList), "Location denied", 0));
                         counterDisplayFoodServiceInList++;
                     }
                 }
@@ -924,8 +931,16 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             Log.d("DURATION", duration);
             if(counterDisplayFoodServiceInList<=services.size()-1){
                 String nameOfFoodservice = services.get(counterDisplayFoodServiceInList);
-                //TODO get queuetime for service
-                arrayList.add(new MyDataListMain(nameOfFoodservice, duration, 5));
+               if(getWaitingTimeFoodservices().isEmpty()) {
+                   long queueTime = 5;
+                   arrayList.add(new MyDataListMain(nameOfFoodservice, duration, queueTime));
+               }
+               else{
+                   long queueTime= getWaitingTimeFoodservices().get("Central Bar");
+                   arrayList.add(new MyDataListMain(nameOfFoodservice, duration, queueTime));
+
+               }
+
                 displayMainFoodServicesList();
                 counterDisplayFoodServiceInList++;
             }

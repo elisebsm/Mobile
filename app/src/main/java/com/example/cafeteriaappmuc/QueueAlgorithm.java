@@ -10,11 +10,11 @@ import java.util.List;
 //least square algorithm
 public class QueueAlgorithm extends AppCompatActivity {
 
-    private static Double b1;  //estimate of slope coefficient betta1. Estimate of people in line
-    private static Double b0;      //this is time in front of line, estimate
-    private static Double meanX;           // average number of people in line
-    private static Double meanY;   //average of total waiting time,
-    private static Integer n; /// number of people in line
+    private static double b1;  //estimate of slope coefficient betta1. Estimate of people in line
+    private static double b0;      //this is time in front of line, estimate
+    private static double meanX;           // average number of people in line
+    private static double meanY;   //average of total waiting time,
+    private static int n; /// number of people in line
    // private static Double estimateY;
 
 

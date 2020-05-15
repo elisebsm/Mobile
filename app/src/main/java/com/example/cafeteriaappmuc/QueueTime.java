@@ -9,19 +9,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class QueueTime {
 
 
-
-    //private List<Integer> XiList= new ArrayList<>();
-    //private List<Double> YiList= new ArrayList<>();
-
-    private Double timeTest;
-    private static Double estimateY;;
+    private static double estimateY;;
     private static List<Integer> XiList;
     private static List<Double>YiList;
+    private static double test;
+
+    private static List<Double> Yi = Arrays.asList(0.5,1.7,3.9); // real data of time per pers in the line
+    private static List<Integer> Xi = Arrays.asList(1,3,5); //number of people in line measured when you arrived
 
     // Creating DatabaseReference. Get broadcast receiver name(campus and cafeteria spesific)
     // in order to find right info in database
@@ -43,25 +43,28 @@ public class QueueTime {
                 //System.out.println(("this is line length:"+numberInLineX));
                 for (DataSnapshot postSnapshot : snapshot.child("trainingData").getChildren()) {
                     QueueInfo queueInfo = postSnapshot.getValue(QueueInfo.class);
+
                     if (queueInfo.getXi()!=null){
-                        XiList.add(queueInfo.getXi());   //add number of people in line to list
-                        YiList.add(queueInfo.getYi());  //add corresponding number of how long people stay in line to list
-                        //System.out.println(("this is X mean:"+Xi));
+                        //XiList.add(queueInfo.getXi());   //add number of people in line to list
+                        //YiList.add(queueInfo.getYi());  //add corresponding number of how long people stay in line to list
+                      //  System.out.println(("this is X mean:"+XiList));
+
 
                     }
 
+                    test= queueInfo.getXi();
                 }
-
-                if (YiList.size()>=2){
-
+                System.out.println(("this is X " + test));
+                    //if (YiList.size()>=2){
                     //estimate waiting time for this person by calculating b1 and b2 and using number of people (X) in line
-                    estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
+                    //estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
+                    estimateY = (QueueAlgorithm.getB1(Xi, Yi) * 4) + QueueAlgorithm.getb0(Xi, Yi);
                     System.out.println(("this is waiting time bitch" + estimateY));
                     callback.onCallback(estimateY);
-                }
 
 
-            }
+           }
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -71,6 +74,7 @@ public class QueueTime {
             }
         });
     }
+
 
     public interface FirebaseCallback {
         void onCallback(double waitTimeEstimate);

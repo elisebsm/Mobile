@@ -6,15 +6,15 @@ public class QueueInfo {
 
 
     //getting info from database Yi and Xi, must have same name as in database
-    private Integer xi;
-    private Double yi;
+    private int xi;
+    private double yi;
 
     public QueueInfo(){
 
     }
 
 
-    public QueueInfo(Integer xi, Double yi){
+    public QueueInfo(int xi, double yi){
         this.xi= xi;
         this.yi= yi;
 
@@ -24,10 +24,10 @@ public class QueueInfo {
     public Integer getXi() {
         return xi;
     }
-    public void setXi(Integer xi){
+    public void setXi(int xi){
         this.xi=xi;
     }
-    public void setYi(Double yi){
+    public void setYi(double yi){
         this.yi=yi;
     }
 
