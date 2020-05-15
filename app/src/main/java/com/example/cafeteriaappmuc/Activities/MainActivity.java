@@ -46,6 +46,7 @@ import com.example.cafeteriaappmuc.QueueAlgorithm;
 import com.example.cafeteriaappmuc.Objects.QueueInfo;
 import com.example.cafeteriaappmuc.QueueTime;
 import com.example.cafeteriaappmuc.R;
+import com.example.cafeteriaappmuc.TranslateBeaconName;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -226,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             timeInQueueMilisec = timeLeavingQueueMillis - timeArrivingQueueMillis;
             timeInQueue=timeInQueueMilisec/60000;
             Log.i("BEACONNAME  InQueue", String.valueOf(timeInQueueMilisec));
-
+/*
             //remove user from line and update training data when user leaves
             if(currentNumberInLine.isEmpty()){
                 //do nothing
@@ -237,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
                 System.out.println("Current numb in central bar!!"+numInLine);
 
             }
-
+*/
 
         }
         // compile list of devices in range
@@ -410,9 +411,32 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             List<String> foodServices= foodServicesOpen;
             services = foodServicesOpen;
             getDistanceValues(foodServices);
-            setWaitingTimeFoodservices("Alameda");
 
 
+            if(foodServicesOpen.isEmpty()){
+                //do nothing
+            }
+            else {
+                setWaitingTimeFoodservices("Alameda");
+
+            }
+
+            //remove user from line and update training data when user leaves
+            if(currentNumberInLine.isEmpty()){
+                //do nothing
+            }
+            else{
+
+                //change so people can arraibe and come
+                //translate names to match database and beacon
+                String cafeteriaName= TranslateBeaconName.transToCafeteria(campus,"ChemyBar");
+               // String beaconName= TranslateBeaconName.transToBeacon(campus,"Central Bar");
+                Integer numInLine= currentNumberInLine.get(cafeteriaName); //input is cafeteria name "Central Bar"
+
+                QueueTime.updateWaitingTime(numInLine,3.4,"Alameda",cafeteriaName, false);
+                System.out.println("Current numb in central bar!!"+numInLine);
+
+            }
         }
         else if (campus.equals("Taguspark")){
             OpeningHours openHours = new OpeningHours();
@@ -421,7 +445,15 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             List<String> foodServices= foodServicesOpen;
             services = foodServicesOpen;
             getDistanceValues(foodServices);
-            setWaitingTimeFoodservices("Taguspark");
+            if(foodServicesOpen.isEmpty()){
+                    //do nothing
+            }
+            else {
+
+                setWaitingTimeFoodservices("Taguspark");
+            }
+
+
         }
         else if (campus.equals("CTN")){
             OpeningHours openHours = new OpeningHours();
@@ -430,7 +462,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             List<String> foodServices= foodServicesOpen;
             services = foodServicesOpen;
             getDistanceValues(foodServices);
-            setWaitingTimeFoodservices("CTN");
+            if(foodServicesOpen.isEmpty()){
+                //do nothing
+            }
+            else {
+                setWaitingTimeFoodservices("CTN");
+            }
         }
     }
 
@@ -933,14 +970,22 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             Log.d("DURATION", duration);
             if(counterDisplayFoodServiceInList<=services.size()-1){
                 String nameOfFoodservice = services.get(counterDisplayFoodServiceInList);
+
+                //Quickfix, crashing for CTN values
                if(getWaitingTimeFoodservices().isEmpty()) {
                    long queueTime = 0;
                    arrayList.add(new MyDataListMain(nameOfFoodservice, duration, queueTime));
+
+               }
+               else if(nameOfFoodservice=="CTN Cafeteria" ){
+                   long queueTime = 0;
+                   arrayList.add(new MyDataListMain(nameOfFoodservice, duration, queueTime));
+
+
                }
                else{
                    long queueTime= getWaitingTimeFoodservices().get(nameOfFoodservice);
                    arrayList.add(new MyDataListMain(nameOfFoodservice, duration, queueTime));
-
                }
 
                 displayMainFoodServicesList();
