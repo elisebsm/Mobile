@@ -16,7 +16,7 @@
     <string name="permission_required_toast">Stedtjenester er påkrevet for denne demoen.</string>
     <string name="show_menu_of_the_day">Vis menyen for i dag</string>
     <string name="estimated_time_to_walk">Estimert tid å gå:</string>
-    <string name="expected_queue_waiting_time">Estimert tid i kø:</string>
+    <string name="expected_queue_waiting_time">"Estimert tid i kø:  "</string>
     <string name="btn_close">Lukk kartet</string>
     <string name="tv_est_time_to_walk_not_available">Estimert tid å gå: ikke tilgjengelig</string>
     <string name="change_campus">Endre campus:</string>
@@ -27,7 +27,6 @@
     <string name="edit_name_for_image">Endre navn på bildet</string>
     <string name="preview_image">Forhåndsvis bildet</string>
     <string name="profile_selected">Profil valgt:</string>
-    <string name="profile" />
     <string name="save_button">Lagre</string>
     <string name="photoItem">Bilde</string>
     <string name="new_dish">Ny rett</string>
@@ -59,8 +58,8 @@
     <string name="dish">Rett</string>
     <string name="choose">Velg campus</string>
     <string name="tv_show_menu_of_the_day">Vis dagens meny</string>
-    <string name="tv_estimated_time_to_walk">Estimert tid å gå</string>
-    <string name="tv_expected_queue_waiting_time">Forventet gå tid</string>
+    <string name="tv_estimated_time_to_walk">"Estimert tid å gå: "</string>
+    <string name="tv_expected_queue_waiting_time">"Forventet køtid: "</string>
     <string name="tv_menu_of_the_day">Dagens meny</string>
     <string name="cb_show_hidden_dishes">Vis gjemte retter</string>
     <string name="tv_add_new_dish">Legg til ny rett</string>

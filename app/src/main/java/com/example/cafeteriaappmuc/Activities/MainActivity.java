@@ -7,11 +7,13 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.os.Build;
@@ -65,6 +67,7 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -90,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
 
     private List<String> campusesAll = new ArrayList<>();
 
-    //TODO: set current campus based on profile
     private String currentCampus = "";
     private static String hoursOpen;
     private Boolean isOpen;
@@ -171,22 +173,21 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
                 QueueTime.getWaitTime(campus, foodserviceName, new QueueTime.FirebaseCallback() {
                     @Override
                     public void onCallback(double waitTimeEstimate, Integer numInLine) {
+                        Log.i("BEACONNAME setwatingtime", String.valueOf(numInLine));
                         currentNumberInLine.put(foodserviceName, numInLine);
+                        Log.i("BEACONNAME setwatingtime", String.valueOf(currentNumberInLine));
                         long roundedTime= Math.round(waitTimeEstimate*10)/10;
                         waitingTimeFoodservices.put(foodserviceName, roundedTime);
                        // System.out.println("tieme to wait"+ roundedTime);
                     }
                 });
-
             }
         }
-
-
+        Log.i("BEACONNAME tester setwating",String.valueOf(currentNumberInLine) );
     }
     private Hashtable<String, Long> getWaitingTimeFoodservices(){
         return waitingTimeFoodservices;
     }
-
 
 
 
@@ -222,11 +223,15 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             //get the corresonding X value by getting the number of peers in queue in database
             Log.i("BEACONNAME  Arriving", String.valueOf(timeArrivingQueueMillis));
             Log.i("BEACONNAME  Leaving", String.valueOf(timeLeavingQueueMillis));
-
+            //Integer numInLine= currentNumberInLine.get(cafeteriaName); //input is cafeteria name "Central Bar"
 
             timeInQueueMilisec = timeLeavingQueueMillis - timeArrivingQueueMillis;
             timeInQueue=timeInQueueMilisec/60000;
             Log.i("BEACONNAME  InQueue", String.valueOf(timeInQueueMilisec));
+            String cafeteriaName= TranslateBeaconName.transToCafeteria(currentCampus,beaconInRange);
+            Log.i("BEACONNAME  currentNumberInLine", String.valueOf(currentNumberInLine));
+            Integer numInLine= currentNumberInLine.get(cafeteriaName);
+            QueueTime.updateWaitingTime(numInLine,timeInQueue,currentCampus,cafeteriaName, false);
 /*
             //remove user from line and update training data when user leaves
             if(currentNumberInLine.isEmpty()){
@@ -236,25 +241,27 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
                 Integer numInLine= currentNumberInLine.get("Central Bar");
                 QueueTime.updateWaitingTime(numInLine,timeInQueue,"Alameda","Central Bar");
                 System.out.println("Current numb in central bar!!"+numInLine);
-
             }
 */
-
         }
         // compile list of devices in range
+        String beaconName;
         for (SimWifiP2pDevice device : peers.getDeviceList()) {
-            Log.i("BEACONNAME", device.deviceName);
             beaconInRange = device.deviceName;
+            Log.i("BEACONNAME", beaconInRange);
             beaconDetectedCounter++;
             timeArrivingQueueMillis = System.currentTimeMillis();
+
+            String cafeteriaName = TranslateBeaconName.transToCafeteria(currentCampus,beaconInRange);
+            Log.i("BEACONNAME linje 256", String.valueOf(cafeteriaName));
+
+            if(!currentNumberInLine.isEmpty()){
+                Integer numInLine= currentNumberInLine.get(cafeteriaName);
+                QueueTime.updateWaitingTime(numInLine,1.0,currentCampus, cafeteriaName, true);
+       }
+
         }
-
-
-
-
     }
-
-
 
 
     @Override
@@ -262,17 +269,13 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
     protected void onResume() {
         super.onResume();
         displayListForChoosingCampus();
-        //displayDiningOptions(getUserProfile(), currentCampus);
-        //displayMainFoodServicesList();
         if(getUserProfile()!= null){
             checkDistanceToCampuses();
 
             displayDiningOptions(getUserProfile(), currentCampus);
             displayMainFoodServicesList();
-
         }
     }
-
 
     private void checkDistanceToCampuses(){
         if(locationEnabled){
@@ -284,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             getDistance(latLngCTN);
         }
     }
-
 
     private void displayListForChoosingCampus(){
         Spinner spinnerListCampuses = findViewById(R.id.spinnerListOfCampus);
@@ -380,7 +382,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
         textViewMainCurrentCampusSet.setText(campusName);
 
         displayDiningOptions(getUserProfile(), currentCampus);
-//       TODO: show campus from what the user chose for the main campus
     }
 
 
@@ -396,11 +397,13 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
         return campuses;
     }
 
+    private void test(){
+
+    }
 
     /**
      * Shows dining places based on status
      */
-    // TODO: display dining options for taguspark as well
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void displayDiningOptions(String status, String campus) {
         //get openinghours list (only displays for alameda at the moment)
@@ -412,31 +415,17 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             services = foodServicesOpen;
             getDistanceValues(foodServices);
 
-
             if(foodServicesOpen.isEmpty()){
                 //do nothing
             }
             else {
                 setWaitingTimeFoodservices("Alameda");
 
+                Log.i("BEACONNAME tester setwatingdisplayy",String.valueOf(currentNumberInLine) );
             }
 
             //remove user from line and update training data when user leaves
-            if(currentNumberInLine.isEmpty()){
-                //do nothing
-            }
-            else{
 
-                //change so people can arraibe and come
-                //translate names to match database and beacon
-                String cafeteriaName= TranslateBeaconName.transToCafeteria(campus,"ChemyBar");
-               // String beaconName= TranslateBeaconName.transToBeacon(campus,"Central Bar");
-                Integer numInLine= currentNumberInLine.get(cafeteriaName); //input is cafeteria name "Central Bar"
-
-                QueueTime.updateWaitingTime(numInLine,3.4,"Alameda",cafeteriaName, false);
-                System.out.println("Current numb in central bar!!"+numInLine);
-
-            }
         }
         else if (campus.equals("Taguspark")){
             OpeningHours openHours = new OpeningHours();
@@ -447,13 +436,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             getDistanceValues(foodServices);
             if(foodServicesOpen.isEmpty()){
                     //do nothing
-            }
-            else {
-
+            } else {
                 setWaitingTimeFoodservices("Taguspark");
             }
-
-
         }
         else if (campus.equals("CTN")){
             OpeningHours openHours = new OpeningHours();
@@ -464,15 +449,13 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             getDistanceValues(foodServices);
             if(foodServicesOpen.isEmpty()){
                 //do nothing
-            }
-            else {
+            } else {
                 setWaitingTimeFoodservices("CTN");
             }
         }
     }
 
 
-    // TODO: make the key work without hard coding it.
     private String getRequestUrl(LatLng origin, LatLng dest) {
         String str_org = "origin=" + origin.latitude + "," + origin.longitude;
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
@@ -481,17 +464,15 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
 
 
     private void getDistance(LatLng latLngCampus){
-        //TODO make actual currentlocation latLngCurrentLoc when delivering project
-        /*LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        String locationProvider = LocationManager.NETWORK_PROVIDER;
-        @SuppressLint("MissingPermission") android.location.Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
-        double userLat = lastKnownLocation.getLatitude();
-        double userLong = lastKnownLocation.getLongitude();
-        LatLng latLngCurrentLoc = new LatLng(userLat, userLong);*/
-
         //checking for internet connection
         if(checkNetworkConnection() && locationEnabled) {
-
+            /*LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            String locationProvider = LocationManager.NETWORK_PROVIDER;
+            @SuppressLint("MissingPermission") android.location.Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+            double userLat = lastKnownLocation.getLatitude();
+            double userLong = lastKnownLocation.getLongitude();
+            LatLng latLngCurrentLoc = new LatLng(userLat, userLong);
+*/
             double userLatAl = 38.738300;
             double userLongAl = -9.139040;
             double userLatTa = 38.735580;
@@ -541,8 +522,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
 
         counterDisplayFoodServiceInList = 0;
         arrayList.clear();
-        //TODO: change back to current after testing
-        /* // Get current location
+       /* //TODO: change back to current after testing
+        // Get current location
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         String locationProvider = LocationManager.NETWORK_PROVIDER;
         @SuppressLint("MissingPermission") android.location.Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
@@ -816,9 +797,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
                         counterDisplayFoodServiceInList++;
                     }
                 }
-
             }
-
         }
     }
 
@@ -867,12 +846,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             //set global variable
             GlobalClass globalAssetsVariable = (GlobalClass) getApplicationContext();
             globalAssetsVariable.setProfile(selectedUserProfile);
-            //  String val =globalAssetsVariable.getProfile();
-            // Toast.makeText(getApplicationContext(), "Selected user"+val, Toast.LENGTH_LONG).show();
             return selectedUserProfile;
         }
     }
-
 
     // method to get direction using httpurlconnection
     private String requestDirection(String reqUrl) throws IOException {
@@ -918,10 +894,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
     }
 
 
-
     /**
      * TaskRequestDirection and TarskParser are used for the AsyncTask to get time to walk
-     * TODO: put them in their own class?? What if userdoes not allow user to use gps? fault handeling
+     *
      */
     // creates AsyncTask to call request Direction
     public class TaskRequestDirections extends AsyncTask<String, Void, String> {
@@ -950,7 +925,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
     }
 
 
-
     public class TaskParser extends AsyncTask<String, Void, String> {
 
         @Override
@@ -975,13 +949,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
                if(getWaitingTimeFoodservices().isEmpty()) {
                    long queueTime = 0;
                    arrayList.add(new MyDataListMain(nameOfFoodservice, duration, queueTime));
-
                }
                else if(nameOfFoodservice=="CTN Cafeteria" ){
                    long queueTime = 0;
                    arrayList.add(new MyDataListMain(nameOfFoodservice, duration, queueTime));
-
-
                }
                else{
                    long queueTime= getWaitingTimeFoodservices().get(nameOfFoodservice);
@@ -997,8 +968,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
 
     /**
      * TaskRequestDistanceToCampuses and TarskParserDistance are used for the AsyncTask to
-     * get distance to Taguspark and Alameda from current location
-     * TODO: put them in their own class??
+     * get distance to Taguspark, CTN and Alameda from current location
      */
 
     // creates AsyncTask to call request Direction
@@ -1068,6 +1038,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
         ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkCapabilities capabilities = null;
 
+        assert connectivityManager != null;
         capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
 
         if (capabilities == null)

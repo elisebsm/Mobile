@@ -2,6 +2,7 @@ package com.example.cafeteriaappmuc.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
@@ -11,6 +12,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
 import android.os.AsyncTask;
@@ -56,7 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class FoodServiceActivity extends AppCompatActivity  {
+public class FoodServiceActivity extends AppCompatActivity {
 
     private GoogleMap mMap;
     private GoogleMap mMapDirection;
@@ -68,17 +72,13 @@ public class FoodServiceActivity extends AppCompatActivity  {
     static String DISH_DESCRIPTION = "DISH_DESCRIPTION";
     private LatLng latLngOrig;
     private List<String> dishNames = new ArrayList<>();
-    private Context context;
 
-    //private String foodservice;
-    //private SupportMapFragment mapFragment2;
-    //TODO: add opening hours
+
     //TODO: show walking time, update every second minute or so??
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = this;
 
         Intent intent = getIntent();
         foodService = intent.getStringExtra("foodService");
@@ -151,6 +151,7 @@ public class FoodServiceActivity extends AppCompatActivity  {
                 case "Red Bar":
                     latitudeDest = 38.736546;
                     longitudeDest = -9.302207;
+
                     latLngDestination = new LatLng(latitudeDest, longitudeDest);
                     break;
                 case "Green Bar":
@@ -207,21 +208,20 @@ public class FoodServiceActivity extends AppCompatActivity  {
         }
 
 
-
         DishIO.getAllDishes(foodService, new DishIO.FirebaseCallback() { //henter alle disher fra DishIO
             @Override
             public void onCallback(List<Dish> list) { //Bruker callback og asynkron kode for å være sikker på å få alle elementene vi trenger før vi kjører koden
                 //get list of dishnames (that is not final) in order to use in socialmedia
                 final Dish[] allDishes = list.toArray(new Dish[list.size()]);
 
-                for (int i=0; i< list.size() ; i++){
-                 Dish selectedDish = allDishes[i];
-                  String dishName =selectedDish.name;
+                for (int i = 0; i < list.size(); i++) {
+                    Dish selectedDish = allDishes[i];
+                    String dishName = selectedDish.name;
                     dishNames.add(dishName);
                 }
-                if (allDishes.length==0){
+                if (allDishes.length == 0) {
                     findViewById(R.id.tvNoRegisteredDishes).setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     findViewById(R.id.tvNoRegisteredDishes).setVisibility(View.GONE);
                 }
 
@@ -242,7 +242,7 @@ public class FoodServiceActivity extends AppCompatActivity  {
                 final ListView listView = findViewById(R.id.dishList);
 
                 CheckBox showHiddenBox = findViewById(R.id.showHiddenDishes);
-                if(list.size() != filteredDishes.size()){
+                if (list.size() != filteredDishes.size()) {
                     showHiddenBox.setVisibility(View.VISIBLE);
                 }
 
@@ -281,18 +281,18 @@ public class FoodServiceActivity extends AppCompatActivity  {
                 findViewById(R.id.constraintLayoutFoodserviceActiv).setVisibility(View.VISIBLE);
             }
         });
+
     }
 
-
-    public OnMapReadyCallback onMapReadyCallback1(){
+    public OnMapReadyCallback onMapReadyCallback1() {
         return new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                if(checkNetworkConnection()) {
+                if (checkNetworkConnection()) {
                     mMap = googleMap;
                     enableMyLocation();
                     mMap.addMarker(new MarkerOptions().position(latLngDestination));
-                    float zoomLevel = 16.5f; //This goes up to 21
+                    float zoomLevel = 16.5f;
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngDestination, zoomLevel));
                     mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                         @Override
@@ -306,44 +306,67 @@ public class FoodServiceActivity extends AppCompatActivity  {
         };
     }
 
+
+    private LatLng getCurrentLocation() {
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider = LocationManager.NETWORK_PROVIDER;
+        assert locationManager != null;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //do nothing
+        }
+        android.location.Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
+        locationManager.requestLocationUpdates(locationProvider, (long) 0.5, 10, new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                setWalkingTime();
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                // do nothing
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+                // do nothing
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+                // do nothing
+            }
+        });
+        assert lastKnownLocation != null;
+        userLat = lastKnownLocation.getLatitude();
+        userLong = lastKnownLocation.getLongitude();
+        latLngOrig = new LatLng(userLat, userLong);
+        return latLngOrig;
+
+    }
+
+
     public OnMapReadyCallback onMapReadyCallback2(){
         return new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 if(checkNetworkConnection()){
                     mMapDirection = googleMap;
+                    mMapDirection.setMyLocationEnabled(true);
                     ArrayList<LatLng> listPoints = new ArrayList<>();
-
-
-                    //TODO: Change back to current location when finished testing
-                    // Get current location
-            /*LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-            String locationProvider = LocationManager.NETWORK_PROVIDER;
-            @SuppressLint("MissingPermission") android.location.Location lastKnownLocation = Objects.requireNonNull(locationManager).getLastKnownLocation(locationProvider);
-            double userLat = Objects.requireNonNull(lastKnownLocation).getLatitude();
-            double userLong = lastKnownLocation.getLongitude();*/
-                    double userLatAl = 38.738300;
-                    double userLongAl = -9.139040;
-                    latLngOrig = new LatLng(userLatAl, userLongAl);
+                    latLngOrig = new LatLng(userLat, userLong);
                     listPoints.add(latLngOrig);
-
-                    //sets zoom level
-                    float zoomLevel = 16.0f; //This goes up to 21
+                    float zoomLevel = 16.0f;
                     mMapDirection.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngOrig, zoomLevel));
                     mMapDirection.addMarker(new MarkerOptions().position(latLngDestination));
-
-                    //LatLng latLngDestination = new LatLng(latitude, longitude);
                     listPoints.add(latLngDestination);
 
                     // create the url to get request from first marker to second marker from google map api
                     String url = getRequestUrl(listPoints.get(0), listPoints.get(1));
                     FoodServiceActivity.TaskRequestDirections taskRequestDirections = new FoodServiceActivity.TaskRequestDirections();
                     taskRequestDirections.execute(url);
-
                 }
             }
         };
-
     }
 
     @Override
@@ -383,20 +406,12 @@ public class FoodServiceActivity extends AppCompatActivity  {
         return "https://maps.googleapis.com/maps/api/directions/json?" + str_org + "&" + str_dest + "&sensor=false&mode=walking&key=AIzaSyB72zLudOuMncMtCOCIpwgMVvTBLFAfPI8";
     }
 
+    private double userLat;
+    private double userLong;
     private void setWalkingTime(){
-        //TODO make actual currentlocation latLngCurrentLoc when delivering project
-        /*LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        String locationProvider = LocationManager.NETWORK_PROVIDER;
-        @SuppressLint("MissingPermission") android.location.Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
-        double userLat = lastKnownLocation.getLatitude();
-        double userLong = lastKnownLocation.getLongitude();
-        LatLng latLngCurrentLoc = new LatLng(userLat, userLong);*/
-
         //checking for internet connection
         if(checkNetworkConnection()) {
-            double latitudeOrig = 38.738300;
-            double longitudeOrig = -9.139040;
-            LatLng latLngCurrentLoc = new LatLng(latitudeOrig, longitudeOrig);
+            LatLng latLngCurrentLoc = getCurrentLocation();
 
             String url = getRequestUrl(latLngCurrentLoc, latLngDestination);
             FoodServiceActivity.TaskRequestDistanceToCampuses taskRequestDistanceToCampuses = new FoodServiceActivity.TaskRequestDistanceToCampuses();
@@ -446,7 +461,6 @@ public class FoodServiceActivity extends AppCompatActivity  {
     /**
      * TaskRequestDistanceToCampuses and TarskParserDistance are used for the AsyncTask to
      * get distance to Taguspark and Alameda from current location
-     * TODO: put them in their own class??
      */
     // creates AsyncTask to call request Direction
     public class TaskRequestDistanceToCampuses extends AsyncTask<String, Void, String> {

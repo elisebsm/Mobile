@@ -15,6 +15,8 @@ public class TranslateBeaconName {
         List<String> foodServiceAlBeacon = Arrays.asList("CentralBar", "CivilBar", "CivilCafeteria","Sena","MechyBar", "AEISTBar",
                 "AEISTEsplanade", "ChemyBar", "SASCafeteria", "MathCafeteria","ComplexBar");
 
+        String transCafeteriaName;
+
         if (campus.equals("Alameda")){
             for(int i=0; i<foodServicesAlameda.size(); i++){
                 beaconNameTranslator.put(foodServiceAlBeacon.get(i),foodServicesAlameda.get(i));
@@ -30,7 +32,8 @@ public class TranslateBeaconName {
             beaconNameTranslator.put( "CTNCafeteria","CTN Cafeteria");
             beaconNameTranslator.put("CTNBar","CTN Bar");
         }
-        String transCafeteriaName= beaconNameTranslator.get(beaconName);
+        transCafeteriaName = beaconNameTranslator.get(beaconName);
+
         return transCafeteriaName;
     }
 

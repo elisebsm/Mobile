@@ -29,7 +29,7 @@
     <!--  Food service  -->
     <string name="tv_show_menu_of_the_day">Show menu of the day</string>
     <string name="tv_estimated_time_to_walk">Estimated time to walk: </string>
-    <string name="tv_expected_queue_waiting_time">Expected queue waiting time: 3 minuttes</string>
+    <string name="tv_expected_queue_waiting_time">Expected queue waiting time: </string>
     <string name="btn_close">Close map</string>
     <string name="tv_est_time_to_walk_not_available">Estimated time to walk: Not available.</string>
     <string name="tv_menu_of_the_day">Menu of the day</string>
@@ -86,6 +86,13 @@
     <string name="dish">Dish</string>
     <string name="choose">Choose Campus</string>
     <string name="tv_chooselanguage">Choose language:"</string>
+    <string name="estimated_time_to_walk">"Estimated time to walk: "</string>
+    <string name="expected_queue_waiting_time">"Expected queue waiting time: "</string>
+    <string name="show_menu_of_the_day">Show menu of the day</string>
+    <string name="new_dish">New dish</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="add_dish">Add dish</string>
 
 </resources>
 
