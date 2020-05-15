@@ -164,10 +164,15 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
         if(services.size()!=0){
             //where services are the open cafeterias
             for (int i=0; i<services.size();i++){
-                String foodserviceName = services.get(i);
-                Double waitTime = QueueTime.getWaitTime(campus,foodserviceName);
-                long roundedTime= Math.round(waitTime*10)/10;
-                waitingTimeFoodservices.put(foodserviceName, roundedTime);
+                final String foodserviceName = services.get(i);
+                QueueTime.getWaitTime(campus, foodserviceName, new QueueTime.FirebaseCallback() {
+                    @Override
+                    public void onCallback(double waitTimeEstimate) {
+                        long roundedTime= Math.round(waitTimeEstimate*10)/10;
+                        waitingTimeFoodservices.put(foodserviceName, roundedTime);
+                    }
+                });
+
             }
         }
 

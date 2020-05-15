@@ -27,7 +27,7 @@ public class QueueTime {
     // in order to find right info in database
     //TODO: change so it is cafeteria spesific. aka get name of beacon and add to databasepath
 
-    public static Double getWaitTime(String campus, String foodservice){
+    public static void getWaitTime(String campus, String foodservice, final FirebaseCallback callback){
         //get info from database, number in line atm and training data Xi and Yi
         //cont checking
         String Database_Path_test = ("Beacons/Alameda/Central Bar/");
@@ -57,7 +57,7 @@ public class QueueTime {
                     //estimate waiting time for this person by calculating b1 and b2 and using number of people (X) in line
                     estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
                     System.out.println(("this is waiting time bitch" + estimateY));
-
+                    callback.onCallback(estimateY);
                 }
 
 
@@ -70,9 +70,10 @@ public class QueueTime {
                 // ...
             }
         });
-        // System.out.println(("this is waiting time bitch" + tempXiList));
-        System.out.println(("this is waiting time bitch" + estimateY));
-        return estimateY;
+    }
+
+    public interface FirebaseCallback {
+        void onCallback(double waitTimeEstimate);
     }
 
 
