@@ -113,11 +113,12 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
     private String beaconInRange;
     private long timeArrivingQueueMillis;
     private long timeLeavingQueueMillis;
-    private long timeInQueue;
+    private double timeInQueueMilisec;
+    private double timeInQueue;
     private int beaconDetectedCounter = 0;
     // creating a My HashTable Dictionary
     private Hashtable<String, Long> waitingTimeFoodservices = new Hashtable<String,Long>();
-    private long testTime;
+    private Hashtable<String, Integer>  currentNumberInLine=new Hashtable<String,Integer>();
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -168,7 +169,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
                 final String foodserviceName = services.get(i);
                 QueueTime.getWaitTime(campus, foodserviceName, new QueueTime.FirebaseCallback() {
                     @Override
-                    public void onCallback(double waitTimeEstimate) {
+                    public void onCallback(double waitTimeEstimate, Integer numInLine) {
+                        currentNumberInLine.put(foodserviceName, numInLine);
                         long roundedTime= Math.round(waitTimeEstimate*10)/10;
                         waitingTimeFoodservices.put(foodserviceName, roundedTime);
                        // System.out.println("tieme to wait"+ roundedTime);
@@ -221,9 +223,20 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             Log.i("BEACONNAME  Leaving", String.valueOf(timeLeavingQueueMillis));
 
 
-            timeInQueue = timeLeavingQueueMillis - timeArrivingQueueMillis;
+            timeInQueueMilisec = timeLeavingQueueMillis - timeArrivingQueueMillis;
+            timeInQueue=timeInQueueMilisec/60000;
+            Log.i("BEACONNAME  InQueue", String.valueOf(timeInQueueMilisec));
 
-            Log.i("BEACONNAME  InQueue", String.valueOf(timeInQueue));
+            //remove user from line and update training data when user leaves
+            if(currentNumberInLine.isEmpty()){
+                //do nothing
+            }
+            else{
+                Integer numInLine= currentNumberInLine.get("Central Bar");
+                QueueTime.updateWaitingTime(numInLine,timeInQueue,"Alameda","Central Bar");
+                System.out.println("Current numb in central bar!!"+numInLine);
+
+            }
 
 
         }
@@ -237,16 +250,9 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
 
 
 
+
     }
 
-/*
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(mReceiver);
-    }
-
-*/
 
 
 
@@ -405,8 +411,6 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             services = foodServicesOpen;
             getDistanceValues(foodServices);
             setWaitingTimeFoodservices("Alameda");
-            QueueTime.updateWaitingTime(10,3.0,"Alameda","Central Bar");
-            System.out.println("Updated time in DB!!!!!!!");
 
 
         }
@@ -871,12 +875,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
 
     //Beacon
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDestroy() {
+        super.onDestroy();
         unregisterReceiver(mReceiver);
     }
-
-
 
 
 

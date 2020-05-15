@@ -18,10 +18,6 @@ public class QueueTime {
     private static double estimateY;;
     private static List<Integer> XiList=new ArrayList<>();
     private static List<Double>YiList=new ArrayList<>();
-    private static double test;
-
-    private static List<Double> Yi = Arrays.asList(0.5,1.7,3.9); // real data of time per pers in the line
-    private static List<Integer> Xi = Arrays.asList(1,3,5); //number of people in line measured when you arrived
 
     // Creating DatabaseReference. Get broadcast receiver name(campus and cafeteria spesific)
     // in order to find right info in database
@@ -47,20 +43,18 @@ public class QueueTime {
                     if (queueInfo.getXi()!=null){
                         XiList.add(queueInfo.getXi());   //add number of people in line to list
                         YiList.add(queueInfo.getYi());  //add corresponding number of how long people stay in line to list
-                      //  System.out.println(("this is X mean:"+XiList));
 
 
                     }
 
-                    test= queueInfo.getXi();
+
                 }
-                   System.out.println(("this is X " + test));
+
                     //if (YiList.size()>=2){
                     //estimate waiting time for this person by calculating b1 and b2 and using number of people (X) in line
                     estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
 
-                    System.out.println(("this is waiting time bitch" + estimateY));
-                    callback.onCallback(estimateY);
+                    callback.onCallback(estimateY, numberInLineX);
 
 
            }
@@ -77,31 +71,35 @@ public class QueueTime {
 
 
     public interface FirebaseCallback {
-        void onCallback(double waitTimeEstimate);
+        void onCallback(double waitTimeEstimate , Integer numInLine);
     }
 
-
-    public static void updateWaitingTime(Integer numberInLine, Double diffTime, String campus, String foodservice){
+    //update this when someone has left line
+    public static void updateWaitingTime(int numberInLine, double diffTime, String campus, String foodservice){
         String Database_Path = ("Beacons/Alameda/Central Bar/");
         String Database_Path_correct = ("Beacons/"+campus+"/"+foodservice+"/");
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path_correct);
         //add info on new person in line into to database to improve training data
         //calculate values
-        Integer newPersonInLine= numberInLine+1;
+
+        Integer newLineNumber= numberInLine-1;
+        Integer lineAtArrival= numberInLine;
 
         //fictional time
         // diffTime= 2.4;
-        QueueInfo newQueueInfo = new QueueInfo(newPersonInLine,diffTime);
+        QueueInfo newQueueInfo = new QueueInfo(lineAtArrival,diffTime);
+        LineInfo newLineInfo= new LineInfo((newLineNumber));
 
         // Getting upload ID.
         String UploadId = databaseReference.push().getKey();
 
         databaseReference.child("trainingData").child(UploadId).setValue(newQueueInfo);
-       // databaseReference.child("line").setValue(newPersonInLine);
+        databaseReference.child("line").setValue(newLineInfo);
 
 
         // System.out.println(("this is "+estimateY));
     }
+
 
 
 }
