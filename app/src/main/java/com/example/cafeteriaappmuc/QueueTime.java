@@ -50,12 +50,16 @@ public class QueueTime {
 
                 }
 
-                    //if (YiList.size()>=2){
-                    //estimate waiting time for this person by calculating b1 and b2 and using number of people (X) in line
-                    estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
+                    if (YiList.size()>=2) {
+                        //estimate waiting time for this person by calculating b1 and b2 and using number of people (X) in line
+                        estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
 
-                    callback.onCallback(estimateY, numberInLineX);
+                        callback.onCallback(estimateY, numberInLineX);
+                    }
+                    else{
 
+                        callback.onCallback(0, numberInLineX);
+                    }
 
            }
 
@@ -75,26 +79,39 @@ public class QueueTime {
     }
 
     //update this when someone has left line
-    public static void updateWaitingTime(int numberInLine, double diffTime, String campus, String foodservice){
+    public static void updateWaitingTime(int numberInLine, double diffTime, String campus, String foodservice, Boolean hasArrived){
         String Database_Path = ("Beacons/Alameda/Central Bar/");
         String Database_Path_correct = ("Beacons/"+campus+"/"+foodservice+"/");
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path_correct);
         //add info on new person in line into to database to improve training data
         //calculate values
 
-        Integer newLineNumber= numberInLine-1;
-        Integer lineAtArrival= numberInLine;
 
         //fictional time
         // diffTime= 2.4;
-        QueueInfo newQueueInfo = new QueueInfo(lineAtArrival,diffTime);
-        LineInfo newLineInfo= new LineInfo((newLineNumber));
+        if (hasArrived){
+            Integer newLineNumber= numberInLine+1;
+            Integer lineAtArrival= numberInLine;
+            LineInfo newLineInfo= new LineInfo((newLineNumber));
+            databaseReference.child("line").setValue(newLineInfo);
+        }
+        else {
 
-        // Getting upload ID.
-        String UploadId = databaseReference.push().getKey();
 
-        databaseReference.child("trainingData").child(UploadId).setValue(newQueueInfo);
-        databaseReference.child("line").setValue(newLineInfo);
+            Integer newLineNumber= numberInLine-1;
+            Integer lineAtArrival= numberInLine;
+            QueueInfo newQueueInfo = new QueueInfo(lineAtArrival,diffTime);
+            LineInfo newLineInfo= new LineInfo((newLineNumber));
+
+            // Getting upload ID.
+            String UploadId = databaseReference.push().getKey();
+
+            databaseReference.child("trainingData").child(UploadId).setValue(newQueueInfo);
+            databaseReference.child("line").setValue(newLineInfo);
+        }
+
+
+
 
 
         // System.out.println(("this is "+estimateY));
