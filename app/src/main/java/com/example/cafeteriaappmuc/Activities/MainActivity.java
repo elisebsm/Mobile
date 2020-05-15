@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
     // creating a My HashTable Dictionary
     private Hashtable<String, Long> waitingTimeFoodservices = new Hashtable<String,Long>();
     private Hashtable<String, Integer>  currentNumberInLine=new Hashtable<String,Integer>();
-
+    private String nameOfDevice;
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -227,28 +227,28 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             timeInQueue=timeInQueueMilisec/60000;
             Log.i("BEACONNAME  InQueue", String.valueOf(timeInQueueMilisec));
 
-            //remove user from line and update training data when user leaves
-            if(currentNumberInLine.isEmpty()){
-                //do nothing
-            }
-            else{
-                Integer numInLine= currentNumberInLine.get("Central Bar");
-                QueueTime.updateWaitingTime(numInLine,timeInQueue,"Alameda","Central Bar");
-                System.out.println("Current numb in central bar!!"+numInLine);
-
-            }
 
 
         }
         // compile list of devices in range
         for (SimWifiP2pDevice device : peers.getDeviceList()) {
+            nameOfDevice=device.deviceName;
             Log.i("BEACONNAME", device.deviceName);
             beaconInRange = device.deviceName;
             beaconDetectedCounter++;
             timeArrivingQueueMillis = System.currentTimeMillis();
         }
 
+        //remove user from line and update training data when user leaves
+        if(currentNumberInLine.isEmpty()){
+            //do nothing
+        }
+        else{
+            Integer numInLine= currentNumberInLine.get(nameOfDevice);
 
+            QueueTime.updateWaitingTime(numInLine,timeInQueue,currentCampus,nameOfDevice);
+
+        }
 
 
     }
