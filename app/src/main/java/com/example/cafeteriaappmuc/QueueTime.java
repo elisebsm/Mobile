@@ -16,8 +16,8 @@ public class QueueTime {
 
 
     private static double estimateY;;
-    private static List<Integer> XiList;
-    private static List<Double>YiList;
+    private static List<Integer> XiList=new ArrayList<>();
+    private static List<Double>YiList=new ArrayList<>();
     private static double test;
 
     private static List<Double> Yi = Arrays.asList(0.5,1.7,3.9); // real data of time per pers in the line
@@ -30,9 +30,9 @@ public class QueueTime {
     public static void getWaitTime(String campus, String foodservice, final FirebaseCallback callback){
         //get info from database, number in line atm and training data Xi and Yi
         //cont checking
-        String Database_Path_test = ("Beacons/Alameda/Central Bar/");
+        //String Database_Path_test = ("Beacons/Alameda/Central Bar/");
         String Database_Path_correct = ("Beacons/"+campus+"/"+foodservice+"/");
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path_test);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path_correct);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -45,8 +45,8 @@ public class QueueTime {
                     QueueInfo queueInfo = postSnapshot.getValue(QueueInfo.class);
 
                     if (queueInfo.getXi()!=null){
-                        //XiList.add(queueInfo.getXi());   //add number of people in line to list
-                        //YiList.add(queueInfo.getYi());  //add corresponding number of how long people stay in line to list
+                        XiList.add(queueInfo.getXi());   //add number of people in line to list
+                        YiList.add(queueInfo.getYi());  //add corresponding number of how long people stay in line to list
                       //  System.out.println(("this is X mean:"+XiList));
 
 
@@ -54,11 +54,11 @@ public class QueueTime {
 
                     test= queueInfo.getXi();
                 }
-                System.out.println(("this is X " + test));
+                   System.out.println(("this is X " + test));
                     //if (YiList.size()>=2){
                     //estimate waiting time for this person by calculating b1 and b2 and using number of people (X) in line
-                    //estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
-                    estimateY = (QueueAlgorithm.getB1(Xi, Yi) * 4) + QueueAlgorithm.getb0(Xi, Yi);
+                    estimateY = (QueueAlgorithm.getB1(XiList, YiList) * numberInLineX) + QueueAlgorithm.getb0(XiList, YiList);
+
                     System.out.println(("this is waiting time bitch" + estimateY));
                     callback.onCallback(estimateY);
 
@@ -81,7 +81,7 @@ public class QueueTime {
     }
 
 
-    public void updateWaitingTime(Integer numberInLine, Double diffTime, String campus, String foodservice){
+    public static void updateWaitingTime(Integer numberInLine, Double diffTime, String campus, String foodservice){
         String Database_Path = ("Beacons/Alameda/Central Bar/");
         String Database_Path_correct = ("Beacons/"+campus+"/"+foodservice+"/");
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(Database_Path);
@@ -97,6 +97,7 @@ public class QueueTime {
         String UploadId = databaseReference.push().getKey();
 
         databaseReference.child("trainingData").child(UploadId).setValue(newQueueInfo);
+       // databaseReference.child("line").setValue(newPersonInLine);
 
 
         // System.out.println(("this is "+estimateY));

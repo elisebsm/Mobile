@@ -164,18 +164,18 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
     private void setWaitingTimeFoodservices(String campus){
         if(services.size()!=0){
             //where services are the open cafeterias
-            //for (int i=0; i<services.size();i++){
-                final String foodserviceName = "Central Bar" ;//services.get(i);
+            for (int i=0; i<services.size();i++){
+                final String foodserviceName = services.get(i);
                 QueueTime.getWaitTime(campus, foodserviceName, new QueueTime.FirebaseCallback() {
                     @Override
                     public void onCallback(double waitTimeEstimate) {
                         long roundedTime= Math.round(waitTimeEstimate*10)/10;
                         waitingTimeFoodservices.put(foodserviceName, roundedTime);
-                        System.out.println("tieme to wait"+ roundedTime);
+                       // System.out.println("tieme to wait"+ roundedTime);
                     }
                 });
 
-           // }
+            }
         }
 
 
@@ -405,8 +405,8 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             services = foodServicesOpen;
             getDistanceValues(foodServices);
             setWaitingTimeFoodservices("Alameda");
-
-            //System.out.println("correct time :"+testTime);
+            QueueTime.updateWaitingTime(10,3.0,"Alameda","Central Bar");
+            System.out.println("Updated time in DB!!!!!!!");
 
 
         }
@@ -417,7 +417,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             List<String> foodServices= foodServicesOpen;
             services = foodServicesOpen;
             getDistanceValues(foodServices);
-            //setWaitingTimeFoodservices(campus);
+            setWaitingTimeFoodservices("Taguspark");
         }
         else if (campus.equals("CTN")){
             OpeningHours openHours = new OpeningHours();
@@ -426,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             List<String> foodServices= foodServicesOpen;
             services = foodServicesOpen;
             getDistanceValues(foodServices);
-          //  setWaitingTimeFoodservices(campus);
+            setWaitingTimeFoodservices("CTN");
         }
     }
 
@@ -932,11 +932,11 @@ public class MainActivity extends AppCompatActivity implements Serializable, Pee
             if(counterDisplayFoodServiceInList<=services.size()-1){
                 String nameOfFoodservice = services.get(counterDisplayFoodServiceInList);
                if(getWaitingTimeFoodservices().isEmpty()) {
-                   long queueTime = 5;
+                   long queueTime = 0;
                    arrayList.add(new MyDataListMain(nameOfFoodservice, duration, queueTime));
                }
                else{
-                   long queueTime= getWaitingTimeFoodservices().get("Central Bar");
+                   long queueTime= getWaitingTimeFoodservices().get(nameOfFoodservice);
                    arrayList.add(new MyDataListMain(nameOfFoodservice, duration, queueTime));
 
                }
